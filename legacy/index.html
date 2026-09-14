@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#13121C">
+<title>洛天依陪跑 · RUN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="phone">
+
+  <!-- 状态栏占位 -->
+  <div class="status-bar">
+    <span class="sb-time">23:59</span>
+    <span class="sb-icons">•••</span>
+  </div>
+
+  <!-- 顶部：徽章 + 状态 -->
+  <header class="top">
+    <div class="badge">洛天依伴跑</div>
+    <div class="chip" id="stateChip">待机</div>
+  </header>
+
+  <!-- 心率环 -->
+  <section class="card hr-card">
+    <div class="ring-wrap">
+      <svg class="hr-ring" viewBox="0 0 200 200">
+        <circle class="ring-bg" cx="100" cy="100" r="84"></circle>
+        <circle class="ring-fg" id="hrRing" cx="100" cy="100" r="84"></circle>
+      </svg>
+      <div class="hr-center">
+        <div class="hr-num" id="hrValue">--</div>
+        <div class="hr-unit">BPM</div>
+        <div class="hr-zone" id="hrZone">未连接手表</div>
+      </div>
+    </div>
+    <div class="hr-actions">
+      <button class="btn-ghost" id="btnConnectHR">连接手表</button>
+      <label class="age-row">年龄 <input type="number" id="ageInput" value="20" min="10" max="90"></label>
+    </div>
+  </section>
+
+  <!-- 阶段条 + 计时 + 目标 BPM -->
+  <section class="stage-area">
+    <div class="phase-bar" id="phaseBar"></div>
+    <div class="timer" id="timer">00:00</div>
+    <div class="bpm-row">
+      <span class="bpm-label">目标节奏</span>
+      <span class="bpm-num" id="curBpm">100</span><span class="bpm-unit">BPM</span>
+    </div>
+  </section>
+
+  <!-- 节拍器 -->
+  <section class="card metro-card">
+    <div class="metro-head">
+      <span>节拍器</span>
+      <span class="bpm-num" id="metroBpm">120</span>
+    </div>
+    <div class="beat-dot" id="beatDot"></div>
+    <input type="range" id="bpmSlider" min="60" max="200" value="120">
+  </section>
+
+  <!-- 音乐 -->
+  <section class="card music-card">
+    <div class="music-cover" id="musicCover">♪</div>
+    <div class="music-body">
+      <div class="music-title" id="musicInfo">导入你的音乐</div>
+      <div class="music-bpm">
+        BPM <input type="number" id="musicBpm" value="118" min="30" max="300">
+        <button class="mini" id="btnSyncBpm">同步</button>
+      </div>
+    </div>
+    <button class="icon-btn" id="btnPlayMusic" disabled>▶</button>
+    <input type="file" id="musicFile" accept="audio/*" hidden>
+  </section>
+
+  <!-- 语音播报提示 -->
+  <div class="voice-toast" id="voiceToast"></div>
+
+  <!-- 主按钮 + 次操作 -->
+  <button class="btn-primary" id="btnStart">开始训练</button>
+  <div class="secondary-actions">
+    <button class="btn-ghost" id="btnStop" disabled>停止</button>
+    <button class="btn-ghost" id="btnTestVoice">试听提示音</button>
+  </div>
+
+  <!-- 底部悬浮 Tab Bar -->
+  <nav class="tabbar">
+    <div class="tab" data-tab="home">首页</div>
+    <div class="tab active" data-tab="train">训练</div>
+    <div class="tab" data-tab="music">音乐</div>
+    <div class="tab" data-tab="mine">我的</div>
+  </nav>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="core/engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

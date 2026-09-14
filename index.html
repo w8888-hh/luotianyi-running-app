@@ -1,0 +1,1903 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+  <title>洛天依陪跑 · RUN</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #13121C;
+      --bg-low: #1A1A1A;
+      --surface-glass: rgba(255, 255, 255, 0.08);
+      --surface-solid: #2A2A2A;
+      --accent-run: #FF8C42;
+      --accent-run-light: #FFC1A1;
+      --accent-luo: #66CCFF;
+      --accent-luo-soft: rgba(102, 204, 255, 0.15);
+      --text-primary: #FFF6EC;
+      --text-secondary: rgba(255, 246, 236, 0.6);
+      --text-muted-low: #999999;
+      --border-glass: rgba(255, 255, 255, 0.15);
+      --success: #7DB87A;
+      --shadow-glass: 0 12px 28px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+      --shadow-button: 0 8px 24px rgba(255, 140, 66, 0.4);
+      --shadow-luo: 0 0 24px rgba(102, 204, 255, 0.4);
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body {
+      font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: #0a0a0f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      overflow: hidden;
+    }
+
+    .phone {
+      width: 100%;
+      max-width: 414px;
+      min-height: 100vh;
+      height: 100vh;
+      margin: 0 auto;
+      overflow: hidden;
+      position: relative;
+      background: var(--bg-primary);
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+    }
+    .screen.active { display: flex; }
+
+    /* Status Bar */
+    .status-bar {
+      display: none;
+      height: 62px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      z-index: 10;
+    }
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .signal-bar { width: 4px; background: var(--text-primary); border-radius: 1px; }
+    .signal-bar:nth-child(1) { height: 7px; }
+    .signal-bar:nth-child(2) { height: 10px; }
+    .signal-bar:nth-child(3) { height: 13px; }
+
+    /* Content */
+    .content {
+      flex: 1;
+      min-height: 0;
+      padding: 0 20px 100px;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .content::-webkit-scrollbar { display: none; }
+
+    /* Typography */
+    .title-lg { font-size: 28px; font-weight: 600; }
+    .title-md { font-size: 20px; font-weight: 600; }
+    .text-muted { color: var(--text-secondary); }
+    .text-luo { color: var(--accent-luo); }
+    .text-run { color: var(--accent-run); }
+
+    /* Glass Card */
+    .glass {
+      background: var(--surface-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 28px;
+      box-shadow: var(--shadow-glass);
+      backdrop-filter: blur(32px);
+      -webkit-backdrop-filter: blur(32px);
+    }
+    .low .glass {
+      background: var(--surface-solid);
+      border-color: #333;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      box-shadow: none;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: var(--accent-run);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      height: 52px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-button);
+      cursor: pointer;
+      width: 100%;
+    }
+
+    /* Tab Bar */
+    .tab-bar {
+      position: absolute;
+      bottom: 21px;
+      left: 20px;
+      right: 20px;
+      height: 62px;
+      background: var(--surface-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 36px;
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+      display: flex;
+      padding: 4px;
+      gap: 4px;
+      z-index: 20;
+    }
+    .low .tab-bar {
+      background: var(--surface-solid);
+      border-color: #333;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      box-shadow: none;
+    }
+    .tab-item {
+      flex: 1;
+      border-radius: 26px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-item.active {
+      background: var(--accent-run);
+      color: white;
+    }
+    .tab-icon { width: 18px; height: 18px; }
+
+    /* Home Screen */
+    .home-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #66CCFF, #3399FF);
+      box-shadow: 0 4px 16px rgba(102, 204, 255, 0.4);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .badge-run { background: rgba(255, 140, 66, 0.15); color: var(--accent-run); }
+    .badge-luo { background: var(--accent-luo-soft); color: var(--accent-luo); border-radius: 12px; margin-left: 8px; }
+    .badge-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    .hero-card {
+      background: linear-gradient(90deg, #FF8C42, #FFC1A1);
+      border-radius: 28px;
+      padding: 24px;
+      height: 170px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      box-shadow: 0 12px 32px rgba(255, 140, 66, 0.35);
+    }
+    .hero-card .label { color: rgba(255, 255, 255, 0.85); font-size: 14px; font-weight: 500; }
+    .hero-card .title { color: white; font-size: 24px; font-weight: 600; }
+    .hero-card .meta { color: rgba(255, 255, 255, 0.8); font-size: 13px; }
+    .hero-card .btn { background: white; color: #FF8C42; border-radius: 999px; height: 44px; display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      padding: 16px;
+      height: 96px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .stat-card .icon { width: 24px; height: 24px; }
+    .stat-card .label { font-size: 12px; color: var(--text-secondary); }
+    .stat-card .value { font-size: 18px; font-weight: 600; }
+
+    .weekly-card { padding: 16px; margin-bottom: 100px; }
+    .weekly-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+    .weekly-days { display: flex; justify-content: space-between; gap: 8px; }
+    .day {
+      width: 32px;
+      height: 40px;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 6px;
+    }
+    .day.active { background: var(--accent-run); color: white; }
+    .day:not(.active) { background: var(--surface-glass); color: var(--text-secondary); }
+    .low .day:not(.active) { background: var(--surface-solid); }
+    .day-bar { width: 4px; border-radius: 2px; }
+
+    /* Tier Screen */
+    .tier-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      margin-bottom: 16px;
+    }
+    .back-btn {
+      width: 40px; height: 40px; border-radius: 20px;
+      background: var(--surface-glass);
+      border: 1px solid var(--border-glass);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .low .back-btn { background: var(--surface-solid); border-color: #333; }
+    .tier-subtitle { font-size: 15px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5; }
+    .tier-card {
+      padding: 16px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tier-card.selected {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 140, 66, 0.5);
+      box-shadow: 0 8px 28px rgba(255, 140, 66, 0.25);
+    }
+    .tier-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .tier-left { display: flex; align-items: center; gap: 12px; }
+    .tier-icon {
+      width: 40px; height: 40px; border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .tier-title { font-size: 18px; font-weight: 600; }
+    .tier-desc { font-size: 13px; color: var(--text-secondary); }
+    .tier-check {
+      width: 28px; height: 28px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border-glass);
+    }
+    .tier-card.selected .tier-check { background: var(--accent-run); border-color: var(--accent-run); }
+    .tier-preview {
+      height: 40px;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      background: #13121C;
+    }
+    .preview-bar {
+      position: absolute;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 246, 236, 0.15);
+      left: 16px;
+    }
+    .preview-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(8px);
+    }
+    .preview-particle {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+    }
+
+    /* Run Screen */
+    .run-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .aurora {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .aurora.orange {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(255, 140, 66, 0.6), transparent 70%);
+      top: -100px; left: -50px;
+      animation: float 8s ease-in-out infinite;
+    }
+    .aurora.peach {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(255, 193, 161, 0.4), transparent 70%);
+      bottom: 100px; right: -50px;
+      animation: float 10s ease-in-out infinite reverse;
+    }
+    .aurora.blue {
+      width: 250px; height: 250px;
+      background: radial-gradient(circle, rgba(102, 204, 255, 0.35), transparent 70%);
+      top: 80px; right: 0;
+      animation: float 9s ease-in-out infinite;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+      opacity: 0.6;
+      pointer-events: none;
+      animation: rise 6s linear infinite;
+    }
+    .low .run-bg { display: none; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(20px, 30px) scale(1.1); }
+    }
+    @keyframes rise {
+      0% { transform: translateY(0); opacity: 0; }
+      20% { opacity: 0.6; }
+      100% { transform: translateY(-200px); opacity: 0; }
+    }
+
+    .run-content {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 0 24px 24px;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .phase-bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      margin-bottom: 28px;
+    }
+    .phase {
+      flex: 1;
+      height: 40px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--surface-glass);
+      color: var(--text-secondary);
+    }
+    .low .phase { background: var(--surface-solid); color: var(--text-muted-low); }
+    .phase.active {
+      background: var(--accent-run);
+      color: white;
+      font-weight: 600;
+    }
+
+    .main-metrics {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .timer { font-size: 72px; font-weight: 700; line-height: 1; }
+    .distance { font-size: 22px; font-weight: 500; color: var(--text-secondary); margin-top: 8px; }
+
+    .metric-cards {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .metric-card {
+      flex: 1;
+      padding: 16px;
+      height: 160px;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-align: center;
+    }
+    .hr-ring {
+      width: 80px; height: 80px;
+      position: relative;
+      margin-bottom: 4px;
+    }
+    .hr-ring svg { transform: rotate(-90deg); }
+    .hr-ring circle.track { fill: none; stroke: rgba(255, 246, 236, 0.15); stroke-width: 6; }
+    .hr-ring circle.fill {
+      fill: none;
+      stroke: var(--accent-luo);
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 226;
+      stroke-dashoffset: 90;
+      filter: drop-shadow(0 0 8px rgba(102, 204, 255, 0.6));
+    }
+    .hr-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 246, 236, 0.1);
+      border-radius: 3px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+    .hr-bar-fill {
+      width: 60%;
+      height: 100%;
+      background: var(--accent-luo);
+      border-radius: 3px;
+    }
+    .metric-value { font-size: 28px; font-weight: 600; }
+    .metric-label { font-size: 13px; color: var(--text-secondary); }
+    .low .metric-label { color: var(--text-muted-low); }
+    .metric-bpm { font-size: 14px; font-weight: 500; color: var(--accent-luo); text-shadow: 0 0 12px rgba(102, 204, 255, 0.4); }
+    .low .metric-bpm { text-shadow: none; }
+
+    .music-player {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+    }
+    .music-bubble {
+      position: absolute;
+      right: 16px;
+      bottom: 140px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FF8C42, #FFC1A1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(255, 140, 66, 0.4);
+      cursor: pointer;
+      z-index: 10;
+      transition: transform 0.2s;
+    }
+    .music-bubble:active { transform: scale(0.92); }
+    .music-left { display: flex; align-items: center; gap: 12px; }
+    .music-cover {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--accent-luo);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 16px rgba(102, 204, 255, 0.3);
+    }
+    .low .music-cover { box-shadow: none; }
+    .music-title { font-size: 14px; font-weight: 600; }
+    .music-sub { font-size: 12px; color: var(--text-secondary); }
+    .low .music-sub { color: var(--text-muted-low); }
+
+    .pause-btn {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: var(--accent-run);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 32px rgba(255, 140, 66, 0.5);
+      cursor: pointer;
+    }
+
+    .mode-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: var(--surface-solid);
+      font-size: 12px;
+      color: var(--text-muted-low);
+      margin-bottom: 16px;
+      align-self: flex-start;
+    }
+
+    /* Utility */
+    .mt-auto { margin-top: auto; }
+    .mt-2 { margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="phone" id="phone">
+
+    <!-- HOME -->
+    <div class="screen active" id="screen-home">
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="status-icons">
+          <svg fill="none" height="14" viewBox="0 0 18 14" width="18">
+            <rect fill="#FFF6EC" height="7" rx="1" width="4" x="0" y="7"/>
+            <rect fill="#FFF6EC" height="10" rx="1" width="4" x="6" y="4"/>
+            <rect fill="#FFF6EC" height="13" rx="1" width="4" x="12" y="1"/>
+          </svg>
+          <svg fill="none" height="14" viewBox="0 0 20 14" width="20">
+            <path d="M2 7C5 2 13 2 16 7C13 12 5 12 2 7Z" stroke="#FFF6EC" stroke-width="1.5"/>
+            <circle cx="9" cy="7" fill="#FFF6EC" r="2"/>
+          </svg>
+          <svg fill="none" height="12" viewBox="0 0 24 12" width="24">
+            <rect height="11" rx="2.5" stroke="#FFF6EC" width="23" x="0.5" y="0.5"/>
+            <rect fill="#FFF6EC" height="8" rx="1.5" width="14" x="2" y="2"/>
+          </svg>
+        </div>
+      </div>
+      <div class="content">
+        <div class="home-header">
+          <div class="title-lg">早安，跑者</div>
+          <div class="avatar"></div>
+        </div>
+        <div style="display:flex; align-items:center; margin-bottom:4px">
+          <div class="badge badge-run">
+            <svg fill="none" height="16" viewBox="0 0 16 16" width="16"><path d="M8 1S5 4 5 7C5 8.5 6 10 8 10C10 10 11 8.5 11 7C11 4 8 1 8 1Z" fill="#FF8C42"/><path d="M8 6S6.5 7.5 6.5 9C6.5 10 7.2 11 8 11C8.8 11 9.5 10 9.5 9C9.5 7.5 8 6 8 6Z" fill="#FFC1A1"/></svg>
+            连续 12 天
+          </div>
+          <div class="badge badge-luo"><div class="badge-dot" style="background:#66CCFF"></div>洛天依伴跑</div>
+        </div>
+        <div class="hero-card">
+          <div>
+            <div class="label">今日计划</div>
+            <div class="title">节奏跑 · 30分钟</div>
+            <div class="meta mt-2">07:00 · 中等强度</div>
+          </div>
+          <div class="btn" onclick="goRun()">开始跑步</div>
+        </div>
+        <div class="stats-grid">
+          <div class="glass stat-card">
+            <svg class="icon" fill="none" viewBox="0 0 24 24"><path d="M3 12C3 12 6 5 12 5C18 5 21 12 21 12C21 12 18 19 12 19C6 19 3 12 3 12Z" stroke="#FF8C42" stroke-width="1.5"/><circle cx="12" cy="12" fill="#FF8C42" r="3"/></svg>
+            <div class="label">本周里程</div>
+            <div class="value">24.6 km</div>
+          </div>
+          <div class="glass stat-card">
+            <svg class="icon" fill="none" viewBox="0 0 24 24"><path d="M12 2V6M12 18V22M6 12H2M22 12H18M4.93 4.93L7.76 7.76M16.24 16.24L19.07 19.07M4.93 19.07L7.76 16.24M16.24 7.76L19.07 4.93" stroke="#FFC1A1" stroke-width="1.5"/></svg>
+            <div class="label">平均配速</div>
+            <div class="value">5'42"</div>
+          </div>
+          <div class="glass stat-card">
+            <svg class="icon" fill="none" viewBox="0 0 24 24"><path d="M12 3S7 9 7 14C7 17.5 9.5 21 12 21C14.5 21 17 17.5 17 14C17 9 12 3 12 3Z" fill="#FF8C42"/><path d="M12 11S9.5 13.5 9.5 16C9.5 17.5 10.7 19 12 19C13.3 19 14.5 17.5 14.5 16C14.5 13.5 12 11 12 11Z" fill="#FFC1A1"/></svg>
+            <div class="label">消耗千卡</div>
+            <div class="value">1,842</div>
+          </div>
+          <div class="glass stat-card">
+            <svg class="icon" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="#66CCFF" stroke-width="1.5"/><path d="M12 7V12L15 15" stroke="#66CCFF" stroke-linecap="round" stroke-width="1.5"/></svg>
+            <div class="label">运动时长</div>
+            <div class="value">4h 12m</div>
+          </div>
+        </div>
+        <div class="glass weekly-card">
+          <div class="weekly-title">本周运动</div>
+          <div class="weekly-days">
+            <div class="day active"><span>一</span><div class="day-bar" style="height:18px; background:white"></div></div>
+            <div class="day"><span>二</span><div class="day-bar" style="height:12px; background:#FFC1A1"></div></div>
+            <div class="day"><span>三</span><div class="day-bar" style="height:9px; background:#FFC1A1"></div></div>
+            <div class="day"><span>四</span><div class="day-bar" style="height:15px; background:#FFC1A1"></div></div>
+            <div class="day"><span>五</span><div class="day-bar" style="height:6px; background:#FFC1A1"></div></div>
+            <div class="day"><span>六</span><div class="day-bar" style="height:21px; background:#FFC1A1"></div></div>
+            <div class="day"><span>日</span><div class="day-bar" style="height:3px; background:rgba(255,246,236,0.3)"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-bar">
+        <div class="tab-item active" data-tab="home">
+          <svg class="tab-icon" fill="none" viewBox="0 0 18 18"><path d="M2 7L9 2L16 7V15C16 15.5 15.5 16 15 16H3C2.5 16 2 15.5 2 15V7Z" fill="white"/><path d="M6 16V10H12V16" stroke="#FF8C42" stroke-width="1.5"/></svg>
+          首页
+        </div>
+        <div class="tab-item" data-tab="run" onclick="goRun()">
+          <svg class="tab-icon" fill="none" viewBox="0 0 18 18"><path d="M4 14C4 14 6 12 7 10C8 8 7.5 6 9 6C10.5 6 12 7 12 7M12 7L10 4M12 7L15 6" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="7" fill="currentColor" r="2"/></svg>
+          跑步
+        </div>
+        <div class="tab-item" data-tab="music">
+          <svg class="tab-icon" fill="none" viewBox="0 0 18 18"><path d="M6 14V6L14 4V12" stroke="currentColor" stroke-width="1.5"/><circle cx="5" cy="14" fill="currentColor" r="2"/></svg>
+          音乐
+        </div>
+        <div class="tab-item" data-tab="settings" onclick="goSettings()">
+          <svg class="tab-icon" fill="none" viewBox="0 0 18 18"><circle cx="9" cy="9" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M15 9H16M9 2V3M9 15V16M3 9H2M13.66 4.34L14.66 3.34M3.34 14.66L4.34 13.66M14.66 14.66L13.66 13.66M4.34 4.34L3.34 3.34" stroke="currentColor" stroke-width="1.5"/></svg>
+          设置
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS / TIER -->
+    <div class="screen" id="screen-settings">
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="status-icons">
+          <svg fill="none" height="14" viewBox="0 0 18 14" width="18"><rect fill="#FFF6EC" height="7" rx="1" width="4" x="0" y="7"/><rect fill="#FFF6EC" height="10" rx="1" width="4" x="6" y="4"/><rect fill="#FFF6EC" height="13" rx="1" width="4" x="12" y="1"/></svg>
+          <svg fill="none" height="14" viewBox="0 0 20 14" width="20"><path d="M2 7C5 2 13 2 16 7C13 12 5 12 2 7Z" stroke="#FFF6EC" stroke-width="1.5"/><circle cx="9" cy="7" fill="#FFF6EC" r="2"/></svg>
+          <svg fill="none" height="12" viewBox="0 0 24 12" width="24"><rect height="11" rx="2.5" stroke="#FFF6EC" width="23" x="0.5" y="0.5"/><rect fill="#FFF6EC" height="8" rx="1.5" width="14" x="2" y="2"/></svg>
+        </div>
+      </div>
+      <div class="content">
+        <div class="tier-header">
+          <div class="back-btn" onclick="goHome()">
+            <svg fill="none" height="20" viewBox="0 0 20 20" width="20"><path d="M12 4L6 10L12 16" stroke="#FFF6EC" stroke-linecap="round" stroke-width="2"/></svg>
+          </div>
+          <div class="title-md">画面效果</div>
+          <div style="width:40px"></div>
+        </div>
+        <div class="tier-subtitle">根据设备性能选择动态效果，兼顾流畅与续航。</div>
+
+        <div class="glass tier-card selected" onclick="setTier('high')">
+          <div class="tier-top">
+            <div class="tier-left">
+              <div class="tier-icon" style="background:var(--accent-run)">
+                <svg fill="none" height="20" viewBox="0 0 20 20" width="20"><path d="M10 2L12.5 8.5L19 10L12.5 11.5L10 18L7.5 11.5L1 10L7.5 8.5L10 2Z" fill="white"/></svg>
+              </div>
+              <div>
+                <div class="tier-title">实时渲染</div>
+                <div class="tier-desc">极光、粒子、光晕全开启</div>
+              </div>
+            </div>
+            <div class="tier-check"><svg fill="none" height="16" viewBox="0 0 16 16" width="16"><path d="M3 8L6.5 11.5L13 5" stroke="white" stroke-linecap="round" stroke-width="2.5"/></svg></div>
+          </div>
+          <div class="tier-preview">
+            <div class="preview-orb" style="width:45px; height:45px; background:rgba(255,140,66,0.5); left:12px; top:5px"></div>
+            <div class="preview-orb" style="width:20px; height:20px; background:rgba(255,193,161,0.5); left:70px; top:15px"></div>
+            <div class="preview-particle" style="width:3px; height:3px; left:100px; top:10px; opacity:0.7"></div>
+            <div class="preview-particle" style="width:2px; height:2px; left:115px; top:25px; opacity:0.5"></div>
+          </div>
+        </div>
+
+        <div class="glass tier-card" onclick="setTier('medium')">
+          <div class="tier-top">
+            <div class="tier-left">
+              <div class="tier-icon" style="background:rgba(255,255,255,0.1)">
+                <svg fill="none" height="20" viewBox="0 0 20 20" width="20"><circle cx="10" cy="10" fill="#FFC1A1" r="3"/><circle cx="4" cy="10" fill="#FFC1A1" r="2"/><circle cx="16" cy="10" fill="#FFC1A1" r="2"/></svg>
+              </div>
+              <div>
+                <div class="tier-title">预渲染</div>
+                <div class="tier-desc">缓存动画，平衡效果与耗电</div>
+              </div>
+            </div>
+            <div class="tier-check"></div>
+          </div>
+          <div class="tier-preview">
+            <div class="preview-orb" style="width:28px; height:28px; background:rgba(255,193,161,0.4); left:20px; top:6px"></div>
+          </div>
+        </div>
+
+        <div class="glass tier-card" onclick="setTier('low')">
+          <div class="tier-top">
+            <div class="tier-left">
+              <div class="tier-icon" style="background:rgba(255,255,255,0.1)">
+                <svg fill="none" height="20" viewBox="0 0 20 20" width="20"><rect fill="#66CCFF" height="2" rx="1" width="14" x="3" y="6"/><rect fill="#66CCFF" height="2" rx="1" width="14" x="3" y="10"/><rect fill="#66CCFF" height="2" rx="1" width="14" x="3" y="14"/></svg>
+              </div>
+              <div>
+                <div class="tier-title">简洁模式</div>
+                <div class="tier-desc">关闭动态效果，最省电</div>
+              </div>
+            </div>
+            <div class="tier-check"></div>
+          </div>
+          <div class="tier-preview" style="background:#13121C">
+            <div class="preview-bar" style="width:80px; top:16px"></div>
+            <div class="preview-bar" style="width:55px; top:25px"></div>
+            <div class="preview-bar" style="width:68px; top:34px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-bar">
+        <div class="tab-item" data-tab="home" onclick="goHome()">
+          <svg class="tab-icon" fill="none" viewBox="0 0 18 18"><path d="M2 7L9 2L16 7V15C16 15.5 15.5 16 15 16H3C2.5 16 2 15.5 2 15V7Z" stroke="currentColor" stroke-width="1.5"/><path d="M6 16V10H12V16" stroke="currentColor" stroke-width="1.5"/></svg>
+          首页
+        </div>
+        <div class="tab-item" data-tab="run" onclick="goRun()">
+          <svg class="tab-icon" fill="none" viewBox="0 0 18 18"><path d="M4 14C4 14 6 12 7 10C8 8 7.5 6 9 6C10.5 6 12 7 12 7M12 7L10 4M12 7L15 6" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="7" fill="currentColor" r="2"/></svg>
+          跑步
+        </div>
+        <div class="tab-item" data-tab="music">
+          <svg class="tab-icon" fill="none" viewBox="0 0 18 18"><path d="M6 14V6L14 4V12" stroke="currentColor" stroke-width="1.5"/><circle cx="5" cy="14" fill="currentColor" r="2"/></svg>
+          音乐
+        </div>
+        <div class="tab-item active" data-tab="settings">
+          <svg class="tab-icon" fill="none" viewBox="0 0 18 18"><circle cx="9" cy="9" r="3" stroke="white" stroke-width="1.5"/><path d="M15 9H16M9 2V3M9 15V16M3 9H2M13.66 4.34L14.66 3.34M3.34 14.66L4.34 13.66M14.66 14.66L13.66 13.66M4.34 4.34L3.34 3.34" stroke="white" stroke-width="1.5"/></svg>
+          设置
+        </div>
+      </div>
+    </div>
+
+    <!-- RUN HIGH -->
+    <div class="screen" id="screen-run-high">
+      <div class="run-bg">
+        <div class="aurora orange"></div>
+        <div class="aurora peach"></div>
+        <div class="aurora blue"></div>
+        <div class="particle" style="width:4px; height:4px; left:40px; top:120px; animation-delay:0s"></div>
+        <div class="particle" style="width:3px; height:3px; left:320px; top:200px; animation-delay:2s"></div>
+        <div class="particle" style="width:5px; height:5px; left:80px; top:600px; animation-delay:4s"></div>
+        <div class="particle" style="width:2px; height:2px; left:300px; top:650px; animation-delay:1s"></div>
+        <div class="particle" style="width:3px; height:3px; left:200px; top:500px; animation-delay:3s"></div>
+      </div>
+      <div class="status-bar" style="position:relative; z-index:1">
+        <span>9:41</span>
+        <div class="status-icons">
+          <svg fill="none" height="14" viewBox="0 0 18 14" width="18"><rect fill="#FFF6EC" height="7" rx="1" width="4" x="0" y="7"/><rect fill="#FFF6EC" height="10" rx="1" width="4" x="6" y="4"/><rect fill="#FFF6EC" height="13" rx="1" width="4" x="12" y="1"/></svg>
+          <svg fill="none" height="14" viewBox="0 0 20 14" width="20"><path d="M2 7C5 2 13 2 16 7C13 12 5 12 2 7Z" stroke="#FFF6EC" stroke-width="1.5"/><circle cx="9" cy="7" fill="#FFF6EC" r="2"/></svg>
+          <svg fill="none" height="12" viewBox="0 0 24 12" width="24"><rect height="11" rx="2.5" stroke="#FFF6EC" width="23" x="0.5" y="0.5"/><rect fill="#FFF6EC" height="8" rx="1.5" width="14" x="2" y="2"/></svg>
+        </div>
+      </div>
+      <div class="run-content">
+        <div class="phase-bar">
+          <div class="phase active">热身</div>
+          <div class="phase">燃脂</div>
+          <div class="phase">冲刺</div>
+          <div class="phase">放松</div>
+        </div>
+        <div class="main-metrics">
+          <div class="timer">14:32</div>
+          <div class="distance">3.24 km</div>
+        </div>
+        <div class="metric-cards">
+          <div class="glass metric-card">
+            <div class="hr-ring">
+              <svg height="80" viewBox="0 0 80 80" width="80"><circle class="track" cx="40" cy="40" r="36"/><circle class="fill" cx="40" cy="40" r="36"/></svg>
+            </div>
+            <div class="metric-value">156</div>
+            <div class="metric-label">心率</div>
+          </div>
+          <div class="glass metric-card">
+            <div class="metric-value">5'38"</div>
+            <div class="metric-label">配速</div>
+            <div class="metric-bpm">BPM 165</div>
+          </div>
+        </div>
+        <div class="glass music-player">
+          <div class="music-left">
+            <div class="music-cover">
+              <svg fill="none" height="20" viewBox="0 0 20 20" width="20"><path d="M5 15V5L15 2V12" stroke="white" stroke-width="1.5"/><circle cx="5" cy="15" fill="white" r="3"/></svg>
+            </div>
+            <div>
+              <div class="music-title">洛天依 - 追光者</div>
+              <div class="music-sub">BPM 165 · 节拍器开启</div>
+            </div>
+          </div>
+          <svg fill="none" height="24" viewBox="0 0 24 24" width="24"><rect fill="#66CCFF" height="6" rx="1" width="2" x="4" y="9"/><rect fill="#66CCFF" height="14" rx="1" width="2" x="9" y="5"/><rect fill="#66CCFF" height="10" rx="1" width="2" x="14" y="7"/><rect fill="#66CCFF" height="4" rx="1" width="2" x="19" y="10"/></svg>
+        </div>
+        <div class="pause-btn">
+          <svg fill="none" height="28" viewBox="0 0 28 28" width="28"><rect fill="white" height="16" rx="1" width="4" x="9" y="6"/><rect fill="white" height="16" rx="1" width="4" x="17" y="6"/></svg>
+        </div>
+        <div class="mt-auto" style="text-align:center; padding-bottom:12px">
+          <div onclick="goHome()" style="font-size:12px; color:var(--text-secondary); cursor:pointer">← 返回首页</div>
+        </div>
+      </div>
+      <div class="music-bubble" onclick="openMusicList()" style="position:absolute;right:16px;bottom:140px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#FF8C42,#FFC1A1);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(255,140,66,0.4);cursor:pointer;z-index:10;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18V6L19 3V15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" fill="white"/></svg>
+      </div>
+    </div>
+
+    <!-- RUN LOW -->
+    <div class="screen low" id="screen-run-low">
+      <div class="status-bar" style="position:relative; z-index:1">
+        <span>9:41</span>
+        <div class="status-icons">
+          <svg fill="none" height="14" viewBox="0 0 18 14" width="18"><rect fill="#FFF6EC" height="7" rx="1" width="4" x="0" y="7"/><rect fill="#FFF6EC" height="10" rx="1" width="4" x="6" y="4"/><rect fill="#FFF6EC" height="13" rx="1" width="4" x="12" y="1"/></svg>
+          <svg fill="none" height="14" viewBox="0 0 20 14" width="20"><path d="M2 7C5 2 13 2 16 7C13 12 5 12 2 7Z" stroke="#FFF6EC" stroke-width="1.5"/><circle cx="9" cy="7" fill="#FFF6EC" r="2"/></svg>
+          <svg fill="none" height="12" viewBox="0 0 24 12" width="24"><rect height="11" rx="2.5" stroke="#FFF6EC" width="23" x="0.5" y="0.5"/><rect fill="#FFF6EC" height="8" rx="1.5" width="14" x="2" y="2"/></svg>
+        </div>
+      </div>
+      <div class="run-content">
+        <div class="mode-badge"><div class="badge-dot" style="background:#66CCFF"></div>低性能模式 · 动态效果已关闭</div>
+        <div class="phase-bar">
+          <div class="phase active">热身</div>
+          <div class="phase">燃脂</div>
+          <div class="phase">冲刺</div>
+          <div class="phase">放松</div>
+        </div>
+        <div class="main-metrics">
+          <div class="timer">14:32</div>
+          <div class="distance">3.24 km</div>
+        </div>
+        <div class="metric-cards">
+          <div class="metric-card" style="background:var(--surface-solid); border-radius:16px">
+            <div class="hr-bar"><div class="hr-bar-fill"></div></div>
+            <div class="metric-value">156</div>
+            <div class="metric-label">心率</div>
+          </div>
+          <div class="metric-card" style="background:var(--surface-solid); border-radius:16px">
+            <div class="metric-value">5'38"</div>
+            <div class="metric-label">配速</div>
+            <div class="metric-bpm">BPM 165</div>
+          </div>
+        </div>
+        <div class="music-player" style="background:var(--surface-solid); border-radius:16px">
+          <div class="music-left">
+            <div class="music-cover">
+              <svg fill="none" height="20" viewBox="0 0 20 20" width="20"><path d="M5 15V5L15 2V12" stroke="white" stroke-width="1.5"/><circle cx="5" cy="15" fill="white" r="3"/></svg>
+            </div>
+            <div>
+              <div class="music-title">洛天依 - 追光者</div>
+              <div class="music-sub">BPM 165 · 节拍器开启</div>
+            </div>
+          </div>
+        </div>
+        <div class="pause-btn">
+          <svg fill="none" height="28" viewBox="0 0 28 28" width="28"><rect fill="white" height="16" rx="1" width="4" x="9" y="6"/><rect fill="white" height="16" rx="1" width="4" x="17" y="6"/></svg>
+        </div>
+        <div class="mt-auto" style="text-align:center; padding-bottom:12px">
+          <div onclick="goHome()" style="font-size:12px; color:var(--text-muted-low); cursor:pointer">← 返回首页</div>
+        </div>
+      </div>
+      <div class="music-bubble" onclick="openMusicList()" style="position:absolute;right:16px;bottom:140px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#FF8C42,#FFC1A1);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(255,140,66,0.4);cursor:pointer;z-index:10;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18V6L19 3V15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" fill="white"/></svg>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="core/engine.js"></script>
+  <script>
+    // ===== 屏幕切换 + 性能档位（前端原有） =====
+    let tier = 'high';
+
+    function show(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function goHome() { show('screen-home'); }
+    function goSettings() { show('screen-settings'); }
+
+    function goRun() {
+      if (tier === 'low') {
+        show('screen-run-low');
+      } else {
+        show('screen-run-high');
+      }
+    }
+
+    function setTier(t) {
+      tier = t;
+      document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+      document.getElementById('phone').classList.toggle('low', tier === 'low');
+    }
+
+    // ===== 后端引擎整合（真实数据源） =====
+    const playIcon = '<svg fill="none" height="28" viewBox="0 0 28 28" width="28"><path d="M10 6L22 14L10 22Z" fill="white"/></svg>';
+    const pauseIcon = '<svg fill="none" height="28" viewBox="0 0 28 28" width="28"><rect fill="white" height="16" rx="1" width="4" x="9" y="6"/><rect fill="white" height="16" rx="1" width="4" x="17" y="6"/></svg>';
+
+    const engine = new RunnerEngine();
+    const CIRC = 226; // 心率环周长（前端 stroke-dasharray）
+
+    function setAll(sel, fn) { document.querySelectorAll(sel).forEach(fn); }
+    function fmt(sec) {
+      sec = Math.max(0, Math.floor(sec));
+      return String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
+    }
+
+    // 语音提示条（动态创建）
+    const voiceToast = document.createElement('div');
+    voiceToast.style.cssText = 'position:absolute;left:50%;top:96px;transform:translateX(-50%);z-index:50;background:rgba(0,0,0,.72);color:#fff;padding:8px 16px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:88%;text-align:center;';
+    document.getElementById('phone').appendChild(voiceToast);
+    let voiceTimer = null;
+    function speakToast(text, duration) {
+      voiceToast.textContent = '天依：' + text;
+      voiceToast.style.opacity = '1';
+      clearTimeout(voiceTimer);
+      var ms = (duration && duration > 0) ? (duration * 1000 + 500) : 3000;
+      voiceTimer = setTimeout(function () { voiceToast.style.opacity = '0'; }, ms);
+    }
+
+    // GPS 距离 / 配速
+    let lastPos = null, totalKm = 0, gpsOn = false;
+    function haversine(aLat, aLon, bLat, bLon) {
+      const R = 6371, toR = Math.PI / 180;
+      const dLat = (bLat - aLat) * toR, dLon = (bLon - aLon) * toR;
+      const s = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(aLat * toR) * Math.cos(bLat * toR) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      return R * 2 * Math.asin(Math.sqrt(s));
+    }
+    function fmtPace(secPerKm) {
+      if (!secPerKm || !isFinite(secPerKm) || secPerKm <= 0) return "--'--\"";
+      const m = Math.floor(secPerKm / 60), s = Math.floor(secPerKm % 60);
+      return m + "'" + String(s).padStart(2, '0') + '"';
+    }
+    if ('geolocation' in navigator) {
+      navigator.geolocation.watchPosition(function (pos) {
+        const c = pos.coords;
+        if (lastPos) totalKm += haversine(lastPos.latitude, lastPos.longitude, c.latitude, c.longitude);
+        lastPos = { latitude: c.latitude, longitude: c.longitude };
+        gpsOn = true;
+      }, function () {}, { enableHighAccuracy: true, maximumAge: 3000 });
+    }
+
+    // 引擎事件 → UI
+    engine.on('tick', function (t) {
+      setAll('.timer', function (el) { el.textContent = fmt(t.elapsed); });
+      setAll('.distance', function (el) { el.textContent = gpsOn ? (totalKm.toFixed(2) + ' km') : '-- km'; });
+      setAll('.metric-cards', function (cards) {
+        const mc = cards.querySelectorAll('.metric-card');
+        if (mc[1]) {
+          const pace = totalKm > 0.01 ? t.elapsed / totalKm : null;
+          mc[1].querySelector('.metric-value').textContent = fmtPace(pace);
+          mc[1].querySelector('.metric-bpm').textContent = 'BPM ' + t.bpm;
+        }
+      });
+      updateHome(); // 首页实时数据
+    });
+
+    engine.on('stage', function (stage, index) {
+      setAll('.phase-bar', function (bar) {
+        bar.querySelectorAll('.phase').forEach(function (p, i) { p.classList.toggle('active', i === index); });
+      });
+    });
+
+    engine.on('heartrate', function (d) {
+      const z = engine.zoneOf(d.bpm);
+      setAll('.metric-cards', function (cards) {
+        const mc = cards.querySelectorAll('.metric-card');
+        if (mc[0]) {
+          mc[0].querySelector('.metric-value').textContent = d.bpm;
+          const ring = mc[0].querySelector('.fill');
+          if (ring) ring.style.strokeDashoffset = (CIRC * (1 - z.pct / 100)).toFixed(1);
+          const bar = mc[0].querySelector('.hr-bar-fill');
+          if (bar) bar.style.width = z.pct + '%';
+        }
+      });
+    });
+
+    engine.on('voice', function (v) { if (v.text) speakToast(v.text, v.duration); });
+    engine.on('cheer', function (text) { if (text) speakToast(text, null); });
+    function updatePauseBtn(s) {
+      setAll('.pause-btn', function (btn) { btn.innerHTML = (s === 'running') ? pauseIcon : playIcon; });
+      // 暂停时显示「结束运动」按钮
+      setAll('.end-btn', function (btn) { btn.style.display = (s === 'paused') ? 'block' : 'none'; });
+    }
+    engine.on('state', updatePauseBtn);
+
+    // 交互
+    function startRun() {
+      goRun();
+      if (engine.state === 'idle' || engine.state === 'finished') {
+        engine.start();
+        updatePauseBtn('running');
+      }
+    }
+    function togglePause() {
+      if (engine.state === 'running') { engine.pause(); updatePauseBtn('paused'); }
+      else if (engine.state === 'paused') { engine.resume(); updatePauseBtn('running'); }
+      else { engine.start(); updatePauseBtn('running'); }
+    }
+
+    // ===== 长按结束运动（带环形进度，防误触） =====
+    const LONG_PRESS_MS = 800;
+    let pressBtn = null, pressActive = false, pressFired = false, pressStartTime = 0;
+
+    function buildRing(btn) {
+      const CIRC2 = 2 * Math.PI * 46;
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 100 100');
+      svg.style.cssText = 'position:absolute;inset:-8px;width:calc(100% + 16px);height:calc(100% + 16px);pointer-events:none;opacity:0;transition:opacity .15s;';
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', '50'); circle.setAttribute('cy', '50'); circle.setAttribute('r', '46');
+      circle.setAttribute('fill', 'none');
+      circle.setAttribute('stroke', '#FF8C42');
+      circle.setAttribute('stroke-width', '4');
+      circle.setAttribute('stroke-linecap', 'round');
+      circle.style.strokeDasharray = CIRC2;
+      circle.style.strokeDashoffset = CIRC2;
+      circle.style.transform = 'rotate(-90deg)';
+      circle.style.transformOrigin = 'center';
+      svg.appendChild(circle);
+      btn.appendChild(svg);
+      btn._ringCircle = circle; btn._ringSvg = svg; btn._ringCirc = CIRC2;
+    }
+
+    function setRingOn(btn, p) {
+      if (!btn || !btn._ringCircle) return;
+      btn._ringCircle.style.strokeDashoffset = btn._ringCirc * (1 - p);
+      btn._ringSvg.style.opacity = p > 0 ? '1' : '0';
+    }
+
+    function endWorkout() {
+      engine.finish();
+      updatePauseBtn('finished');
+      setAll('.timer', function (el) { el.textContent = '00:00'; });
+      setAll('.distance', function (el) { el.textContent = '-- km'; });
+      recordRun();
+      updateStreak();
+    }
+
+    // 连续跑步天数统计
+    function recordRun() {
+      const today = new Date();
+      const key = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+      let days = [];
+      try { days = JSON.parse(localStorage.getItem('runDays') || '[]'); } catch (e) { days = []; }
+      if (days.indexOf(key) === -1) days.push(key);
+      localStorage.setItem('runDays', JSON.stringify(days));
+    }
+    function calcStreak() {
+      let days = [];
+      try { days = JSON.parse(localStorage.getItem('runDays') || '[]'); } catch (e) { days = []; }
+      const set = {};
+      days.forEach(function (d) { set[d] = true; });
+      let streak = 0;
+      const d = new Date();
+      while (true) {
+        const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        if (set[key]) { streak++; d.setDate(d.getDate() - 1); } else break;
+      }
+      return streak;
+    }
+    function updateStreak() {
+      const streak = calcStreak();
+      document.querySelectorAll('.badge-run').forEach(function (el) {
+        const svg = el.querySelector('svg');
+        if (svg) {
+          el.innerHTML = '';
+          el.appendChild(svg.cloneNode(true));
+          el.appendChild(document.createTextNode(' 连续 ' + streak + ' 天'));
+        } else {
+          el.textContent = '连续 ' + streak + ' 天';
+        }
+      });
+    }
+
+    // 每个跑步屏底部加「结束运动」按钮（暂停时显示）
+    function buildEndButton() {
+      document.querySelectorAll('.run-content').forEach(function (rc) {
+        const btn = document.createElement('div');
+        btn.className = 'end-btn';
+        btn.textContent = '结束运动';
+        btn.style.cssText = 'display:none;text-align:center;padding:13px;margin-top:10px;border-radius:999px;background:rgba(251,113,133,0.14);color:#FB7185;font-weight:600;cursor:pointer;font-size:14px;border:1px solid rgba(251,113,133,0.3);';
+        rc.appendChild(btn);
+        btn.onclick = endWorkout;
+      });
+    }
+
+    function onPressStart(e) {
+      if (engine.state !== 'running' && engine.state !== 'paused') return; // 待机时长按无意义
+      e.preventDefault();
+      pressBtn = e.currentTarget;
+      pressActive = true;
+      pressFired = false;
+      pressStartTime = performance.now();
+      (function tick() {
+        if (!pressActive || pressBtn !== e.currentTarget) return;
+        const p = Math.min(1, (performance.now() - pressStartTime) / LONG_PRESS_MS);
+        setRingOn(pressBtn, p);
+        if (p >= 1) {
+          pressFired = true;
+          pressActive = false;
+          setRingOn(pressBtn, 0);
+          endWorkout();
+          return;
+        }
+        requestAnimationFrame(tick);
+      })();
+    }
+
+    function onPressEnd(e) {
+      if (!pressActive || pressBtn !== e.currentTarget) {
+        // 待机/已完成时的短按 → 开始训练
+        if (engine.state === 'idle' || engine.state === 'finished') togglePause();
+        return;
+      }
+      pressActive = false;
+      setRingOn(pressBtn, 0);
+      if (!pressFired) togglePause(); // 短按 → 暂停/继续
+      pressFired = false;
+      pressBtn = null;
+    }
+
+    document.querySelectorAll('.hero-card .btn').forEach(function (btn) { btn.onclick = startRun; });
+    document.querySelectorAll('.pause-btn').forEach(function (btn) {
+      btn.style.position = 'relative';
+      btn.style.touchAction = 'none';
+      buildRing(btn);
+      btn.addEventListener('pointerdown', onPressStart);
+      btn.addEventListener('pointerup', onPressEnd);
+      btn.addEventListener('pointerleave', onPressEnd);
+      btn.addEventListener('pointercancel', onPressEnd);
+    });
+
+    // ===== 蓝牙连接（Capacitor BLE 优先，Web Bluetooth 回退） =====
+    let currentOverlay = null;
+    let lastBackTime = 0;
+    let bleDeviceId = null;
+
+    function buildBleOverlay() {
+      const phone = document.getElementById('phone');
+      const ov = document.createElement('div');
+      ov.id = 'bleOverlay';
+      ov.style.cssText = 'position:absolute;inset:0;z-index:48;background:rgba(19,18,28,0.98);display:none;flex-direction:column;padding:70px 24px 30px;';
+      ov.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">' +
+        '<div style="font-size:22px;font-weight:700;">连接设备</div>' +
+        '<div id="bleClose" style="cursor:pointer;font-size:15px;color:var(--text-secondary);padding:4px;">← 返回</div>' +
+        '</div>' +
+        '<div style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;">请开启手环/手表的「心率广播」并靠近手机</div>' +
+        '<div id="bleList" style="display:flex;flex-direction:column;gap:8px;flex:1;overflow-y:auto;"></div>' +
+        '<div id="bleScanBtn" style="margin-top:14px;text-align:center;padding:14px;border-radius:999px;background:#FF8C42;color:#fff;font-weight:600;cursor:pointer;">重新扫描</div>';
+      phone.appendChild(ov);
+      document.getElementById('bleClose').onclick = function () { closeOverlay('ble'); };
+      document.getElementById('bleScanBtn').onclick = function () { startBleScan(); };
+      // 首页加「连接设备」独立卡片（放在 hero 下面）
+      const statsGrid = document.querySelector('.stats-grid');
+      if (statsGrid) {
+        const card = document.createElement('div');
+        card.className = 'glass';
+        card.style.cssText = 'display:flex;align-items:center;gap:12px;padding:16px;border-radius:20px;margin-bottom:16px;cursor:pointer;border:1px solid var(--border-glass);';
+        card.innerHTML =
+          '<div style="width:42px;height:42px;border-radius:12px;background:var(--accent-luo-soft);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">⌚</div>' +
+          '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:15px;font-weight:600;">连接手环/手表</div>' +
+          '<div style="font-size:12px;color:var(--text-secondary);">实时心率监测</div>' +
+          '</div>' +
+          '<div style="font-size:12px;color:#66CCFF;font-weight:500;">去连接 ›</div>';
+        card.onclick = function () { startBleScan(); };
+        statsGrid.parentNode.insertBefore(card, statsGrid);
+      }
+    }
+
+    function openOverlay(name) { currentOverlay = name; }
+    function closeOverlay(name) {
+      const map = { ble: 'bleOverlay', music: 'musicOverlay', volume: 'volumeOverlay', account: 'accountOverlay' };
+      const id = map[name];
+      if (id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
+      if (currentOverlay === name) currentOverlay = null;
+    }
+
+    function startBleScan() {
+      const ov = document.getElementById('bleOverlay');
+      if (ov) ov.style.display = 'flex';
+      currentOverlay = 'ble';
+      const list = document.getElementById('bleList');
+      list.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:20px;">正在扫描附近设备…</div>';
+      const seen = {};
+      function addDevice(d) {
+        if (d.error) { list.innerHTML = '<div style="color:#FB7185;text-align:center;padding:20px;">' + d.error + '</div>'; return; }
+        if (seen[d.id]) return;
+        seen[d.id] = true;
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;background:var(--surface-glass);cursor:pointer;';
+        row.innerHTML =
+          '<div style="width:38px;height:38px;border-radius:50%;background:var(--accent-luo-soft);display:flex;align-items:center;justify-content:center;font-size:18px;">⌚</div>' +
+          '<div style="flex:1;min-width:0;font-size:14px;">' + d.name + '</div>' +
+          '<div style="font-size:12px;color:#66CCFF;">连接</div>';
+        row.onclick = function () { connectBleDevice(d.id, d.name); };
+        list.appendChild(row);
+      }
+      function doScan() {
+        if (window.ble && window.ble.available) {
+          window.ble.scan(addDevice, function () {
+            if (Object.keys(seen).length === 0) {
+              list.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:20px;">没有找到设备，点下方重新扫描</div>';
+            }
+          });
+        } else {
+          list.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:20px;">当前环境不支持蓝牙</div>';
+        }
+      }
+      if (window.ble && window.ble.requestPermissions) {
+        window.ble.requestPermissions().then(doScan).catch(function (e) {
+          list.innerHTML = '<div style="color:#FB7185;text-align:center;padding:20px;">蓝牙权限被拒绝：' + (e && e.message ? e.message : '请在系统设置中开启蓝牙和位置权限') + '</div>';
+        });
+      } else {
+        doScan();
+      }
+    }
+
+    function connectBleDevice(id, name) {
+      speakToast('连接中…');
+      const list = document.getElementById('bleList');
+      list.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:20px;">正在连接 ' + name + '…</div>';
+      window.ble.connect(id, function (bpm) {
+        engine.currentHR = bpm;
+        engine.emit('heartrate', { bpm: bpm });
+      }).then(function (res) {
+        if (res && res.ok) {
+          bleDeviceId = id;
+          speakToast('已连接 ' + name);
+          closeOverlay('ble');
+        } else {
+          list.innerHTML = '<div style="color:#FB7185;text-align:center;padding:20px;">连接失败：' + (res && res.error ? res.error : '未知错误') + '</div>';
+        }
+      });
+    }
+
+    // 心率卡点击 → 打开蓝牙扫描（或 Web Bluetooth 回退）
+    document.querySelectorAll('.metric-cards .metric-card:first-child').forEach(function (c) {
+      c.style.cursor = 'pointer';
+      c.onclick = function () {
+        if (window.ble && window.ble.available) {
+          startBleScan();
+        } else if (engine.heartRate.supported) {
+          engine.heartRate.connect().then(function () { speakToast('心率已连接'); }).catch(function () { speakToast('心率连接失败'); });
+        } else {
+          speakToast('当前环境不支持蓝牙');
+        }
+      };
+    });
+
+    // ===== 返回键逻辑 =====
+    window.handleBack = function () {
+      if (currentOverlay) { closeOverlay(currentOverlay); return; }
+      const active = document.querySelector('.screen.active');
+      if (active && active.id !== 'screen-home') { goHome(); return; }
+      const now = Date.now();
+      if (now - lastBackTime < 2000) {
+        if (window.capApp && window.capApp.exitApp) window.capApp.exitApp();
+      } else {
+        lastBackTime = now;
+        speakToast('再按一次退出应用');
+      }
+    };
+
+    // 音乐：多选导入 + 歌单 + 播放器交互 + 列表
+    const musicInput = document.createElement('input');
+    musicInput.type = 'file'; musicInput.accept = 'audio/*'; musicInput.multiple = true; musicInput.style.display = 'none';
+    document.body.appendChild(musicInput);
+    let musicLoaded = false;
+
+    function updateMusicUI() {
+      const total = engine.music.playlist.length;
+      const cur = engine.music.index + 1;
+      setAll('.music-title', function (el) {
+        if (!total) el.textContent = '洛天依陪跑歌单';
+        else if (cur > 0) el.textContent = engine.music.name;
+        else el.textContent = total + ' 首歌';
+      });
+      setAll('.music-sub', function (el) {
+        if (!total) el.textContent = '点击左侧封面导入洛天依的歌';
+        else if (cur > 0) el.textContent = '第 ' + cur + '/' + total + ' 首';
+        else el.textContent = total + ' 首歌';
+      });
+      renderMusicList();
+    }
+
+    engine.music.onTrack = function () { updateMusicUI(); };
+    engine.music.onListChange = function () { updateMusicUI(); };
+
+    // ===== IndexedDB 音乐持久化（导入的音乐退出不丢） =====
+    const MusicDB = {
+      _db: null,
+      open() {
+        return new Promise(function (resolve) {
+          if (!window.indexedDB) { resolve(); return; }
+          const req = indexedDB.open('music-db', 1);
+          req.onupgradeneeded = function (e) {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('songs')) db.createObjectStore('songs', { keyPath: 'id' });
+          };
+          req.onsuccess = function (e) { MusicDB._db = e.target.result; resolve(); };
+          req.onerror = function () { resolve(); };
+        });
+      },
+      save(file) {
+        return new Promise(function (resolve) {
+          if (!MusicDB._db) { resolve(); return; }
+          const id = 'song_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+          const tx = MusicDB._db.transaction('songs', 'readwrite');
+          tx.objectStore('songs').put({ id: id, name: file.name, blob: file });
+          tx.oncomplete = function () { resolve(); };
+          tx.onerror = function () { resolve(); };
+        });
+      },
+      loadAll() {
+        return new Promise(function (resolve) {
+          if (!MusicDB._db) { resolve([]); return; }
+          const tx = MusicDB._db.transaction('songs', 'readonly');
+          const req = tx.objectStore('songs').getAll();
+          req.onsuccess = function () { resolve(req.result || []); };
+          req.onerror = function () { resolve([]); };
+        });
+      },
+    };
+
+    musicInput.onchange = function () {
+      if (!musicInput.files.length) return;
+      const files = Array.from(musicInput.files);
+      files.forEach(function (f) { MusicDB.save(f); });
+      engine.music.loadList(files);
+      musicLoaded = true;
+      updateMusicUI();
+    };
+
+    // 启动时恢复已保存的音乐
+    MusicDB.open().then(function () {
+      return MusicDB.loadAll();
+    }).then(function (songs) {
+      if (songs && songs.length) {
+        const files = songs.map(function (s) {
+          return new File([s.blob], s.name, { type: s.blob.type || 'audio/*' });
+        });
+        engine.music.loadList(files);
+        musicLoaded = true;
+        updateMusicUI();
+      }
+    });
+
+    // 播放器：左边正方框（封面）= 播放/暂停，右边整卡 = 进列表
+    document.querySelectorAll('.music-cover').forEach(function (cover) {
+      cover.style.cursor = 'pointer';
+      cover.onclick = function (e) {
+        e.stopPropagation();
+        if (!musicLoaded) { musicInput.click(); return; }
+        engine.music.toggle();
+        updateMusicUI();
+      };
+    });
+    document.querySelectorAll('.music-player').forEach(function (mp) {
+      mp.style.cursor = 'pointer';
+      mp.onclick = function () { openMusicList(); };
+    });
+
+    // ===== 音乐列表浮层 =====
+    function buildMusicOverlay() {
+      const phone = document.getElementById('phone');
+      const ov = document.createElement('div');
+      ov.id = 'musicOverlay';
+      ov.style.cssText = 'position:absolute;inset:0;z-index:45;background:rgba(19,18,28,0.98);display:none;flex-direction:column;padding:70px 18px 30px;overflow-y:auto;';
+      ov.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">' +
+        '<div style="font-size:22px;font-weight:700;">音乐</div>' +
+        '<div id="musicClose" style="cursor:pointer;font-size:22px;color:var(--text-secondary);padding:4px;">✕</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;margin-bottom:14px;">' +
+        '<div id="tabLocal" style="flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;background:#FF8C42;color:#fff;">本地歌单</div>' +
+        '<div id="tabLibrary" style="flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;background:var(--surface-glass);color:var(--text-secondary);">内置音乐</div>' +
+        '</div>' +
+        '<div id="localView">' +
+        '<div style="display:flex;gap:8px;margin-bottom:14px;">' +
+        '<div id="modeOrder" style="flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;">顺序</div>' +
+        '<div id="modeShuffle" style="flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;">随机</div>' +
+        '<div id="modeSmart" style="flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;">智能</div>' +
+        '</div>' +
+        '<div id="musicList" style="display:flex;flex-direction:column;gap:8px;"></div>' +
+        '<div id="musicEmpty" style="color:var(--text-secondary);text-align:center;padding:40px 0;font-size:13px;">还没有音乐哦，点下面的按钮导入吧</div>' +
+        '<div id="musicImport" style="margin-top:16px;text-align:center;padding:14px;border-radius:999px;background:#FF8C42;color:#fff;font-weight:600;cursor:pointer;">导入音乐</div>' +
+        '</div>' +
+        '<div id="libraryView" style="display:none;"><div id="libraryList"></div></div>';
+      phone.appendChild(ov);
+      document.getElementById('musicClose').onclick = closeMusicList;
+      document.getElementById('musicImport').onclick = function () { musicInput.click(); };
+      document.getElementById('modeOrder').onclick = function () { engine.music.setMode('order'); syncModeUI(); };
+      document.getElementById('modeShuffle').onclick = function () { engine.music.setMode('shuffle'); syncModeUI(); };
+      document.getElementById('modeSmart').onclick = function () { engine.music.setMode('smart'); syncModeUI(); };
+      document.getElementById('tabLocal').onclick = function () { switchMusicTab('local'); };
+      document.getElementById('tabLibrary').onclick = function () { switchMusicTab('library'); };
+      syncModeUI();
+
+    function switchMusicTab(tab) {
+      const local = document.getElementById('localView');
+      const lib = document.getElementById('libraryView');
+      const tl = document.getElementById('tabLocal');
+      const tlb = document.getElementById('tabLibrary');
+      if (!local || !lib) return;
+      const on = '#FF8C42', off = 'var(--surface-glass)';
+      if (tab === 'local') {
+        local.style.display = 'block'; lib.style.display = 'none';
+        tl.style.background = on; tl.style.color = '#fff';
+        tlb.style.background = off; tlb.style.color = 'var(--text-secondary)';
+      } else {
+        local.style.display = 'none'; lib.style.display = 'block';
+        tl.style.background = off; tl.style.color = 'var(--text-secondary)';
+        tlb.style.background = on; tlb.style.color = '#fff';
+        loadLibrary();
+      }
+    }
+
+    // ===== 内置音乐库（读 assets/music_meta.json） =====
+    let libraryData = null;
+    function loadLibrary() {
+      const list = document.getElementById('libraryList');
+      if (!list) return;
+      if (libraryData) { renderLibrary(); return; }
+      list.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:20px;">加载中…</div>';
+      fetch('assets/music_meta.json').then(function (r) { return r.json(); }).then(function (data) {
+        libraryData = data;
+        renderLibrary();
+      }).catch(function () {
+        list.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:20px;">内置音乐加载失败</div>';
+      });
+    }
+    function renderLibrary() {
+      const list = document.getElementById('libraryList');
+      if (!list) return;
+      list.innerHTML = '';
+      (libraryData || []).forEach(function (album) {
+        const card = document.createElement('div');
+        card.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--surface-glass);cursor:pointer;margin-bottom:8px;';
+        const coverHtml = album.cover
+          ? '<div style="width:54px;height:54px;border-radius:10px;background-size:cover;background-position:center;background-image:url(' + album.cover + ');flex-shrink:0;"></div>'
+          : '<div style="width:54px;height:54px;border-radius:10px;background:linear-gradient(135deg,#66CCFF,#3399FF);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;flex-shrink:0;">♪</div>';
+        card.innerHTML = coverHtml +
+          '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:15px;font-weight:600;">' + album.album + '</div>' +
+          '<div style="font-size:12px;color:var(--text-secondary);">' + album.songs.length + ' 首</div>' +
+          '</div>' +
+          '<div style="color:var(--text-secondary);font-size:18px;">›</div>';
+        card.onclick = function () { openAlbum(album); };
+        list.appendChild(card);
+      });
+    }
+    function openAlbum(album) {
+      const list = document.getElementById('libraryList');
+      if (!list) return;
+      list.innerHTML = '';
+      const back = document.createElement('div');
+      back.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;font-size:14px;color:#66CCFF;';
+      back.textContent = '‹ 返回专辑';
+      back.onclick = renderLibrary;
+      list.appendChild(back);
+      const isBundled = album.songs.length > 0 && album.songs[0].file;
+      if (isBundled) {
+        const playBtn = document.createElement('div');
+        playBtn.style.cssText = 'text-align:center;padding:12px;border-radius:999px;background:#FF8C42;color:#fff;font-weight:600;cursor:pointer;margin-bottom:14px;';
+        playBtn.textContent = '▶ 播放专辑（' + album.songs.length + ' 首）';
+        playBtn.onclick = function () { playBundledAlbum(album); };
+        list.appendChild(playBtn);
+      } else {
+        const importBtn = document.createElement('div');
+        importBtn.style.cssText = 'text-align:center;padding:12px;border-radius:999px;background:#FF8C42;color:#fff;font-weight:600;cursor:pointer;margin-bottom:14px;';
+        importBtn.textContent = '导入本专辑音乐（' + album.songs.length + ' 首）';
+        importBtn.onclick = function () { importAlbumMusic(album); };
+        list.appendChild(importBtn);
+      }
+      album.songs.forEach(function (song, i) {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--surface-glass);margin-bottom:6px;cursor:pointer;';
+        row.innerHTML =
+          '<div style="width:38px;height:38px;border-radius:10px;background:var(--surface-glass);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-size:14px;flex-shrink:0;">♪</div>' +
+          '<div style="flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + song.title + '</div>';
+        if (isBundled) {
+          row.onclick = function () { playBundledAlbum(album, i); };
+        }
+        list.appendChild(row);
+      });
+    }
+
+    function playBundledAlbum(album, startIndex) {
+      startIndex = startIndex || 0;
+      const urls = album.songs.map(function (s) { return { title: s.title, url: s.file }; });
+      engine.music.loadUrls(urls);
+      engine.music.playTrack(startIndex);
+      musicLoaded = true;
+      updateMusicUI();
+      closeMusicList();
+    }
+
+    function importAlbumMusic(album) {
+      const inp = document.createElement('input');
+      inp.type = 'file'; inp.accept = 'audio/*'; inp.multiple = true; inp.style.display = 'none';
+      document.body.appendChild(inp);
+      inp.onchange = function () {
+        if (!inp.files.length) return;
+        const files = Array.from(inp.files);
+        files.forEach(function (f) { MusicDB.save(f); });
+        const urls = files.map(function (f) { return { title: f.name.replace(/\.[^.]+$/, ''), url: URL.createObjectURL(f) }; });
+        engine.music.loadUrls(urls);
+        musicLoaded = true;
+        updateMusicUI();
+        closeMusicList();
+      };
+      inp.click();
+    }
+    }
+
+    function syncModeUI() {
+      const mode = engine.music.mode;
+      function style(el, on) {
+        if (!el) return;
+        el.style.background = on ? '#FF8C42' : 'var(--surface-glass)';
+        el.style.color = on ? '#fff' : 'var(--text-secondary)';
+      }
+      style(document.getElementById('modeOrder'), mode === 'order');
+      style(document.getElementById('modeShuffle'), mode === 'shuffle');
+      style(document.getElementById('modeSmart'), mode === 'smart');
+    }
+
+    function openMusicList() {
+      const ov = document.getElementById('musicOverlay');
+      if (ov) { ov.style.display = 'flex'; syncModeUI(); renderMusicList(); }
+      currentOverlay = 'music';
+    }
+    function closeMusicList() {
+      const ov = document.getElementById('musicOverlay');
+      if (ov) ov.style.display = 'none';
+      if (currentOverlay === 'music') currentOverlay = null;
+    }
+
+    function renderMusicList() {
+      const list = document.getElementById('musicList');
+      if (!list) return;
+      const empty = document.getElementById('musicEmpty');
+      const pl = engine.music.playlist;
+      if (empty) empty.style.display = pl.length ? 'none' : 'block';
+      list.innerHTML = '';
+      pl.forEach(function (t, i) {
+        const row = document.createElement('div');
+        const active = i === engine.music.index;
+        row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--surface-glass);cursor:pointer;' + (active ? 'border:1px solid #FF8C42;' : '');
+        const bpmTxt = t.bpm ? (t.bpm + ' BPM') : 'BPM 检测中…';
+        const playIcon = (active && engine.music.playing) ? '❚❚' : '▶';
+        row.innerHTML =
+          '<div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#66CCFF,#3399FF);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;flex-shrink:0;">' + playIcon + '</div>' +
+          '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + t.name + '</div>' +
+          '<div style="font-size:11px;color:var(--text-secondary);">' + bpmTxt + '</div>' +
+          '</div>' +
+          '<div class="like-btn" style="cursor:pointer;font-size:20px;flex-shrink:0;">' + (t.liked ? '❤️' : '🤍') + '</div>';
+        row.onclick = function (e) {
+          if (e.target.classList && e.target.classList.contains('like-btn')) return;
+          engine.music.playTrack(i);
+          renderMusicList();
+        };
+        row.querySelector('.like-btn').onclick = function (e) {
+          e.stopPropagation();
+          engine.music.toggleLike(i);
+          renderMusicList();
+        };
+        list.appendChild(row);
+      });
+    }
+
+    // Tab「音乐」→ 打开列表
+    document.querySelectorAll('.tab-item[data-tab="music"]').forEach(function (t) {
+      t.onclick = openMusicList;
+    });
+
+    // ===== 首页动态化 =====
+    function updateHome() {
+      const h = new Date().getHours();
+      const greet = h < 5 ? '夜深了' : h < 11 ? '早安' : h < 14 ? '午安' : h < 18 ? '下午好' : '晚安';
+      const name = localStorage.getItem('nickname') || '跑者';
+      const titleEl = document.querySelector('.title-lg');
+      if (titleEl) titleEl.textContent = greet + '，' + name;
+
+      const heroTitle = document.querySelector('.hero-card .title');
+      const heroMeta = document.querySelector('.hero-card .meta');
+      if (engine.state === 'running' || engine.state === 'paused') {
+        const st = engine.stages[engine.stageIndex];
+        if (heroTitle) heroTitle.textContent = st ? ('进行中 · ' + st.name) : '训练中';
+        if (heroMeta) heroMeta.textContent = fmt(engine.elapsed) + ' · 目标 ' + engine.currentBpm + ' BPM';
+      } else if (engine.state === 'finished') {
+        if (heroTitle) heroTitle.textContent = '训练完成，真棒！';
+        if (heroMeta) heroMeta.textContent = '天依给你点赞，记得拉伸哦';
+      } else {
+        if (heroTitle) heroTitle.textContent = '今天还没开跑哦';
+        if (heroMeta) heroMeta.textContent = '点「开始跑步」，天依陪你一起';
+      }
+      updateStatCards();
+    }
+
+    function updateStatCards() {
+      const hasData = totalKm > 0 || engine.elapsed > 0;
+      const kcal = totalKm > 0 ? Math.round(totalKm * 60) : 0;
+      const pace = (totalKm > 0.01 && engine.elapsed > 0) ? fmtPace(engine.elapsed / totalKm) : null;
+      const data = [
+        hasData ? totalKm.toFixed(2) + ' km' : '无',
+        pace || '无',
+        hasData ? kcal + ' kcal' : '无',
+        hasData ? fmt(engine.elapsed) : '无',
+      ];
+      const reasons = [
+        hasData ? '本次实时里程' : '还没有跑步记录',
+        hasData ? '本次实时配速' : '跑了才有配速',
+        hasData ? '按里程估算' : '跑起来才消耗卡路里',
+        hasData ? '本次运动时长' : '还没开始计时',
+      ];
+      const cards = document.querySelectorAll('.stat-card');
+      cards.forEach(function (card, i) {
+        if (i >= data.length) return;
+        const val = card.querySelector('.value');
+        if (val) val.textContent = data[i];
+        let reason = card.querySelector('.reason');
+        if (!reason) {
+          reason = document.createElement('div');
+          reason.className = 'reason';
+          reason.style.cssText = 'font-size:9px;color:var(--text-muted-low);margin-top:3px;';
+          card.appendChild(reason);
+        }
+        reason.textContent = reasons[i];
+      });
+    }
+
+    // ===== 音量调节（设置页卡片 + 跑步页均衡器浮层） =====
+    function renderVolumeSliders(container) {
+      if (!container) return;
+      const items = [
+        { key: 'master', label: '总音量', icon: '🔊' },
+        { key: 'voice', label: '洛天依声音', icon: '🎤' },
+        { key: 'music', label: '音乐', icon: '🎵' },
+        { key: 'metronome', label: '节拍器', icon: '🥁' },
+      ];
+      let html = '';
+      items.forEach(function (it) {
+        const v = engine.getVolumes()[it.key];
+        html +=
+          '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">' +
+          '<span style="width:88px;font-size:13px;color:var(--text-secondary);">' + it.icon + ' ' + it.label + '</span>' +
+          '<input type="range" class="vol-slider" data-key="' + it.key + '" min="0" max="100" value="' + Math.round(v * 100) + '" style="flex:1;accent-color:#66CCFF;">' +
+          '<span class="vol-val" style="width:34px;text-align:right;font-size:12px;color:var(--text-secondary);">' + Math.round(v * 100) + '</span>' +
+          '</div>';
+      });
+      container.innerHTML = html;
+      container.querySelectorAll('.vol-slider').forEach(function (slider) {
+        slider.oninput = function () {
+          const key = slider.dataset.key;
+          engine.setVolume(key, parseInt(slider.value, 10) / 100);
+          const valEl = slider.parentElement.querySelector('.vol-val');
+          if (valEl) valEl.textContent = slider.value;
+        };
+      });
+    }
+
+    function buildVolumeUI() {
+      const settings = document.getElementById('screen-settings');
+      if (!settings) return;
+      const content = settings.querySelector('.content');
+      if (!content) return;
+      const card = document.createElement('div');
+      card.className = 'glass';
+      card.style.cssText = 'padding:18px;border-radius:20px;margin-top:16px;';
+      card.innerHTML = '<div style="font-size:15px;font-weight:600;margin-bottom:14px;">音量</div><div class="vol-panel"></div>';
+      content.appendChild(card);
+      renderVolumeSliders(card.querySelector('.vol-panel'));
+    }
+
+    function buildVolumeOverlay() {
+      const phone = document.getElementById('phone');
+      const ov = document.createElement('div');
+      ov.id = 'volumeOverlay';
+      ov.style.cssText = 'position:absolute;inset:0;z-index:46;background:rgba(19,18,28,0.97);display:none;flex-direction:column;padding:70px 24px 30px;';
+      ov.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">' +
+        '<div style="font-size:22px;font-weight:700;">均衡器</div>' +
+        '<div id="volClose" style="cursor:pointer;font-size:15px;color:var(--text-secondary);padding:4px;">← 返回</div>' +
+        '</div>' +
+        '<div id="volPanel"></div>';
+      phone.appendChild(ov);
+      document.getElementById('volClose').onclick = closeVolumeOverlay;
+    }
+
+    function openVolumeOverlay() {
+      const ov = document.getElementById('volumeOverlay');
+      if (ov) { ov.style.display = 'flex'; renderVolumeSliders(document.getElementById('volPanel')); }
+      currentOverlay = 'volume';
+    }
+    function closeVolumeOverlay() {
+      const ov = document.getElementById('volumeOverlay');
+      if (ov) ov.style.display = 'none';
+      if (currentOverlay === 'volume') currentOverlay = null;
+    }
+
+    // 音乐卡加切歌 + 音量按钮（放在音乐卡右侧，显眼）
+    function buildMusicControls() {
+      document.querySelectorAll('.music-player').forEach(function (mp) {
+        const controls = document.createElement('div');
+        controls.style.cssText = 'display:flex;align-items:center;gap:12px;flex-shrink:0;';
+        const prev = document.createElement('div');
+        prev.textContent = '⏮';
+        prev.style.cssText = 'font-size:19px;cursor:pointer;';
+        prev.onclick = function (e) { e.stopPropagation(); engine.music.prev(); updateMusicUI(); };
+        const next = document.createElement('div');
+        next.textContent = '⏭';
+        next.style.cssText = 'font-size:19px;cursor:pointer;';
+        next.onclick = function (e) { e.stopPropagation(); engine.music.next(); updateMusicUI(); };
+        const vol = document.createElement('div');
+        vol.textContent = '🔊';
+        vol.style.cssText = 'font-size:17px;cursor:pointer;';
+        vol.onclick = function (e) { e.stopPropagation(); openVolumeOverlay(); };
+        controls.appendChild(prev);
+        controls.appendChild(next);
+        controls.appendChild(vol);
+        const left = mp.querySelector('.music-left');
+        if (left && left.nextSibling) mp.insertBefore(controls, left.nextSibling);
+        else mp.appendChild(controls);
+      });
+    }
+
+    // ===== 账号（换头像 + 昵称） =====
+    let pendingAvatar = null;
+    let avatarInput = null;
+
+    function buildAccountUI() {
+      document.querySelectorAll('.avatar').forEach(function (av) {
+        av.style.cursor = 'pointer';
+        av.onclick = openAccount;
+      });
+      const phone = document.getElementById('phone');
+      const ov = document.createElement('div');
+      ov.id = 'accountOverlay';
+      ov.style.cssText = 'position:absolute;inset:0;z-index:47;background:rgba(19,18,28,0.97);display:none;flex-direction:column;padding:70px 24px 30px;';
+      ov.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">' +
+        '<div style="font-size:22px;font-weight:700;">我的账号</div>' +
+        '<div id="accClose" style="cursor:pointer;font-size:15px;color:var(--text-secondary);padding:4px;">← 返回</div>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">' +
+        '<div id="accAvatar" style="width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,#66CCFF,#3399FF);display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;cursor:pointer;background-size:cover;background-position:center;flex-shrink:0;">跑</div>' +
+        '<div style="flex:1;">' +
+        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">点击头像更换</div>' +
+        '<input id="accName" type="text" maxlength="12" placeholder="输入昵称" style="background:var(--surface-glass);border:1px solid var(--border-glass);border-radius:10px;padding:10px;color:var(--text-primary);font-size:14px;width:100%;">' +
+        '</div>' +
+        '</div>' +
+        '<div id="accSave" style="text-align:center;padding:14px;border-radius:999px;background:#FF8C42;color:#fff;font-weight:600;cursor:pointer;">保存</div>';
+      phone.appendChild(ov);
+      document.getElementById('accClose').onclick = closeAccount;
+      document.getElementById('accSave').onclick = saveAccount;
+      document.getElementById('accAvatar').onclick = function () { avatarInput.click(); };
+      avatarInput = document.createElement('input');
+      avatarInput.type = 'file'; avatarInput.accept = 'image/*'; avatarInput.style.display = 'none';
+      document.body.appendChild(avatarInput);
+      avatarInput.onchange = function () {
+        if (avatarInput.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            pendingAvatar = e.target.result;
+            const el = document.getElementById('accAvatar');
+            el.style.backgroundImage = 'url(' + pendingAvatar + ')';
+            el.textContent = '';
+          };
+          reader.readAsDataURL(avatarInput.files[0]);
+        }
+      };
+    }
+
+    function openAccount() {
+      const ov = document.getElementById('accountOverlay');
+      if (!ov) return;
+      ov.style.display = 'flex';
+      document.getElementById('accName').value = localStorage.getItem('nickname') || '';
+      const av = localStorage.getItem('avatar');
+      pendingAvatar = av;
+      const el = document.getElementById('accAvatar');
+      el.style.backgroundImage = av ? ('url(' + av + ')') : 'none';
+      el.textContent = av ? '' : '跑';
+      currentOverlay = 'account';
+    }
+    function closeAccount() {
+      const ov = document.getElementById('accountOverlay');
+      if (ov) ov.style.display = 'none';
+      if (currentOverlay === 'account') currentOverlay = null;
+    }
+    function saveAccount() {
+      const name = document.getElementById('accName').value.trim();
+      if (name) localStorage.setItem('nickname', name);
+      if (pendingAvatar) localStorage.setItem('avatar', pendingAvatar);
+      applyAccount();
+      closeAccount();
+    }
+    function applyAccount() {
+      const av = localStorage.getItem('avatar');
+      document.querySelectorAll('.avatar').forEach(function (el) {
+        if (av) { el.style.backgroundImage = 'url(' + av + ')'; el.style.backgroundSize = 'cover'; el.style.backgroundPosition = 'center'; }
+        else { el.style.backgroundImage = ''; }
+      });
+      updateHome();
+    }
+
+    // 初始化静态数据
+    setAll('.timer', function (el) { el.textContent = '00:00'; });
+    setAll('.distance', function (el) { el.textContent = '-- km'; });
+    setAll('.metric-cards', function (cards) {
+      const mc = cards.querySelectorAll('.metric-card');
+      if (mc[0]) {
+        mc[0].querySelector('.metric-value').textContent = '--';
+        const ring = mc[0].querySelector('.fill');
+        if (ring) ring.style.strokeDashoffset = CIRC;
+        const bar = mc[0].querySelector('.hr-bar-fill');
+        if (bar) bar.style.width = '0%';
+      }
+      if (mc[1]) {
+        mc[1].querySelector('.metric-value').textContent = "--'--\"";
+        mc[1].querySelector('.metric-bpm').textContent = 'BPM ' + engine.stages[0].startBpm;
+      }
+    });
+    updatePauseBtn('idle');
+    buildMusicOverlay();
+    buildVolumeUI();
+    buildVolumeOverlay();
+    buildMusicControls();
+    buildAccountUI();
+    buildEndButton();
+    buildBleOverlay();
+    applyAccount();
+    updateMusicUI();
+    updateHome();
+    updateStreak();
+  </script>
+
+  <script type="module">
+  import { App } from '@capacitor/app';
+  import { BleClient } from '@capacitor-community/bluetooth-le';
+
+  window.capApp = App;
+
+  // 返回键：交给普通 script 的 handleBack 处理
+  App.addListener('backButton', function () {
+    if (typeof window.handleBack === 'function') window.handleBack();
+  });
+
+  const HR_SERVICE = '180d';
+  const HR_MEASUREMENT = '2a37';
+
+  // 蓝牙能力暴露给普通 script（APK 内可用）
+  window.ble = {
+    available: true,
+    scan: function (onDevice, onDone) {
+      BleClient.initialize().then(function () {
+        return BleClient.requestLEScan({}, function (result) {
+          if (result && result.device) {
+            onDevice({ id: result.device.deviceId, name: (result.localName || result.device.name || '未知设备') });
+          }
+        });
+      }).then(function () {
+        setTimeout(function () {
+          BleClient.stopLEScan().catch(function () {});
+          if (onDone) onDone();
+        }, 10000);
+      }).catch(function (e) {
+        onDevice({ error: (e && e.message) || String(e) });
+      });
+    },
+    connect: function (id, onData) {
+      return BleClient.stopLEScan().catch(function () {}).then(function () {
+        return BleClient.connect(id);
+      }).then(function () {
+        return BleClient.startNotifications(id, HR_SERVICE, HR_MEASUREMENT, function (value) {
+          try {
+            const flags = value.getUint8(0);
+            const u16 = flags & 0x01;
+            const bpm = u16 ? value.getUint16(1, true) : value.getUint8(1);
+            onData(bpm);
+          } catch (e) {}
+        });
+      }).then(function () {
+        return { ok: true };
+      }).catch(function (e) {
+        return { ok: false, error: (e && e.message) || String(e) };
+      });
+    },
+    disconnect: function (id) {
+      return BleClient.disconnect(id).catch(function () {});
+    },
+  };
+  </script>
+</body>
+</html>
