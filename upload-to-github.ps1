@@ -64,7 +64,7 @@ if ([string]::IsNullOrWhiteSpace($repoName)) {
     $repoName = $defaultRepoName
 }
 
-$defaultDesc = "洛天依陪跑应用 - 节拍器 + 语音引导 + 音乐播放的跑步健身 Web 应用，作者 Cory"
+$defaultDesc = "洛天依陪跑应用 - 节拍器 + 心率监测 + 音乐播放 + 语音引导的跑步健身 Web 应用"
 $desc = Read-Host "请输入仓库描述 (默认: $defaultDesc)"
 if ([string]::IsNullOrWhiteSpace($desc)) {
     $desc = $defaultDesc

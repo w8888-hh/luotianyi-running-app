@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 通知条前景色：对齐 Salt Player 的深色图标/文字观感（浅色通知底） -->
+    <color name="notif_fg">#FF263238</color>
+    <color name="notif_fg_secondary">#FF78909C</color>
+</resources>

@@ -1,0 +1,74 @@
+[
+ {
+  "title": "洛天依 - Monologue",
+  "file": "assets/music/四重奏/Monologue.mp3",
+  "bpm": 108,
+  "duration": 262
+ },
+ {
+  "title": "洛天依 - 唱给雅音宫羽",
+  "file": "assets/music/四重奏/唱给雅音宫羽.mp3",
+  "bpm": 123,
+  "duration": 278
+ },
+ {
+  "title": "洛天依 - 地府美食家",
+  "file": "assets/music/四重奏/地府美食家.mp3",
+  "bpm": 114,
+  "duration": 232
+ },
+ {
+  "title": "洛天依 - 异样的风暴中心",
+  "file": "assets/music/四重奏/异样的风暴中心.mp3",
+  "bpm": 128,
+  "duration": 277
+ },
+ {
+  "title": "洛天依 - 心音",
+  "file": "assets/music/四重奏/心音.mp3",
+  "bpm": 98,
+  "duration": 201
+ },
+ {
+  "title": "洛天依 - 无参数",
+  "file": "assets/music/四重奏/无参数.mp3",
+  "bpm": 93,
+  "duration": 225
+ },
+ {
+  "title": "洛天依 - 棱镜",
+  "file": "assets/music/四重奏/棱镜.mp3",
+  "bpm": 94,
+  "duration": 212
+ },
+ {
+  "title": "洛天依 - 猫耳クラッシャー",
+  "file": "assets/music/四重奏/猫耳クラッシャー.mp3",
+  "bpm": 132,
+  "duration": 183
+ },
+ {
+  "title": "洛天依 - 绝体绝命",
+  "file": "assets/music/四重奏/绝体绝命.mp3",
+  "bpm": 152,
+  "duration": 228
+ },
+ {
+  "title": "洛天依 - 越冰船",
+  "file": "assets/music/四重奏/越冰船.mp3",
+  "bpm": 117,
+  "duration": 262
+ },
+ {
+  "title": "洛天依 - 风之子",
+  "file": "assets/music/四重奏/风之子.mp3",
+  "bpm": 147,
+  "duration": 195
+ },
+ {
+  "title": "洛天依 - 风吹过",
+  "file": "assets/music/四重奏/风吹过.mp3",
+  "bpm": 132,
+  "duration": 227
+ }
+]

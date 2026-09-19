@@ -42,7 +42,7 @@
 ### 1. 创建 GitHub 仓库
 1. 打开 https://github.com/new
 2. 填写仓库名：`luotianyi-running-app`
-3. 填写描述：`洛天依陪跑应用 - 节拍器 + 语音引导 + 音乐播放的跑步健身 Web 应用`
+3. 填写描述：`洛天依陪跑应用 - 节拍器 + 心率监测 + 音乐播放 + 语音引导`
 4. 选择 Public（公开）或 Private（私有）
 5. 不要勾选 "Initialize this repository with a README"
 6. 点击 "Create repository"

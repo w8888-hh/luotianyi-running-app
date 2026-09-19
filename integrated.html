@@ -1,0 +1,3448 @@
+<!DOCTYPE html>
+<html data-page-node-id="cwrmLONAmkOy4ODA8IkEXg" lang="zh-CN">
+<head data-page-node-id="phfelMplCHvZGvcarriPJT">
+<script data-page-node-id="twnGkirPnW1Qu4SkNJUxJS" src="/page/page_comm/inject.js"></script>
+  <meta data-page-node-id="vxnGI97pvwxjYbYa2maWiy" charset="UTF-8">
+  <meta data-page-node-id="J4N6vmK9lbyuzySSDkqUgN" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+  <title data-page-node-id="medTEhHB3p7ugQUJ6FLIl4" data-pnid-children="7Y0PkgLnOb0CJYmpnCaH9Y">跑步应用 · 视觉预览</title>
+  <link data-page-node-id="o1CqNW8iibBKfRgqY33PhE" href="https://fonts.googleapis.com" rel="preconnect">
+  <link data-page-node-id="ZYwxnYqGfRNsNHWcGb0Yih" crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link data-page-node-id="3kamSfK5BK0k4yxRJZUscZ" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style data-page-node-id="mBqqKS0o6ssMIS74dp7YzR" data-pnid-children="w6QNj9L3ZbgLOIQoh6A1yN">
+    :root {
+      --bg-primary: #13121C;
+      --bg-low: #1A1A1A;
+      --surface-glass: rgba(255, 255, 255, 0.08);
+      --surface-solid: #2A2A2A;
+      --accent-run: #FF8C42;
+      --accent-run-light: #FFC1A1;
+      --accent-luo: #66CCFF;
+      --accent-luo-soft: rgba(102, 204, 255, 0.15);
+      --text-primary: #FFF6EC;
+      --text-secondary: rgba(255, 246, 236, 0.6);
+      --text-muted-low: #999999;
+      --border-glass: rgba(255, 255, 255, 0.15);
+      --success: #7DB87A;
+      --shadow-glass: 0 12px 28px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+      --shadow-button: 0 8px 24px rgba(255, 140, 66, 0.4);
+      --shadow-luo: 0 0 24px rgba(102, 204, 255, 0.4);
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body {
+      font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: #0a0a0f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      overflow: hidden;
+    }
+
+    .phone {
+      width: 100%;
+      max-width: 414px;
+      min-height: 100vh;
+      height: 100vh;
+      margin: 0 auto;
+      overflow: hidden;
+      position: relative;
+      background: var(--bg-primary);
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+    }
+    .screen.active { display: flex; }
+
+    /* Status Bar */
+    .status-bar {
+      display: none;
+      height: 62px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      z-index: 10;
+    }
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .signal-bar { width: 4px; background: var(--text-primary); border-radius: 1px; }
+    .signal-bar:nth-child(1) { height: 7px; }
+    .signal-bar:nth-child(2) { height: 10px; }
+    .signal-bar:nth-child(3) { height: 13px; }
+
+    /* Content */
+    .content {
+      flex: 1;
+      min-height: 0;
+      padding: 0 20px 100px;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .content::-webkit-scrollbar { display: none; }
+
+    /* Typography */
+    .title-lg { font-size: 28px; font-weight: 600; }
+    .title-md { font-size: 20px; font-weight: 600; }
+    .text-muted { color: var(--text-secondary); }
+    .text-luo { color: var(--accent-luo); }
+    .text-run { color: var(--accent-run); }
+
+    /* Glass Card */
+    .glass {
+      background: var(--surface-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 28px;
+      box-shadow: var(--shadow-glass);
+      backdrop-filter: blur(32px);
+      -webkit-backdrop-filter: blur(32px);
+    }
+    .low .glass {
+      background: var(--surface-solid);
+      border-color: #333;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      box-shadow: none;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: var(--accent-run);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      height: 52px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-button);
+      cursor: pointer;
+      width: 100%;
+    }
+
+    /* Tab Bar */
+    .tab-bar {
+      position: absolute;
+      bottom: 21px;
+      left: 20px;
+      right: 20px;
+      height: 62px;
+      background: var(--surface-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: 36px;
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+      display: flex;
+      padding: 4px;
+      gap: 4px;
+      z-index: 20;
+    }
+    .low .tab-bar {
+      background: var(--surface-solid);
+      border-color: #333;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      box-shadow: none;
+    }
+    .tab-item {
+      flex: 1;
+      border-radius: 26px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-item.active {
+      background: var(--accent-run);
+      color: white;
+    }
+    .tab-icon { width: 18px; height: 18px; }
+
+    /* Home Screen */
+    .home-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #66CCFF, #3399FF);
+      box-shadow: 0 4px 16px rgba(102, 204, 255, 0.4);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .badge-run { background: rgba(255, 140, 66, 0.15); color: var(--accent-run); }
+    .badge-luo { background: var(--accent-luo-soft); color: var(--accent-luo); border-radius: 12px; margin-left: 8px; }
+    .badge-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    .hero-card {
+      background: linear-gradient(90deg, #FF8C42, #FFC1A1);
+      border-radius: 28px;
+      padding: 24px;
+      height: 170px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      box-shadow: 0 12px 32px rgba(255, 140, 66, 0.35);
+    }
+    .hero-card .label { color: rgba(255, 255, 255, 0.85); font-size: 14px; font-weight: 500; }
+    .hero-card .title { color: white; font-size: 24px; font-weight: 600; }
+    .hero-card .meta { color: rgba(255, 255, 255, 0.8); font-size: 13px; }
+    .hero-card .btn { background: white; color: #FF8C42; border-radius: 999px; height: 44px; display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      padding: 16px;
+      height: 96px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .stat-card .icon { width: 24px; height: 24px; }
+    .stat-card .label { font-size: 12px; color: var(--text-secondary); }
+    .stat-card .value { font-size: 18px; font-weight: 600; }
+
+    .weekly-card { padding: 16px; margin-bottom: 100px; }
+    .weekly-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+    .weekly-days { display: flex; justify-content: space-between; gap: 8px; }
+    .day {
+      width: 32px;
+      height: 40px;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 6px;
+    }
+    .day.active { background: var(--accent-run); color: white; }
+    .day:not(.active) { background: var(--surface-glass); color: var(--text-secondary); }
+    .low .day:not(.active) { background: var(--surface-solid); }
+    .day-bar { width: 4px; border-radius: 2px; }
+
+    /* Tier Screen */
+    .tier-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      margin-bottom: 16px;
+    }
+    .back-btn {
+      width: 40px; height: 40px; border-radius: 20px;
+      background: var(--surface-glass);
+      border: 1px solid var(--border-glass);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .low .back-btn { background: var(--surface-solid); border-color: #333; }
+    .tier-subtitle { font-size: 15px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5; }
+    .tier-card {
+      padding: 16px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tier-card.selected {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 140, 66, 0.5);
+      box-shadow: 0 8px 28px rgba(255, 140, 66, 0.25);
+    }
+    .tier-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .tier-left { display: flex; align-items: center; gap: 12px; }
+    .tier-icon {
+      width: 40px; height: 40px; border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .tier-title { font-size: 18px; font-weight: 600; }
+    .tier-desc { font-size: 13px; color: var(--text-secondary); }
+    .tier-check {
+      width: 28px; height: 28px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border-glass);
+    }
+    .tier-card.selected .tier-check { background: var(--accent-run); border-color: var(--accent-run); }
+    .tier-preview {
+      height: 40px;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      background: #13121C;
+    }
+    .preview-bar {
+      position: absolute;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 246, 236, 0.15);
+      left: 16px;
+    }
+    .preview-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(8px);
+    }
+    .preview-particle {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+    }
+
+    /* Run Screen */
+    .run-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .aurora {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .aurora.orange {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(255, 140, 66, 0.6), transparent 70%);
+      top: -100px; left: -50px;
+      animation: float 8s ease-in-out infinite;
+    }
+    .aurora.peach {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(255, 193, 161, 0.4), transparent 70%);
+      bottom: 100px; right: -50px;
+      animation: float 10s ease-in-out infinite reverse;
+    }
+    .aurora.blue {
+      width: 250px; height: 250px;
+      background: radial-gradient(circle, rgba(102, 204, 255, 0.35), transparent 70%);
+      top: 80px; right: 0;
+      animation: float 9s ease-in-out infinite;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+      opacity: 0.6;
+      pointer-events: none;
+      animation: rise 6s linear infinite;
+    }
+    .low .run-bg { display: none; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(20px, 30px) scale(1.1); }
+    }
+    @keyframes rise {
+      0% { transform: translateY(0); opacity: 0; }
+      20% { opacity: 0.6; }
+      100% { transform: translateY(-200px); opacity: 0; }
+    }
+
+    .run-content {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 0 24px 24px;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .phase-bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      margin-bottom: 28px;
+    }
+    .phase {
+      flex: 1;
+      height: 40px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--surface-glass);
+      color: var(--text-secondary);
+    }
+    .low .phase { background: var(--surface-solid); color: var(--text-muted-low); }
+    .phase.active {
+      background: var(--accent-run);
+      color: white;
+      font-weight: 600;
+    }
+
+    .main-metrics {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .timer { font-size: 72px; font-weight: 700; line-height: 1; }
+    .distance { font-size: 22px; font-weight: 500; color: var(--text-secondary); margin-top: 8px; }
+
+    .metric-cards {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .metric-card {
+      flex: 1;
+      padding: 16px;
+      height: 160px;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-align: center;
+    }
+    .hr-ring {
+      width: 80px; height: 80px;
+      position: relative;
+      margin-bottom: 4px;
+    }
+    .hr-ring svg { transform: rotate(-90deg); }
+    .hr-ring circle.track { fill: none; stroke: rgba(255, 246, 236, 0.15); stroke-width: 6; }
+    .hr-ring circle.fill {
+      fill: none;
+      stroke: var(--accent-luo);
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 226;
+      stroke-dashoffset: 90;
+      filter: drop-shadow(0 0 8px rgba(102, 204, 255, 0.6));
+    }
+    .hr-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 246, 236, 0.1);
+      border-radius: 3px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+    .hr-bar-fill {
+      width: 60%;
+      height: 100%;
+      background: var(--accent-luo);
+      border-radius: 3px;
+    }
+    .metric-value { font-size: 28px; font-weight: 600; }
+    .metric-label { font-size: 13px; color: var(--text-secondary); }
+    .low .metric-label { color: var(--text-muted-low); }
+    .metric-bpm { font-size: 14px; font-weight: 500; color: var(--accent-luo); text-shadow: 0 0 12px rgba(102, 204, 255, 0.4); }
+    .low .metric-bpm { text-shadow: none; }
+
+    .music-player {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+    }
+    .music-bubble {
+      position: absolute;
+      right: 16px;
+      bottom: 140px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FF8C42, #FFC1A1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(255, 140, 66, 0.4);
+      cursor: pointer;
+      z-index: 10;
+      transition: transform 0.2s;
+    }
+    .music-bubble:active { transform: scale(0.92); }
+    .music-left { display: flex; align-items: center; gap: 12px; }
+    .music-cover {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--accent-luo);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 16px rgba(102, 204, 255, 0.3);
+    }
+    .low .music-cover { box-shadow: none; }
+    .music-title { font-size: 14px; font-weight: 600; }
+    .music-sub { font-size: 12px; color: var(--text-secondary); }
+    .low .music-sub { color: var(--text-muted-low); }
+
+    .pause-btn {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: var(--accent-run);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 32px rgba(255, 140, 66, 0.5);
+      cursor: pointer;
+    }
+
+    .mode-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: var(--surface-solid);
+      font-size: 12px;
+      color: var(--text-muted-low);
+      margin-bottom: 16px;
+      align-self: flex-start;
+    }
+
+    /* Utility */
+    .mt-auto { margin-top: auto; }
+    .mt-2 { margin-top: 8px; }
+  </style>
+</head>
+<body data-page-node-id="MKBlPYcs7VUCEXART1vrMN">
+  <div data-page-node-id="swWyq5wptoWdBL0v7JcI8T" class="phone" id="phone">
+
+    <!--pnid:PMxkDXMOemV8a4X6uKAULE--><!-- HOME -->
+    <div data-page-node-id="BGQlq26j51NUPOGO0woyaf" class="screen active" id="screen-home">
+      <div data-page-node-id="d2ALlxJ22VTjOOe3WNOmXq" class="status-bar">
+        <span data-page-node-id="7jf9n7nmLECQXHqaMXrwII"><!--pnid:RaQrQqQwIOoLCmndFTPe7K-->9:41</span>
+        <div data-page-node-id="RPYaNfCgHMUUEt4reYyRze" class="status-icons">
+          <svg data-page-node-id="PpZyYxmpDp55q5yHFFvkjp" fill="none" height="14" viewBox="0 0 18 14" width="18">
+            <rect data-page-node-id="awYtGPp2MIac8oqaNRQdWp" fill="#FFF6EC" height="7" rx="1" width="4" x="0" y="7"/>
+            <rect data-page-node-id="U1funRhiXV7i93QeV5OES3" fill="#FFF6EC" height="10" rx="1" width="4" x="6" y="4"/>
+            <rect data-page-node-id="5ZMjE1LyPYeslrfCNuw3ud" fill="#FFF6EC" height="13" rx="1" width="4" x="12" y="1"/>
+          </svg>
+          <svg data-page-node-id="qpsAi0RZw2BRPWPi4waK41" fill="none" height="14" viewBox="0 0 20 14" width="20">
+            <path data-page-node-id="UyH6kewwADdFklnKDXxqZJ" d="M2 7C5 2 13 2 16 7C13 12 5 12 2 7Z" stroke="#FFF6EC" stroke-width="1.5"/>
+            <circle data-page-node-id="TxamZ8vj5A2RkcATbvIDhk" cx="9" cy="7" fill="#FFF6EC" r="2"/>
+          </svg>
+          <svg data-page-node-id="X76VhooMFbafzTklkCjwen" fill="none" height="12" viewBox="0 0 24 12" width="24">
+            <rect data-page-node-id="sKK2i2lOKuxUEzKBdteowY" height="11" rx="2.5" stroke="#FFF6EC" width="23" x="0.5" y="0.5"/>
+            <rect data-page-node-id="wdn99UHhlH0Go1KKemYF71" fill="#FFF6EC" height="8" rx="1.5" width="14" x="2" y="2"/>
+          </svg>
+        </div>
+      </div>
+      <div data-page-node-id="6gj7pL1wxwySqTHkwhJ1tF" class="content">
+        <div data-page-node-id="RxoGbyDovpSMyrEkCyFX8o" class="home-header">
+          <div data-page-node-id="ixJhEgRVJR5E8NyCc6vTEe" class="title-lg"><!--pnid:1T1VmZUtKZh82c7zrua2jX-->早安，跑者</div>
+          <div data-page-node-id="lYGidy6mPBbEJlR6vC6GNr" class="avatar"></div>
+        </div>
+        <div data-page-node-id="AWoxfTGNfhmAhgXqhX03sq" style="display:flex; align-items:center; margin-bottom:4px">
+          <div data-page-node-id="hHj8Y5TFCeY6fxN8EPcXkB" class="badge badge-run">
+            <svg data-page-node-id="4S99ZDXejlOvUGWrHc33Gv" fill="none" height="16" viewBox="0 0 16 16" width="16"><path data-page-node-id="E0fPfVjlFHfyOLKimQtzeB" d="M8 1S5 4 5 7C5 8.5 6 10 8 10C10 10 11 8.5 11 7C11 4 8 1 8 1Z" fill="#FF8C42"/><path data-page-node-id="UTYl5GimOE6drRzBC9DGUi" d="M8 6S6.5 7.5 6.5 9C6.5 10 7.2 11 8 11C8.8 11 9.5 10 9.5 9C9.5 7.5 8 6 8 6Z" fill="#FFC1A1"/></svg><!--pnid:s2lCR9aRNNHo2lgp2Ed2v3-->
+            连续 12 天
+          </div>
+          <div data-page-node-id="JHU0EpdcMen7R7HymqXzIH" class="badge badge-luo"><div data-page-node-id="oRnnXsseeWsyBHrFxvldgA" class="badge-dot" style="background:#66CCFF"></div><!--pnid:qf5qeCIpUmDiQgP16J1lIN-->洛天依伴跑</div>
+        </div>
+        <div data-page-node-id="8J1MwAn87iR1Eq3JiP7Sn9" class="hero-card">
+          <div data-page-node-id="WVwVkjWjYCclsFuvoFkXa8">
+            <div data-page-node-id="uy2gUYbF8My4B2YrDcVSqf" class="label"><!--pnid:3QSbnfFVUThUs9UPRnspXj-->今日计划</div>
+            <div data-page-node-id="0vzx55YUYkYyUBhCVA7mAK" class="title"><!--pnid:3XkY4oDExMk77vqX6W5T5k-->节奏跑 · 30分钟</div>
+            <div data-page-node-id="g5OQN7gM9zFPkHF0WHUDDE" class="meta mt-2"><!--pnid:IwYlqDrtwGoajlmxW3TiMu-->07:00 · 中等强度</div>
+          </div>
+          <div data-page-node-id="BNjsAA38KYKzeAkc9M3yDx" class="btn" onclick="goRun()"><!--pnid:IXmDwZYfN6XCHoGqsBUbJk-->开始跑步</div>
+        </div>
+        <div class="glass" style="margin-top:14px;padding:12px;">
+          <div style="display:flex;gap:6px;">
+            <div id="modeGuide" style="flex:1;padding:11px 4px;border-radius:14px;cursor:pointer;text-align:center;">
+              <div style="font-size:13px;font-weight:600;">跟天依跑</div>
+              <div style="font-size:10px;opacity:.75;margin-top:3px;">天依带你加速</div>
+            </div>
+            <div id="modeFollow" style="flex:1;padding:11px 4px;border-radius:14px;cursor:pointer;text-align:center;">
+              <div style="font-size:13px;font-weight:600;">天依跟你跑</div>
+              <div style="font-size:10px;opacity:.75;margin-top:3px;">跟着你的心率</div>
+            </div>
+            <div id="modeCustom" style="flex:1;padding:11px 4px;border-radius:14px;cursor:pointer;text-align:center;">
+              <div style="font-size:13px;font-weight:600;">自定义</div>
+              <div style="font-size:10px;opacity:.75;margin-top:3px;">自己定步频</div>
+            </div>
+          </div>
+          <div id="runModeHint" style="font-size:11px;color:var(--text-secondary);margin-top:9px;text-align:center;line-height:1.5;"></div>
+          <div id="stageRatioBtn" style="display:none;margin-top:10px;padding:9px;border-radius:12px;text-align:center;font-size:12px;font-weight:600;color:#FF8C42;background:rgba(255,140,66,0.12);cursor:pointer;">⚙ 调整四阶段占比</div>
+          <div id="customBpmBtn" style="display:none;margin-top:10px;padding:9px;border-radius:12px;text-align:center;font-size:12px;font-weight:600;color:#7BE495;background:rgba(123,228,149,0.14);cursor:pointer;">⚙ 设定步频 <span id="customBpmBtnVal">170</span> BPM</div>
+        </div>
+        <div data-page-node-id="c8TNOrOmNiXqv0OTjQXwwo" class="stats-grid">
+          <div data-page-node-id="k7O83zFsCHVh7Nx0gM4Dsr" class="glass stat-card">
+            <svg data-page-node-id="oXac7eDpTmJJbQEgPYyz1k" class="icon" fill="none" viewBox="0 0 24 24"><path data-page-node-id="DMGbJwKTxBzrAAGCW6y1JI" d="M3 12C3 12 6 5 12 5C18 5 21 12 21 12C21 12 18 19 12 19C6 19 3 12 3 12Z" stroke="#FF8C42" stroke-width="1.5"/><circle data-page-node-id="Sky7rqjIJzj6tJs7sRwBfz" cx="12" cy="12" fill="#FF8C42" r="3"/></svg>
+            <div data-page-node-id="pQhXyLyWLQGF7mR78yhr6O" class="label"><!--pnid:i3M2aTRjddvZycJ7cNKKg1-->本周里程</div>
+            <div data-page-node-id="bVHenAIrqTRLhw3tZtUA5M" class="value"><!--pnid:BLIlIROuREkl23J9ZLO0PY-->24.6 km</div>
+          </div>
+          <div data-page-node-id="AG2b4C64gz0tnXRAzGD6aC" class="glass stat-card">
+            <svg data-page-node-id="AmMNZrBSKpLXeBxkxxDM2U" class="icon" fill="none" viewBox="0 0 24 24"><path data-page-node-id="z0jVxDQ9BnkFDimj0r5YdX" d="M12 2V6M12 18V22M6 12H2M22 12H18M4.93 4.93L7.76 7.76M16.24 16.24L19.07 19.07M4.93 19.07L7.76 16.24M16.24 7.76L19.07 4.93" stroke="#FFC1A1" stroke-width="1.5"/></svg>
+            <div data-page-node-id="lFGM18qeg4qM36XbgP69Gg" class="label"><!--pnid:SYNMNI5Rs2zDrTxFoucX6K-->平均配速</div>
+            <div data-page-node-id="6dkIizSv4PXWyrBFs5I2C3" class="value"><!--pnid:n3GmhnR4nLxc3QiOWRWcdF-->5'42"</div>
+          </div>
+          <div data-page-node-id="4NNp947rY4QLY0CavjnPTU" class="glass stat-card">
+            <svg data-page-node-id="bWCIm3W1yKoj5q0fyxrhNp" class="icon" fill="none" viewBox="0 0 24 24"><path data-page-node-id="mHrALlGbNgvFUBwuYnezio" d="M12 3S7 9 7 14C7 17.5 9.5 21 12 21C14.5 21 17 17.5 17 14C17 9 12 3 12 3Z" fill="#FF8C42"/><path data-page-node-id="iR29VorwTcynAOuIgCd0uz" d="M12 11S9.5 13.5 9.5 16C9.5 17.5 10.7 19 12 19C13.3 19 14.5 17.5 14.5 16C14.5 13.5 12 11 12 11Z" fill="#FFC1A1"/></svg>
+            <div data-page-node-id="2jtHUuvs7soe5EH4HSg9qG" class="label"><!--pnid:d3RhyDtWOe9wbeGCfkozoJ-->消耗千卡</div>
+            <div data-page-node-id="rhUUf8qaWbPzyb2L8q9nBa" class="value"><!--pnid:QZbEvqtkULD41pStQB1JWT-->1,842</div>
+          </div>
+          <div data-page-node-id="T3AqCInrxkxsl4S8iZxIg4" class="glass stat-card">
+            <svg data-page-node-id="G1lUrOnulJPwCsi0KysOzn" class="icon" fill="none" viewBox="0 0 24 24"><circle data-page-node-id="Uq0Vpxk5uhvDp6efxpgSd2" cx="12" cy="12" r="9" stroke="#66CCFF" stroke-width="1.5"/><path data-page-node-id="K0h31WEEOw2LZiPJXZNimj" d="M12 7V12L15 15" stroke="#66CCFF" stroke-linecap="round" stroke-width="1.5"/></svg>
+            <div data-page-node-id="ipqEjWyDIe4f1NNjWoXkRe" class="label"><!--pnid:ghoxBocfs3geljB1rKFuZK-->运动时长</div>
+            <div data-page-node-id="IOc8K1c7XUav8Wy9nvNSzF" class="value"><!--pnid:WSi1gz0C1kC5vXakxpULtb-->4h 12m</div>
+          </div>
+        </div>
+        <div data-page-node-id="KibCEEj909MdTjbuvaczs1" class="glass weekly-card">
+          <div data-page-node-id="FCYzaNUFOWkLGYQ4bcvKRL" class="weekly-title"><!--pnid:06RDh8yetxmxNwVH82Jgr3-->本周运动</div>
+          <div data-page-node-id="G6vv1dt4tCCTac436PyRjY" class="weekly-days">
+            <div data-page-node-id="hkx5I4xlMWOWdNlky23GP1" class="day active"><span data-page-node-id="zILUlVgy4LIHrV36ZoV7rU"><!--pnid:nKU9TdBWI7whjIfP2a7hcD-->一</span><div data-page-node-id="SwgnptUdMoMow84CVarnRi" class="day-bar" style="height:18px; background:white"></div></div>
+            <div data-page-node-id="hl3NA84AXcO1SXSK18Zh1h" class="day"><span data-page-node-id="2jZpQLrCNTp4Hu2AB7QoRm"><!--pnid:26xjmndtGwBkyCbM1ZEczU-->二</span><div data-page-node-id="01LcPhekVboBzOiDeBaekt" class="day-bar" style="height:12px; background:#FFC1A1"></div></div>
+            <div data-page-node-id="AnIsQjuAD3v95WrNk7x3OO" class="day"><span data-page-node-id="Dfo0HExY5YFebdnug8pnL3"><!--pnid:vmoKMoIx9rRtbEO69yUf7C-->三</span><div data-page-node-id="2DrViiwN4e1lYUla1ucsA4" class="day-bar" style="height:9px; background:#FFC1A1"></div></div>
+            <div data-page-node-id="Wq7sXpgoGRTH4Fabek2VuZ" class="day"><span data-page-node-id="dfuj1AgWixTnfBm7WwYAKZ"><!--pnid:CU2Bxa27VAuL8EhT9r9gqP-->四</span><div data-page-node-id="0CpodFQ8z6wgRZ3YNxVjHO" class="day-bar" style="height:15px; background:#FFC1A1"></div></div>
+            <div data-page-node-id="m8X8X5jXCdZ3o78Cm8bmjc" class="day"><span data-page-node-id="zMW6GI7kyMvAeNiNKiEs6h"><!--pnid:lQl7mMyioHp301k0GHBAbU-->五</span><div data-page-node-id="RWBLHyUTxx3JRTeSzIiELD" class="day-bar" style="height:6px; background:#FFC1A1"></div></div>
+            <div data-page-node-id="Kf4vCMH4qNn2XyfiwtiIvo" class="day"><span data-page-node-id="IiuwpBjzemP0RzExCrCk3E"><!--pnid:hoiVVq87uVI7lTvBKWjAsY-->六</span><div data-page-node-id="YceBgRpLaT8mcril1yG44I" class="day-bar" style="height:21px; background:#FFC1A1"></div></div>
+            <div data-page-node-id="mMsZHNJOoGmdzVUc9SZbYY" class="day"><span data-page-node-id="W3v4F14cY4VTit7U5jeinj"><!--pnid:19sMUSoQauTXcE1KbZU31U-->日</span><div data-page-node-id="M60OmZOESftk7IWua1wRAk" class="day-bar" style="height:3px; background:rgba(255,246,236,0.3)"></div></div>
+          </div>
+        </div>
+      </div>
+      <div data-page-node-id="bETz0JfdJQvvcLWyod1Xtr" class="tab-bar">
+        <div data-page-node-id="fiOMIT6D0HsT7WbJIxrHXl" class="tab-item active" data-tab="home">
+          <svg data-page-node-id="Ry8tMULDhJQ3mQHa15E8Xt" class="tab-icon" fill="none" viewBox="0 0 18 18"><path data-page-node-id="mduhdXsVhGwi6p8hTQNF4u" d="M2 7L9 2L16 7V15C16 15.5 15.5 16 15 16H3C2.5 16 2 15.5 2 15V7Z" fill="white"/><path data-page-node-id="rfEn3FwPUINZC8uk7xxD1Y" d="M6 16V10H12V16" stroke="#FF8C42" stroke-width="1.5"/></svg><!--pnid:cvYyn7OYS2wScknETTpVsx-->
+          首页
+        </div>
+        <div data-page-node-id="qTqB5z4YhxcfXtWdAT0UGq" class="tab-item" data-tab="run" onclick="goRun()">
+          <svg data-page-node-id="9iCYZaRZXQcY70OE0NqmqS" class="tab-icon" fill="none" viewBox="0 0 18 18"><path data-page-node-id="hodCpAlTuZls7cWTsxgBZC" d="M4 14C4 14 6 12 7 10C8 8 7.5 6 9 6C10.5 6 12 7 12 7M12 7L10 4M12 7L15 6" stroke="currentColor" stroke-width="1.5"/><circle data-page-node-id="KrikWuz3WXhh7voDPQMa8y" cx="12" cy="7" fill="currentColor" r="2"/></svg><!--pnid:IxUEUmZLWkksR7YHlNkIny-->
+          跑步
+        </div>
+        <div data-page-node-id="hlyp9IBOb9bY81SME71rFu" class="tab-item" data-tab="music">
+          <svg data-page-node-id="cfleIaXXX7bfSRe2PrHnm1" class="tab-icon" fill="none" viewBox="0 0 18 18"><path data-page-node-id="gxlCa21wk1cTiYbvUSfb6c" d="M6 14V6L14 4V12" stroke="currentColor" stroke-width="1.5"/><circle data-page-node-id="ALkdVkapLq9fLQMPU9L7dp" cx="5" cy="14" fill="currentColor" r="2"/></svg><!--pnid:FMqaSa3AK7dXMtlIjOYJJM-->
+          音乐
+        </div>
+        <div data-page-node-id="ReHEr1Tgr7MhyYJFN8sDI5" class="tab-item" data-tab="settings" onclick="goSettings()">
+          <svg data-page-node-id="ddfaYE6wbJ15gQnIud3YrH" class="tab-icon" fill="none" viewBox="0 0 18 18"><circle data-page-node-id="YwgNXi96VZigaQCGIcGDPQ" cx="9" cy="9" r="3" stroke="currentColor" stroke-width="1.5"/><path data-page-node-id="0CGFMn8GFBc6btjAjJ0ztA" d="M15 9H16M9 2V3M9 15V16M3 9H2M13.66 4.34L14.66 3.34M3.34 14.66L4.34 13.66M14.66 14.66L13.66 13.66M4.34 4.34L3.34 3.34" stroke="currentColor" stroke-width="1.5"/></svg><!--pnid:EBnOaDx4CXb7VBHAh5ybcx-->
+          设置
+        </div>
+      </div>
+    </div>
+
+    <!--pnid:2Kfhxal5u53Eo65P213DOy--><!-- SETTINGS / TIER -->
+    <div data-page-node-id="7S61cvfdFe5vvnfs73rDqZ" class="screen" id="screen-settings">
+      <div data-page-node-id="HCYKp0XR2eGKn0zquMqJEK" class="status-bar">
+        <span data-page-node-id="9Kc9MTRaLsn3YgctgS061Y"><!--pnid:CxKPCi2UfZZ4AdTxH1BVxP-->9:41</span>
+        <div data-page-node-id="MYaggKxWhw400wXIM8eo2Z" class="status-icons">
+          <svg data-page-node-id="k2MteEFMEmfqo7AzQtEbcX" fill="none" height="14" viewBox="0 0 18 14" width="18"><rect data-page-node-id="gSI56ekQwC3oYyPLeBgtRc" fill="#FFF6EC" height="7" rx="1" width="4" x="0" y="7"/><rect data-page-node-id="8czjNE4EcKdgeQUTCGcTmL" fill="#FFF6EC" height="10" rx="1" width="4" x="6" y="4"/><rect data-page-node-id="bjtZ1fieijwF2tLtG3pdxT" fill="#FFF6EC" height="13" rx="1" width="4" x="12" y="1"/></svg>
+          <svg data-page-node-id="Lxj03OPjSg6EAsGUbNIKf8" fill="none" height="14" viewBox="0 0 20 14" width="20"><path data-page-node-id="KbYHqMUf7Mzx3O15MhMl4y" d="M2 7C5 2 13 2 16 7C13 12 5 12 2 7Z" stroke="#FFF6EC" stroke-width="1.5"/><circle data-page-node-id="g0661jNe4FERk5DOZ5yisq" cx="9" cy="7" fill="#FFF6EC" r="2"/></svg>
+          <svg data-page-node-id="CHKypbb1n3SOLLfVzfzVnT" fill="none" height="12" viewBox="0 0 24 12" width="24"><rect data-page-node-id="64h4zUDwWny8XXqxB1SO1l" height="11" rx="2.5" stroke="#FFF6EC" width="23" x="0.5" y="0.5"/><rect data-page-node-id="AenrYc8Hqn24tajN5lFpIL" fill="#FFF6EC" height="8" rx="1.5" width="14" x="2" y="2"/></svg>
+        </div>
+      </div>
+      <div data-page-node-id="dZb6q8jufD5YrqKQ2S0Mgj" class="content">
+        <div data-page-node-id="IrSqyFYPpNXnz1uTUuAH8J" class="tier-header">
+          <div data-page-node-id="TY6olvpx7ziqHToZTUquQG" class="back-btn" onclick="goHome()">
+            <svg data-page-node-id="74JjJar9kURGGlmneZQMUo" fill="none" height="20" viewBox="0 0 20 20" width="20"><path data-page-node-id="3QVSv7AqrD3JmrYt8tuVYc" d="M12 4L6 10L12 16" stroke="#FFF6EC" stroke-linecap="round" stroke-width="2"/></svg>
+          </div>
+          <div data-page-node-id="FvenMlJq6mBt4kx2QGcZNs" class="title-md"><!--pnid:wkOFgcaEqpqoWS98O0fpqq-->画面效果</div>
+          <div data-page-node-id="Ck3VFdUfigaAWz9aVclbpX" style="width:40px"></div>
+        </div>
+        <div data-page-node-id="DjO33CvxEQUxLDY4998Eu1" class="tier-subtitle"><!--pnid:e25OOgmufZW0ndTlouUrrg-->根据设备性能选择动态效果，兼顾流畅与续航。</div>
+
+        <div data-page-node-id="KZY79TLJjIrhz8dUXl74a9" class="glass tier-card selected" onclick="setTier('high')">
+          <div data-page-node-id="LkmvB1h8jgLQWRZP4SmYHK" class="tier-top">
+            <div data-page-node-id="zkMlaSshHDx56z8et8I619" class="tier-left">
+              <div data-page-node-id="XtVDMpSmhlW3aSlYlBlWMZ" class="tier-icon" style="background:var(--accent-run)">
+                <svg data-page-node-id="ahN0Ir6ITDqNjelGIX8QZQ" fill="none" height="20" viewBox="0 0 20 20" width="20"><path data-page-node-id="DUnc64FTJ2GbxJnMLEFICb" d="M10 2L12.5 8.5L19 10L12.5 11.5L10 18L7.5 11.5L1 10L7.5 8.5L10 2Z" fill="white"/></svg>
+              </div>
+              <div data-page-node-id="OKCt8bxierT6wpWETYOBQQ">
+                <div data-page-node-id="7d9qEPp3cHU1FWRfIyMV3v" class="tier-title"><!--pnid:t9akXDjHcWcF9yT0Pm8oF9-->实时渲染</div>
+                <div data-page-node-id="6Jy6W0b9YfUxL6uqwAgB37" class="tier-desc"><!--pnid:h5ufOuTOdn7wspkHILg6nY-->极光、粒子、光晕全开启</div>
+              </div>
+            </div>
+            <div data-page-node-id="bJb8y6o7KHwwMz0sKiRMEU" class="tier-check"><svg data-page-node-id="JOWvpakucG1ZtN9l7Ic3UD" fill="none" height="16" viewBox="0 0 16 16" width="16"><path data-page-node-id="2HTHa6Nb7Y7f6cU0VtUcTo" d="M3 8L6.5 11.5L13 5" stroke="white" stroke-linecap="round" stroke-width="2.5"/></svg></div>
+          </div>
+          <div data-page-node-id="gbf1TeT96YRSTzZ41gsS7v" class="tier-preview">
+            <div data-page-node-id="hEfZ2iBofUWL6YaPQ7LXbO" class="preview-orb" style="width:45px; height:45px; background:rgba(255,140,66,0.5); left:12px; top:5px"></div>
+            <div data-page-node-id="WPbMiEoTqNYj37B2ZOivu1" class="preview-orb" style="width:20px; height:20px; background:rgba(255,193,161,0.5); left:70px; top:15px"></div>
+            <div data-page-node-id="kqsf4uhjSX4vavNLRKOatH" class="preview-particle" style="width:3px; height:3px; left:100px; top:10px; opacity:0.7"></div>
+            <div data-page-node-id="21v74rrUQyHbpBqWDQcFis" class="preview-particle" style="width:2px; height:2px; left:115px; top:25px; opacity:0.5"></div>
+          </div>
+        </div>
+
+        <div data-page-node-id="pmUXPxORcoWfpAXsA1qqnb" class="glass tier-card" onclick="setTier('medium')">
+          <div data-page-node-id="lKmbtJByFHzBbywsc9N9NB" class="tier-top">
+            <div data-page-node-id="asWKOyxAZquqRSUk7zWcO4" class="tier-left">
+              <div data-page-node-id="bD5Yttn9VXaxPNuBxGxA1M" class="tier-icon" style="background:rgba(255,255,255,0.1)">
+                <svg data-page-node-id="7ILsr3B7lW72W1lilfAecN" fill="none" height="20" viewBox="0 0 20 20" width="20"><circle data-page-node-id="mpczwSWjBy9H00NsTFCSWA" cx="10" cy="10" fill="#FFC1A1" r="3"/><circle data-page-node-id="2f9VGM5bdYW9nRLpuCv5N9" cx="4" cy="10" fill="#FFC1A1" r="2"/><circle data-page-node-id="l475IJyhG0ckZNvW33dBKQ" cx="16" cy="10" fill="#FFC1A1" r="2"/></svg>
+              </div>
+              <div data-page-node-id="w8sVtjB8meB1YRUT1wg5DC">
+                <div data-page-node-id="d9dQSVPtrBA3PkzI1hx1Z0" class="tier-title"><!--pnid:rc3bq2DKJa9geY5lqQ1fqr-->预渲染</div>
+                <div data-page-node-id="sryUDv4fyq7axKyabbYiji" class="tier-desc"><!--pnid:TM0WjBG1YU4UrDiyriNSMu-->缓存动画，平衡效果与耗电</div>
+              </div>
+            </div>
+            <div data-page-node-id="vABOuPA3it8KerCyn4KfuG" class="tier-check"></div>
+          </div>
+          <div data-page-node-id="Zq6DPF4NbUSYddlhcHzpmw" class="tier-preview">
+            <div data-page-node-id="gD3QH7Xl99DAbaqa3D9VmX" class="preview-orb" style="width:28px; height:28px; background:rgba(255,193,161,0.4); left:20px; top:6px"></div>
+          </div>
+        </div>
+
+        <div data-page-node-id="EhmSYC6zPVBm435HFaPPut" class="glass tier-card" onclick="setTier('low')">
+          <div data-page-node-id="koWfpBCr8aYYPjaZZHQEjS" class="tier-top">
+            <div data-page-node-id="d8AV9XNJMjRapZm5UFL37o" class="tier-left">
+              <div data-page-node-id="gbWXg6XuFQEAGTxBGyMytl" class="tier-icon" style="background:rgba(255,255,255,0.1)">
+                <svg data-page-node-id="TlpJYbBFdjot8ljJmuAoGP" fill="none" height="20" viewBox="0 0 20 20" width="20"><rect data-page-node-id="3mu38zIIORZWl9PRZonAag" fill="#66CCFF" height="2" rx="1" width="14" x="3" y="6"/><rect data-page-node-id="sVvEsXFTRoobhGqcPwbpNt" fill="#66CCFF" height="2" rx="1" width="14" x="3" y="10"/><rect data-page-node-id="FT7oiJ1gY5LNijpD4Up5Tt" fill="#66CCFF" height="2" rx="1" width="14" x="3" y="14"/></svg>
+              </div>
+              <div data-page-node-id="7RYxPWWiaTE3t9m37sQ0bP">
+                <div data-page-node-id="Rs2sqjovptrhxLm10u9jVe" class="tier-title"><!--pnid:rADhwWZCVFRcLq5L5Le9Br-->简洁模式</div>
+                <div data-page-node-id="2ZMi4Vf4JMgXKwDmUkLoYk" class="tier-desc"><!--pnid:04MgucCPmGljDmlk5vtfCb-->关闭动态效果，最省电</div>
+              </div>
+            </div>
+            <div data-page-node-id="EGWP0OqxwBZmhH734LRjeX" class="tier-check"></div>
+          </div>
+          <div data-page-node-id="nC05NNgwDdlX7bfM25hlD5" class="tier-preview" style="background:#13121C">
+            <div data-page-node-id="v5yafoGYyEfqgpvTO24uU5" class="preview-bar" style="width:80px; top:16px"></div>
+            <div data-page-node-id="Hjx7ee3N4HHtk4eBfgdjbt" class="preview-bar" style="width:55px; top:25px"></div>
+            <div data-page-node-id="YIwTq79PD876eEPtv987Yd" class="preview-bar" style="width:68px; top:34px"></div>
+          </div>
+        </div>
+      </div>
+      <div data-page-node-id="U5z7noHMt7gfzhRX5Zq2fX" class="tab-bar">
+        <div data-page-node-id="wzrf8CqVgSRkgFYvfZAE6K" class="tab-item" data-tab="home" onclick="goHome()">
+          <svg data-page-node-id="JynjkMTBeYRNxzJwSs7IwA" class="tab-icon" fill="none" viewBox="0 0 18 18"><path data-page-node-id="GzTCyXqqesZRSEl6CiN7gs" d="M2 7L9 2L16 7V15C16 15.5 15.5 16 15 16H3C2.5 16 2 15.5 2 15V7Z" stroke="currentColor" stroke-width="1.5"/><path data-page-node-id="EOQ0MurpcWHVttyd5D6wmR" d="M6 16V10H12V16" stroke="currentColor" stroke-width="1.5"/></svg><!--pnid:b81z2hHMRuofcZSDy5Ivwa-->
+          首页
+        </div>
+        <div data-page-node-id="iRWyRXk1GeeqMwDAvFeiCB" class="tab-item" data-tab="run" onclick="goRun()">
+          <svg data-page-node-id="5JFPoYA0psXIt4fJvHCd0E" class="tab-icon" fill="none" viewBox="0 0 18 18"><path data-page-node-id="puLDQmhCEde4iaIyam7QK7" d="M4 14C4 14 6 12 7 10C8 8 7.5 6 9 6C10.5 6 12 7 12 7M12 7L10 4M12 7L15 6" stroke="currentColor" stroke-width="1.5"/><circle data-page-node-id="W0m2nUhtFQCJG7w3oGMcjQ" cx="12" cy="7" fill="currentColor" r="2"/></svg><!--pnid:H0T8myPYxzr9AxZbOYgENX-->
+          跑步
+        </div>
+        <div data-page-node-id="Zx6LWTatgafrT8fvLt6LS5" class="tab-item" data-tab="music">
+          <svg data-page-node-id="jkf9sPOL4Uf9ZjcZRTapmb" class="tab-icon" fill="none" viewBox="0 0 18 18"><path data-page-node-id="v6PdyndqRzC7SDkC58A91d" d="M6 14V6L14 4V12" stroke="currentColor" stroke-width="1.5"/><circle data-page-node-id="duXOkImeoMxNj2d6XaBpVN" cx="5" cy="14" fill="currentColor" r="2"/></svg><!--pnid:C8iGnBkcdnR3oLlOZlPust-->
+          音乐
+        </div>
+        <div data-page-node-id="9WLX8rNjP54yZsfq7PdrfQ" class="tab-item active" data-tab="settings">
+          <svg data-page-node-id="BaUEX4N3qN3HA76lFMH5YZ" class="tab-icon" fill="none" viewBox="0 0 18 18"><circle data-page-node-id="yMBhCoUg6L7fvCTpUB14hS" cx="9" cy="9" r="3" stroke="white" stroke-width="1.5"/><path data-page-node-id="O96YvJBq1rIbwpM8WmYs8w" d="M15 9H16M9 2V3M9 15V16M3 9H2M13.66 4.34L14.66 3.34M3.34 14.66L4.34 13.66M14.66 14.66L13.66 13.66M4.34 4.34L3.34 3.34" stroke="white" stroke-width="1.5"/></svg><!--pnid:1pF9800oAsBHla2GcRvpha-->
+          设置
+        </div>
+      </div>
+    </div>
+
+    <!--pnid:sGUHItI9jc0A93Q0tCFSYo--><!-- RUN HIGH -->
+    <div data-page-node-id="j8tMwu82ooLqxNLfbzmg9R" class="screen" id="screen-run-high">
+      <div data-page-node-id="SEdsx9zErZ1fuxW3gHCguI" class="run-bg">
+        <div data-page-node-id="M1ssmETEPN93zRTZuLWfA7" class="aurora orange"></div>
+        <div data-page-node-id="NUdVh2jbwzidIEVlFWa8fG" class="aurora peach"></div>
+        <div data-page-node-id="GR8o6AufxiXOiYw3g3ERLw" class="aurora blue"></div>
+        <div data-page-node-id="HkeAkUjBqFcT3D2GDJeWcF" class="particle" style="width:4px; height:4px; left:40px; top:120px; animation-delay:0s"></div>
+        <div data-page-node-id="WiSjPjHavX7SbnvAhCSbMk" class="particle" style="width:3px; height:3px; left:320px; top:200px; animation-delay:2s"></div>
+        <div data-page-node-id="TPBXzOeuIJxXlUbZp2lA15" class="particle" style="width:5px; height:5px; left:80px; top:600px; animation-delay:4s"></div>
+        <div data-page-node-id="AwEZfwcSolwwGHMxbB5Fxh" class="particle" style="width:2px; height:2px; left:300px; top:650px; animation-delay:1s"></div>
+        <div data-page-node-id="re2TtQRisUK3yi8TjugTnx" class="particle" style="width:3px; height:3px; left:200px; top:500px; animation-delay:3s"></div>
+      </div>
+      <div data-page-node-id="GXpPC25J04Bvx42iwnzcEn" class="status-bar" style="position:relative; z-index:1">
+        <span data-page-node-id="2DMuE773NpmkTlyMfq87uo"><!--pnid:iMyVM8bFvSgvQ5ytnsJF6P-->9:41</span>
+        <div data-page-node-id="bddElvS2XeRkQKIDwXIiJT" class="status-icons">
+          <svg data-page-node-id="2xMLKwhg89CXqWXnAbsg98" fill="none" height="14" viewBox="0 0 18 14" width="18"><rect data-page-node-id="1c1fbVPfJbDKQvmSoDE0oy" fill="#FFF6EC" height="7" rx="1" width="4" x="0" y="7"/><rect data-page-node-id="KFwF6LtbIK0JGrti9Ii88e" fill="#FFF6EC" height="10" rx="1" width="4" x="6" y="4"/><rect data-page-node-id="8ck5YhBfmFRdwUax8jxPcF" fill="#FFF6EC" height="13" rx="1" width="4" x="12" y="1"/></svg>
+          <svg data-page-node-id="bvbtvB3rmTLM4GGzJk544J" fill="none" height="14" viewBox="0 0 20 14" width="20"><path data-page-node-id="Ba8bA4UTSTwTJaDPRVgmTv" d="M2 7C5 2 13 2 16 7C13 12 5 12 2 7Z" stroke="#FFF6EC" stroke-width="1.5"/><circle data-page-node-id="55zQmCYgBGhH7nSaFTAk2s" cx="9" cy="7" fill="#FFF6EC" r="2"/></svg>
+          <svg data-page-node-id="Ahb2u9729VTDI9FikxVdKV" fill="none" height="12" viewBox="0 0 24 12" width="24"><rect data-page-node-id="Bh1ou1XrlrLBKaMeevhOJL" height="11" rx="2.5" stroke="#FFF6EC" width="23" x="0.5" y="0.5"/><rect data-page-node-id="7SXM4Z9UHDmxMd8O6pgsYP" fill="#FFF6EC" height="8" rx="1.5" width="14" x="2" y="2"/></svg>
+        </div>
+      </div>
+      <div data-page-node-id="G1biKePJe0xRw8hgvL57KV" class="run-content">
+        <div class="runmode-badge" style="align-self:center;padding:6px 14px;border-radius:999px;font-size:12px;font-weight:600;margin-bottom:12px;">跟天依跑</div>
+        <div class="run-nowplaying" style="align-self:center;max-width:88%;padding:5px 12px;border-radius:999px;font-size:11px;font-weight:500;background:var(--surface-glass);color:var(--text-secondary);margin-bottom:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">♪ 未播放音乐</div>
+        <div data-page-node-id="TJiTcfjq6pxNfSLCH7FI8c" class="phase-bar">
+          <div data-page-node-id="aK31TLlfKRMqNxkPB8v9fl" class="phase active"><!--pnid:DZJA0DFSBtVJTCzHBtrFES-->热身</div>
+          <div data-page-node-id="96cQEBbZUyHkauuIiIfaw4" class="phase"><!--pnid:N78YufZQT5IPgKCo1Tl22u-->燃脂</div>
+          <div data-page-node-id="vTj6sCNQyFkUEkDFhyZYZH" class="phase"><!--pnid:YuroE98EYfLBcMfIuA5b9v-->冲刺</div>
+          <div data-page-node-id="6JnSkFWsPKKmX8Kkle8ZcF" class="phase"><!--pnid:mhiXAIrDF4WwET02zAFPJY-->放松</div>
+        </div>
+        <div class="stage-time" style="align-self:center;margin-top:10px;padding:5px 12px;border-radius:999px;font-size:11px;font-weight:600;background:var(--surface-glass);color:var(--text-secondary);display:none;"></div>
+        <div class="custom-bpm-chip" style="align-self:center;margin-top:10px;padding:5px 12px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(123,228,149,0.16);color:#7BE495;display:none;cursor:pointer;">自定义 170 BPM · 点击调整</div>
+        <div data-page-node-id="i8R5rJajjHpl36xDzL80oX" class="main-metrics">
+          <div data-page-node-id="lxCCbjQdNPOw4mzQIDpQp8" class="timer"><!--pnid:LD0jI2sYoYN2ZRhMrIaKII-->14:32</div>
+          <div data-page-node-id="KHmFQFQKgLjzbGGLIngfxY" class="distance"><!--pnid:gDZDIS9SjIi23jYd20zFbo-->3.24 km</div>
+        </div>
+        <div data-page-node-id="Yh5VsA6lTsoFIvPAbtHM49" class="metric-cards">
+          <div data-page-node-id="yL4iEtCObwrkaru6UWf9YE" class="glass metric-card">
+            <div data-page-node-id="2JAJludfuqoLd4yMhTf6K6" class="hr-ring">
+              <svg data-page-node-id="qDfdKOSAath5bIgfrXR2LG" height="80" viewBox="0 0 80 80" width="80"><circle data-page-node-id="GX5LNFPtl6ZzvPfMrofvHZ" class="track" cx="40" cy="40" r="36"/><circle data-page-node-id="9fIiZ1frZvMA4VflS1fb3C" class="fill" cx="40" cy="40" r="36"/></svg>
+            </div>
+            <div data-page-node-id="jXdiXvKMKNA8b0xNatLPdc" class="metric-value"><!--pnid:xVeOwv487fhrE84AqWXNNO-->156</div>
+            <div data-page-node-id="6ixpsRX476GbmIwOxaCGIH" class="metric-label"><!--pnid:2md7Jo9qdYB99sGyhaRcZJ-->心率</div>
+          </div>
+          <div data-page-node-id="1Rf4wWChOIjFPUm2NHHoJn" class="glass metric-card">
+            <div data-page-node-id="cRpeLok0IR7bm55uG6mL8g" class="metric-value"><!--pnid:RUAKME8MAAqbpiC0qx3muj-->5'38"</div>
+            <div data-page-node-id="QFlEocss9w9JMTBMVnprO4" class="metric-label"><!--pnid:OvJrW2BVJMMXcWVmp4oJyq-->配速</div>
+            <div data-page-node-id="UvpKEN5tBuDh2Flu99O7N3" class="metric-bpm"><!--pnid:YMqdKgVDCCDKwYI3stkLuf-->BPM 165</div>
+          </div>
+        </div>
+        <div data-page-node-id="PYPwriD2Z58SEIPyM26rkY" class="glass music-player">
+          <div data-page-node-id="h6VIQIjiQnVrgy32iXIQOM" class="music-left">
+            <div data-page-node-id="I2ACgfG5JSVlqUDT5VC8CC" class="music-cover">
+              <svg data-page-node-id="vc5vs4GNSViYuVczmMWsP4" fill="none" height="20" viewBox="0 0 20 20" width="20"><path data-page-node-id="oYv1JGItvvSGsgb3u9Kkzo" d="M5 15V5L15 2V12" stroke="white" stroke-width="1.5"/><circle data-page-node-id="5tH7zyrrv3vDfzMjuqhcnk" cx="5" cy="15" fill="white" r="3"/></svg>
+            </div>
+            <div data-page-node-id="p3PvTfVD7jlv7QmJ4dsPX0">
+              <div data-page-node-id="YtZVBSURuq27DBag74R7rR" class="music-title"><!--pnid:U2cbvT0cSLyB5wccponFPE-->洛天依 - 追光者</div>
+              <div data-page-node-id="BWoIYgMNvkPXsqQtPbDFrM" class="music-sub"><!--pnid:kGsBQKCGcBbCWHqRrPwq5X-->BPM 165 · 节拍器开启</div>
+            </div>
+          </div>
+          <svg data-page-node-id="6UgiqLMUz2tbKHTvMxU7Zu" fill="none" height="24" viewBox="0 0 24 24" width="24"><rect data-page-node-id="e8crf2aaZn7qt18YjXTOXD" fill="#66CCFF" height="6" rx="1" width="2" x="4" y="9"/><rect data-page-node-id="d978xYqWeUCfMfNFPJWUF5" fill="#66CCFF" height="14" rx="1" width="2" x="9" y="5"/><rect data-page-node-id="gYJXNARvGxda0vQNTR2d5Z" fill="#66CCFF" height="10" rx="1" width="2" x="14" y="7"/><rect data-page-node-id="bKroahz2Nh1rf3EmcoZJBp" fill="#66CCFF" height="4" rx="1" width="2" x="19" y="10"/></svg>
+        </div>
+        <div data-page-node-id="pL0ZZ2vpzYFxnYm964jMQ3" class="pause-btn">
+          <svg data-page-node-id="Gak46i80IpWubouJsL1aVH" fill="none" height="28" viewBox="0 0 28 28" width="28"><rect data-page-node-id="czYddsIxsC78i0gcY5lO6p" fill="white" height="16" rx="1" width="4" x="9" y="6"/><rect data-page-node-id="Dhv5NP71NEfSLcjcLnMULU" fill="white" height="16" rx="1" width="4" x="17" y="6"/></svg>
+        </div>
+        <div data-page-node-id="C3lMv1nbbFA3uhnQuqjZ5s" class="mt-auto" style="text-align:center; padding-bottom:12px">
+          <div data-page-node-id="MD3sGlLo1ikvzPVcBQY3Ff" onclick="goHome()" style="font-size:12px; color:var(--text-secondary); cursor:pointer"><!--pnid:skfvLnfDNUtkgko3W3X5n4-->← 返回首页</div>
+        </div>
+      </div>
+      <div class="music-bubble" onclick="openMusicList()" style="position:absolute;right:16px;bottom:140px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#FF8C42,#FFC1A1);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(255,140,66,0.4);cursor:pointer;z-index:10;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18V6L19 3V15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" fill="white"/></svg>
+      </div>
+    </div>
+
+    <!--pnid:5rQ0jJ6kbUc6gJcba0A6TT--><!-- RUN LOW -->
+    <div data-page-node-id="fAiIuHyMSEUO0V8TD1rK2P" class="screen low" id="screen-run-low">
+      <div data-page-node-id="9nNqUfJFIsQ2URJ6AnUzLJ" class="status-bar" style="position:relative; z-index:1">
+        <span data-page-node-id="FRIumVUONDenZrhl9YoDFM"><!--pnid:jwliLbGAqRVcnihK1qgbpZ-->9:41</span>
+        <div data-page-node-id="kCZE6tgekOLFtSNswEb6sF" class="status-icons">
+          <svg data-page-node-id="DHd1IR16zHeRLk8Mm2GEJ3" fill="none" height="14" viewBox="0 0 18 14" width="18"><rect data-page-node-id="FPeI4Pglf3Y4VwtZXDrQZf" fill="#FFF6EC" height="7" rx="1" width="4" x="0" y="7"/><rect data-page-node-id="iptfyNamUWuaxGv3weE11S" fill="#FFF6EC" height="10" rx="1" width="4" x="6" y="4"/><rect data-page-node-id="9JxYYzbnFheGoOY2W96edI" fill="#FFF6EC" height="13" rx="1" width="4" x="12" y="1"/></svg>
+          <svg data-page-node-id="Gx7EnyeU8XdhUneBpKZn9f" fill="none" height="14" viewBox="0 0 20 14" width="20"><path data-page-node-id="J65pPeTKJSWiLPjjWUTNAk" d="M2 7C5 2 13 2 16 7C13 12 5 12 2 7Z" stroke="#FFF6EC" stroke-width="1.5"/><circle data-page-node-id="n5Uf2Nkx2lSAprP7SLp2mc" cx="9" cy="7" fill="#FFF6EC" r="2"/></svg>
+          <svg data-page-node-id="CIuAzwqIkzb2CmDUv3lu27" fill="none" height="12" viewBox="0 0 24 12" width="24"><rect data-page-node-id="U30bPF4sKSItBh6Fm3yR5f" height="11" rx="2.5" stroke="#FFF6EC" width="23" x="0.5" y="0.5"/><rect data-page-node-id="YVKYnKviS1x4qOhXxtYEkH" fill="#FFF6EC" height="8" rx="1.5" width="14" x="2" y="2"/></svg>
+        </div>
+      </div>
+      <div data-page-node-id="L8cGFtyUlqI37u3rLEIjOs" class="run-content">
+        <div data-page-node-id="9a5m6gTICOhgXv3l1fOgEc" class="mode-badge"><div data-page-node-id="zkBRIz2BlBdC3B0bIQtoie" class="badge-dot" style="background:#66CCFF"></div><!--pnid:FAMbBnH1p1SEfPo2UzwmBD-->低性能模式 · 动态效果已关闭</div>
+        <div class="runmode-badge" style="align-self:center;padding:6px 14px;border-radius:999px;font-size:12px;font-weight:600;margin-bottom:12px;">跟天依跑</div>
+        <div class="run-nowplaying" style="align-self:center;max-width:88%;padding:5px 12px;border-radius:999px;font-size:11px;font-weight:500;background:var(--surface-glass);color:var(--text-secondary);margin-bottom:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">♪ 未播放音乐</div>
+        <div data-page-node-id="kiDu1m3EE2IHQa0ITTfjpZ" class="phase-bar">
+          <div data-page-node-id="50CdKXemsVVAelAjLuYim5" class="phase active"><!--pnid:mhqlBYAL8JvTfPnne7bhpf-->热身</div>
+          <div data-page-node-id="759snNCuHj4UG39pRR7TVX" class="phase"><!--pnid:41Thc3ODBFIaobCzHCSu9k-->燃脂</div>
+          <div data-page-node-id="CcDf2XO6sr8qCOpAbrNkVw" class="phase"><!--pnid:mBIPXxmJtfFGBnilcnTZq7-->冲刺</div>
+          <div data-page-node-id="mtA6HyITY8vzWjBDHlivtu" class="phase"><!--pnid:eAaGbY0L8jMvYz8EkrShJ7-->放松</div>
+        </div>
+        <div class="stage-time" style="align-self:center;margin-top:10px;padding:5px 12px;border-radius:999px;font-size:11px;font-weight:600;background:var(--surface-glass);color:var(--text-secondary);display:none;"></div>
+        <div class="custom-bpm-chip" style="align-self:center;margin-top:10px;padding:5px 12px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(123,228,149,0.16);color:#7BE495;display:none;cursor:pointer;">自定义 170 BPM · 点击调整</div>
+        <div data-page-node-id="JA02KsNV6Q2xgmwsjXXaML" class="main-metrics">
+          <div data-page-node-id="1ghSovm47JmiGnX9izaJDU" class="timer"><!--pnid:3uDoNLIOjgKgSV9EY71gDY-->14:32</div>
+          <div data-page-node-id="OmlH52zGvUzOfXdbv4DxYN" class="distance"><!--pnid:0MQAzBqInX0mxkxAxkB0Z7-->3.24 km</div>
+        </div>
+        <div data-page-node-id="IDAuyDXuJBOsZc6WTM8Lou" class="metric-cards">
+          <div data-page-node-id="vEkWaq4ytVBnNpMVcxrB2i" class="metric-card" style="background:var(--surface-solid); border-radius:16px">
+            <div data-page-node-id="f0cQAJYsYziq6IeD44RCKX" class="hr-bar"><div data-page-node-id="hEV8NnCaBBM8aIKXffofZK" class="hr-bar-fill"></div></div>
+            <div data-page-node-id="nLFVh5juNPoaWi1FXIG4xN" class="metric-value"><!--pnid:RwGRXvqoiAuResuzY5WL4h-->156</div>
+            <div data-page-node-id="lSbcQQDItWln51IwSMGYjA" class="metric-label"><!--pnid:AnWDfw7Qz5s8f6zFGtfLGY-->心率</div>
+          </div>
+          <div data-page-node-id="7EYp0ugJzHJNTYtCPsJ2H4" class="metric-card" style="background:var(--surface-solid); border-radius:16px">
+            <div data-page-node-id="RWDMQtTlhZXyJ3LawNBzJH" class="metric-value"><!--pnid:uW9WIUOqT9KeC5Fan0ZBLb-->5'38"</div>
+            <div data-page-node-id="o4ro69WGNFTRChCYefkTBA" class="metric-label"><!--pnid:LPnFsdmvsNqKXZiEjJTSBt-->配速</div>
+            <div data-page-node-id="mHVrPnmiZtRofu3A5IwPxU" class="metric-bpm"><!--pnid:wgFzfjwrXX8MAfd9scdD3C-->BPM 165</div>
+          </div>
+        </div>
+        <div data-page-node-id="LlyEKr2SlEyn0wWoRYZOJ4" class="music-player" style="background:var(--surface-solid); border-radius:16px">
+          <div data-page-node-id="0ySwuA2wuVX82CnoCxTWuR" class="music-left">
+            <div data-page-node-id="PYRiWJTxNyWnHsL3bLVmCm" class="music-cover">
+              <svg data-page-node-id="5Fd0FHJqN2JD3TEQ8nRlQC" fill="none" height="20" viewBox="0 0 20 20" width="20"><path data-page-node-id="i53HU94EARVgRg6UqfxOAp" d="M5 15V5L15 2V12" stroke="white" stroke-width="1.5"/><circle data-page-node-id="inl80dOhjwFoQQd8WXfQtU" cx="5" cy="15" fill="white" r="3"/></svg>
+            </div>
+            <div data-page-node-id="YFyWEoi9XAAc5GP1yhsX4c">
+              <div data-page-node-id="P1Lk9LOO3BjayjYI2JRV0N" class="music-title"><!--pnid:EOw4s563UnI2byL1qXgJct-->洛天依 - 追光者</div>
+              <div data-page-node-id="lZEt2FwC4p0xF5mtevcU1M" class="music-sub"><!--pnid:Imhm548bJ5rLcyqJspC1Y1-->BPM 165 · 节拍器开启</div>
+            </div>
+          </div>
+        </div>
+        <div data-page-node-id="5H5z4kOzkRrqKWsAJ97sAi" class="pause-btn">
+          <svg data-page-node-id="0c3Xrlao33ZraecXpgknx0" fill="none" height="28" viewBox="0 0 28 28" width="28"><rect data-page-node-id="UL6hB8wETa8wGpPlv2TeeD" fill="white" height="16" rx="1" width="4" x="9" y="6"/><rect data-page-node-id="eKtGvxiE0VH8AzWQOyui4n" fill="white" height="16" rx="1" width="4" x="17" y="6"/></svg>
+        </div>
+        <div data-page-node-id="kTPoSnMEVOWDp2fa3uHxN6" class="mt-auto" style="text-align:center; padding-bottom:12px">
+          <div data-page-node-id="Zcte6DdOlBp2vftrAh6VGJ" onclick="goHome()" style="font-size:12px; color:var(--text-muted-low); cursor:pointer"><!--pnid:EcO2NDtEixgi85IbJudWFI-->← 返回首页</div>
+        </div>
+      </div>
+      <div class="music-bubble" onclick="openMusicList()" style="position:absolute;right:16px;bottom:140px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#FF8C42,#FFC1A1);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(255,140,66,0.4);cursor:pointer;z-index:10;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18V6L19 3V15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" fill="white"/></svg>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BPM 检测：开源库 bpm-detective（UMD，零依赖，暴露 window.DetectBPM） -->
+  <script src="core/bpm-detective.js"></script>
+  <script src="core/engine.js"></script>
+  <script data-page-node-id="akP2SCOCeA8EPMD2jn0uQv" data-pnid-children="3twITNlYumAETdF5m3T1vb">
+    // ===== 屏幕切换 + 性能档位（前端原有） =====
+    let tier = 'high';
+
+    function show(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function goHome() { show('screen-home'); }
+    function goSettings() { show('screen-settings'); }
+
+    function goRun() {
+      if (tier === 'low') {
+        show('screen-run-low');
+      } else {
+        show('screen-run-high');
+      }
+    }
+
+    function setTier(t) {
+      tier = t;
+      document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+      document.getElementById('phone').classList.toggle('low', tier === 'low');
+    }
+
+    // ===== 后端引擎整合（真实数据源） =====
+    const playIcon = '<svg fill="none" height="28" viewBox="0 0 28 28" width="28"><path d="M10 6L22 14L10 22Z" fill="white"/></svg>';
+    const pauseIcon = '<svg fill="none" height="28" viewBox="0 0 28 28" width="28"><rect fill="white" height="16" rx="1" width="4" x="9" y="6"/><rect fill="white" height="16" rx="1" width="4" x="17" y="6"/></svg>';
+
+    const engine = new RunnerEngine();
+    const CIRC = 226; // 心率环周长（前端 stroke-dasharray）
+
+    function setAll(sel, fn) { document.querySelectorAll(sel).forEach(fn); }
+    function fmt(sec) {
+      sec = Math.max(0, Math.floor(sec));
+      return String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
+    }
+
+    // 语音提示条（动态创建）
+    const voiceToast = document.createElement('div');
+    voiceToast.style.cssText = 'position:absolute;left:50%;top:96px;transform:translateX(-50%);z-index:50;background:rgba(0,0,0,.72);color:#fff;padding:8px 16px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:88%;text-align:center;';
+    document.getElementById('phone').appendChild(voiceToast);
+    let voiceTimer = null;
+    function speakToast(text, duration) {
+      voiceToast.textContent = '天依：' + text;
+      voiceToast.style.opacity = '1';
+      clearTimeout(voiceTimer);
+      var ms = (duration && duration > 0) ? (duration * 1000 + 500) : 3000;
+      voiceTimer = setTimeout(function () { voiceToast.style.opacity = '0'; }, ms);
+    }
+
+    // 通用提示条（不带「天依：」前缀）
+    function showTip(text, ms) {
+      voiceToast.textContent = text;
+      voiceToast.style.opacity = '1';
+      clearTimeout(voiceTimer);
+      voiceTimer = setTimeout(function () { voiceToast.style.opacity = '0'; }, ms || 2800);
+    }
+
+    // ===== GPS 距离 / 配速（带滤波：精度过滤 + 漂移过滤 + 滑动窗口 + 平滑） =====
+    let gpsOn = false;
+    function haversine(aLat, aLon, bLat, bLon) {
+      const R = 6371, toR = Math.PI / 180;
+      const dLat = (bLat - aLat) * toR, dLon = (bLon - aLon) * toR;
+      const s = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(aLat * toR) * Math.cos(bLat * toR) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      return R * 2 * Math.asin(Math.sqrt(s));
+    }
+    function fmtPace(secPerKm) {
+      if (!secPerKm || !isFinite(secPerKm) || secPerKm <= 0) return "--'--\"";
+      const m = Math.floor(secPerKm / 60), s = Math.floor(secPerKm % 60);
+      return m + "'" + String(s).padStart(2, '0') + '"';
+    }
+
+    // 一维卡尔曼滤波（匀速模型）：对纬度/经度分别平滑。
+    // GPS 点位会在真实位置附近抖动，直接累加会把抖动也算成距离（实测能虚高 5~15%）。
+    // 观测噪声按定位精度自适应：信号差时更信任运动模型，信号好时更信任实测点。
+    function Kalman1D() {
+      this.x = 0; this.p = 1; this.q = 1e-7; this.r = 1e-6; this.init = false;
+    }
+    Kalman1D.prototype.filter = function (z) {
+      if (!this.init) { this.x = z; this.p = 1; this.init = true; return z; }
+      this.p += this.q;                        // 预测：不确定性增大
+      const k = this.p / (this.p + this.r);    // 卡尔曼增益
+      this.x += k * (z - this.x);              // 用观测修正估计
+      this.p *= (1 - k);
+      return this.x;
+    };
+    Kalman1D.prototype.reset = function () { this.init = false; this.p = 1; };
+
+    const GpsPace = {
+      kLat: new Kalman1D(),  // 纬度滤波器
+      kLon: new Kalman1D(),  // 经度滤波器
+      fixes: [],       // 滑动窗口内的 {t: 毫秒, d: 累计公里}
+      last: null,      // 上一个有效定位点
+      totalKm: 0,      // 累计有效距离
+      ema: null,       // 配速指数平滑值
+      speedEma: null,  // 手机直接给出的移动速度（m/s）平滑值
+      WINDOW_MS: 45000,   // 配速窗口：最近 45 秒
+      MAX_ACCURACY: 25,   // 定位精度差于 25 米的点丢弃
+      MIN_STEP_KM: 0.003, // 相邻点位移小于 3 米视为静止漂移，不计距离
+      MAX_KMH: 30,        // 超过 30 km/h 判定为异常跳点
+
+      onFix(pos) {
+        const c = pos.coords;
+        if (!c || typeof c.latitude !== 'number') return;
+        // ① 精度过滤：城市高楼/室内定位误差大，直接丢弃
+        if (c.accuracy && c.accuracy > this.MAX_ACCURACY) return;
+        const now = pos.timestamp || Date.now();
+
+        // 手机自己算的移动速度（多数安卓机可直接给出），起步阶段比位移法灵敏
+        if (typeof c.speed === 'number' && isFinite(c.speed) && c.speed >= 0.8 && c.speed <= 8.5) {
+          this.speedEma = (this.speedEma == null) ? c.speed : (this.speedEma * 0.6 + c.speed * 0.4);
+        }
+
+        // 观测噪声按定位精度换算（米 → 度），精度越差越相信运动模型
+        const accM = (c.accuracy && c.accuracy > 0) ? c.accuracy : 10;
+        const accDeg = accM / 111320;
+        this.kLat.r = this.kLon.r = accDeg * accDeg;
+        const flat = this.kLat.filter(c.latitude);
+        const flon = this.kLon.filter(c.longitude);
+
+        if (!this.last) {
+          this.last = { lat: flat, lon: flon, t: now };
+          gpsOn = true;
+          return;
+        }
+
+        // 距离用滤波后的坐标算，抖动不再被累加进里程
+        const d = haversine(this.last.lat, this.last.lon, flat, flon);
+        const dt = Math.max(0.5, (now - this.last.t) / 1000);
+        const kmh = (d / dt) * 3600;
+
+        // ② 漂移 + 异常过滤：静止抖动不算距离，瞬移/超速点丢弃
+        if (d >= this.MIN_STEP_KM && kmh <= this.MAX_KMH) {
+          this.totalKm += d;
+          this.fixes.push({ t: now, d: this.totalKm });
+          while (this.fixes.length > 2 && (now - this.fixes[0].t) > this.WINDOW_MS) this.fixes.shift();
+        }
+        this.last = { lat: flat, lon: flon, t: now };
+        gpsOn = true;
+      },
+
+      // 当前配速（秒/公里）：优先用窗口距离法，样本不足时用手机即时速度换算
+      currentPace() {
+        const win = this._windowPace();
+        if (win != null) return win;
+        if (this.speedEma && this.speedEma >= 0.8) {
+          const p = 1000 / this.speedEma;
+          if (p > 120 && p < 1800) return p;
+        }
+        return null;
+      },
+
+      _windowPace() {
+        if (this.fixes.length < 2) return null;
+        const a = this.fixes[0], b = this.fixes[this.fixes.length - 1];
+        const dd = b.d - a.d, dt = (b.t - a.t) / 1000;
+        if (dd <= 0.005 || dt <= 3) return null;  // 窗口内几乎没移动（等红灯/暂停）
+        const pace = dt / dd;
+        if (!isFinite(pace) || pace <= 0 || pace > 1800) return null;
+        this.ema = (this.ema == null) ? pace : (this.ema * 0.7 + pace * 0.3);
+        return this.ema;
+      },
+
+      // 平均配速（全程）
+      avgPace(elapsedSec) {
+        if (this.totalKm <= 0.01 || !elapsedSec) return null;
+        return elapsedSec / this.totalKm;
+      },
+
+      // 当前速度（km/h），给 UI 用
+      currentKmh() {
+        if (this.speedEma && this.speedEma >= 0.5) return this.speedEma * 3.6;
+        const p = this._windowPace();
+        if (p && p > 0) return 3600 / p;
+        return null;
+      },
+
+      reset() {
+        this.fixes = []; this.last = null; this.totalKm = 0; this.ema = null;
+        this.speedEma = null; gpsOn = false;
+        this.kLat.reset(); this.kLon.reset();
+      },
+    };
+
+    if ('geolocation' in navigator) {
+      navigator.geolocation.watchPosition(
+        function (pos) { GpsPace.onFix(pos); },
+        function () {},
+        { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 }
+      );
+    }
+
+    // 开跑前主动拿一次定位：没权限/没信号就明说，别让配速一直显示 --
+    let gpsWarned = false;
+    function ensureGps() {
+      if (!('geolocation' in navigator)) { showTip('设备不支持定位，距离与配速不可用'); return; }
+      navigator.geolocation.getCurrentPosition(
+        function (p) { GpsPace.onFix(p); },
+        function (err) {
+          if (gpsWarned) return;
+          gpsWarned = true;
+          showTip((err && err.code === 1)
+            ? '定位权限未开启，距离和配速会不准'
+            : '暂时拿不到定位信号，配速可能有偏差', 3200);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    }
+
+    // ===== 阶段时间提示（仅「跟天依跑」生效） =====
+    let _lastTickInfo = null;
+    function fmtClock(sec) {
+      sec = Math.max(0, Math.round(sec || 0));
+      const m = Math.floor(sec / 60);
+      return String(m).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
+    }
+    function updateStageTime(t) {
+      setAll('.stage-time', function (el) {
+        // 跟随跑没有预设的四阶段划分，这条提示只在引导跑出现
+        if (engine.runMode !== 'guide' || !t || t.stageIndex == null || t.stageIndex < 0) {
+          el.style.display = 'none'; el.textContent = ''; return;
+        }
+        el.style.display = 'block';
+        const n = t.stageIndex + 1;
+        el.textContent = (t.nextStageIn == null)
+          ? ('第 ' + n + ' 阶段 剩余 ' + fmtClock(t.stageRemain))
+          : ('第 ' + n + ' 阶段 剩余 ' + fmtClock(t.stageRemain) + ' / 距下一阶段 ' + fmtClock(t.nextStageIn));
+      });
+    }
+    // 拖动进度/跳转后立刻跟着刷新（数值始终由 elapsed 现算，不做增量累加，所以天然同步）
+    function refreshStageTime() { updateStageTime(_lastTickInfo); }
+
+    // ===== 通知条（锁屏 / 通知栏常驻控制） =====
+    // 原生插件不存在（浏览器预览）时全部走空实现，不影响其它功能
+    const RunNotify = (function () {
+      const NAME = 'RunNotification';
+      let shown = false;
+      function p() {
+        return (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins[NAME]) || null;
+      }
+      function call(method, payload) {
+        const pl = p();
+        if (!pl || typeof pl[method] !== 'function') return Promise.resolve(false);
+        try {
+          return pl[method](payload || {}).then(function () { return true; })
+            .catch(function () { return false; });
+        } catch (e) { return Promise.resolve(false); }
+      }
+      // 0=还没问过 1=已授权 2=被拒/没拿到。没确认之前一个原生调用都不发，
+      // 免得服务在没权限时 notify 抛 SecurityException 把 App 带崩。
+      let permState = 0, permAt = 0;
+      return {
+        available: function () { return !!p(); },
+        hasPermission: function () { return permState === 1; },
+        // Android 13+ 的通知是运行时权限，首次显示前先要一次；被拒后每 20s 才重试一次，别刷屏
+        ensurePermission: function () {
+          if (permState === 1) return Promise.resolve(true);
+          const now = Date.now();
+          if (now - permAt < 20000) return Promise.resolve(false);
+          permAt = now;
+          const pl = p();
+          if (!pl || typeof pl.requestPermission !== 'function') { permState = 1; return Promise.resolve(true); }
+          try {
+            return pl.requestPermission().then(function (r) {
+              permState = (r && r.granted === false) ? 2 : 1;
+              return permState === 1;
+            }).catch(function () { permState = 2; return false; });
+          } catch (e) { permState = 2; return Promise.resolve(false); }
+        },
+        show: function (payload) {
+          if (permState !== 1) return Promise.resolve(false);
+          shown = true; return call('show', payload);
+        },
+        update: function (payload) {
+          if (permState !== 1) return Promise.resolve(false);
+          return call(shown ? 'update' : 'show', (shown = true, payload));
+        },
+        hide: function () { shown = false; return call('hide', {}); },
+        onAction: function (cb) {
+          const pl = p();
+          if (pl && typeof pl.addListener === 'function') {
+            pl.addListener('action', function (d) { cb && cb(d && d.action); });
+          }
+        },
+      };
+    })();
+
+    let _notifyAt = 0;
+    function syncRunNotify(force) {
+      if (!RunNotify.available()) return;
+      const st = engine.state;
+      if (st !== 'running' && st !== 'paused') { RunNotify.hide(); return; }
+      RunNotify.ensurePermission(); // 只会在第一次真正发起
+      // 权限还没确认就先不贴通知，下一个 tick（250ms 后）会自动补上
+      if (!RunNotify.hasPermission()) return;
+      const now = Date.now();
+      if (!force && now - _notifyAt < 1000) return; // 每秒最多刷一次，别把桥打满
+      _notifyAt = now;
+
+      const t = _lastTickInfo || {};
+      const km = GpsPace.totalKm;
+      const pace = GpsPace.currentPace() || GpsPace.avgPace(t.elapsed || 0);
+      const bits = ['时长 ' + fmt(t.elapsed || 0)];
+      if (km > 0) bits.push('距离 ' + km.toFixed(2) + ' km');
+      if (pace) bits.push('配速 ' + fmtPace(pace));
+      if (engine.currentHR) bits.push('心率 ' + engine.currentHR + ' bpm');
+      if (t.bpm) bits.push('BPM ' + t.bpm);
+      if (engine.runMode === 'guide' && t.stageIndex >= 0) bits.push('第 ' + (t.stageIndex + 1) + ' 阶段');
+
+      const hasMusic = engine.music.playlist.length > 0;
+      const track = hasMusic ? (engine.music.name || '待播放') : '未导入音乐';
+      const mode = (typeof RUNMODE_LABEL !== 'undefined' && RUNMODE_LABEL[engine.runMode]) || '洛天依陪跑';
+      RunNotify.update({
+        title: mode,
+        text: bits.slice(0, 3).join(' · ') + ' · ♪ ' + track,
+        workout: bits.join(' · '),
+        track: '♪ ' + track + (engine.music.playing ? '（播放中）' : '（已暂停）'),
+        playing: !!engine.music.playing,
+        running: true,
+        paused: st === 'paused',
+      });
+    }
+    RunNotify.onAction(function (a) {
+      if (a === 'prev') engine.music.prev();
+      else if (a === 'next') engine.music.next();
+      else if (a === 'togglePlay') engine.music.toggle();
+      else if (a === 'toggleRun') togglePause();
+      else if (a === 'stopRun') endWorkout();
+      updateMusicUI();
+      syncRunNotify(true);
+    });
+
+    // 引擎事件 → UI
+    engine.on('tick', function (t) {
+      _lastTickInfo = t;
+      updateStageTime(t);
+      syncRunNotify();
+      setAll('.timer', function (el) { el.textContent = fmt(t.elapsed); });
+      setAll('.distance', function (el) { el.textContent = gpsOn ? (GpsPace.totalKm.toFixed(2) + ' km') : '-- km'; });
+      setAll('.metric-cards', function (cards) {
+        const mc = cards.querySelectorAll('.metric-card');
+        if (mc[1]) {
+          // 优先显示当前配速（实时），起步阶段不足时回退平均配速
+          const pace = GpsPace.currentPace() || GpsPace.avgPace(t.elapsed);
+          mc[1].querySelector('.metric-value').textContent = fmtPace(pace);
+          // 跟随跑渐进时把目标步频也显示出来（165 → 172），用户知道天依正把他往哪儿带
+          mc[1].querySelector('.metric-bpm').textContent =
+            (t.converging && t.targetBpm) ? ('BPM ' + t.bpm + ' → ' + t.targetBpm) : ('BPM ' + t.bpm);
+        }
+      });
+      updateHome(); // 首页实时数据
+    });
+
+    engine.on('stage', function (stage, index) {
+      setAll('.phase-bar', function (bar) {
+        bar.querySelectorAll('.phase').forEach(function (p, i) { p.classList.toggle('active', i === index); });
+      });
+    });
+
+    engine.on('heartrate', function (d) {
+      const z = engine.zoneOf(d.bpm);
+      _lastHrAt = Date.now();
+      refreshHrCard(d.bpm);   // 首页卡片上的心率数字跟着实时更新
+      setAll('.metric-cards', function (cards) {
+        const mc = cards.querySelectorAll('.metric-card');
+        if (mc[0]) {
+          mc[0].querySelector('.metric-value').textContent = d.bpm;
+          const ring = mc[0].querySelector('.fill');
+          if (ring) ring.style.strokeDashoffset = (CIRC * (1 - z.pct / 100)).toFixed(1);
+          const bar = mc[0].querySelector('.hr-bar-fill');
+          if (bar) bar.style.width = z.pct + '%';
+        }
+      });
+    });
+
+    engine.on('voice', function (v) { if (v.text) speakToast(v.text, v.duration); });
+    engine.on('cheer', function (text) { if (text) speakToast(text, null); });
+    function updatePauseBtn(s) {
+      setAll('.pause-btn', function (btn) { btn.innerHTML = (s === 'running') ? pauseIcon : playIcon; });
+      // 暂停时显示「结束运动」按钮
+      setAll('.end-btn', function (btn) { btn.style.display = (s === 'paused') ? 'block' : 'none'; });
+      // 暂停/继续时音乐同步停起，顶部「正在播放」要跟着变文案
+      if (typeof updateMusicUI === 'function') updateMusicUI();
+    }
+    engine.on('state', updatePauseBtn);
+    // 暂停/继续时 tick 会停，阶段时间要手动同步一次，别停在旧数字上
+    engine.on('state', function () { refreshStageTime(); syncRunNotify(); });
+    engine.on('runmode', function () { refreshStageTime(); });
+    // 拖动进度条跳转后也同步一次
+    engine.music.onSeek = function () { refreshStageTime(); };
+    // 切歌后通知条要立刻跟着换曲目和状态，不等下一次 tick
+    engine.music.onTrack = function () { syncRunNotify(true); };
+
+    // 交互
+    // ===== 三种跑法：引导跑（App 主导）/ 跟随跑（心率主导）/ 自定义（自己定 BPM）=====
+    const RUNMODE_LABEL = { guide: '跟天依跑', follow: '天依跟你跑', custom: '自定义 BPM' };
+    const RUNMODE_COLOR = { guide: '#FF8C42', follow: '#66CCFF', custom: '#7BE495' };
+    const RUNMODE_BG = {
+      guide: 'rgba(255,140,66,0.18)', follow: 'rgba(102,204,255,0.16)', custom: 'rgba(123,228,149,0.16)',
+    };
+    function syncRunModeUI() {
+      const m = engine.runMode;
+      // 跑步页顶部小徽章：一眼看出这次是天依带节奏、天依跟你的心率，还是你自己定步频
+      setAll('.runmode-badge', function (el) {
+        el.textContent = RUNMODE_LABEL[m] || RUNMODE_LABEL.guide;
+        el.style.background = RUNMODE_BG[m] || RUNMODE_BG.guide;
+        el.style.color = RUNMODE_COLOR[m] || RUNMODE_COLOR.guide;
+      });
+      const paint = function (el, active) {
+        if (!el) return;
+        el.style.background = active ? (RUNMODE_COLOR[m] || '#FF8C42') : 'var(--surface-glass)';
+        el.style.color = active ? '#fff' : 'var(--text-secondary)';
+      };
+      paint(document.getElementById('modeGuide'), m === 'guide');
+      paint(document.getElementById('modeFollow'), m === 'follow');
+      paint(document.getElementById('modeCustom'), m === 'custom');
+      // 自定义跑没有四阶段概念，阶段条藏起来，换成步频胶囊
+      setAll('.phase-bar', function (bar) { bar.style.display = (m === 'custom') ? 'none' : 'flex'; });
+      setAll('.custom-bpm-chip', function (el) {
+        el.style.display = (m === 'custom') ? 'block' : 'none';
+        el.textContent = '自定义 ' + engine.customBpm + ' BPM · 点击调整';
+      });
+      const val = document.getElementById('customBpmBtnVal');
+      if (val) val.textContent = engine.customBpm;
+      updateRunModeHint();
+    }
+
+    /* ===== 引导跑：四阶段占比可调（总时长仍是歌单总长，这里调各阶段占多少） ===== */
+    const STAGE_COLORS = ['#66CCFF', '#FF8C42', '#FF5A7A', '#7BE495'];
+    function pctText(r) { return Math.round(r * 100) + '%'; }
+    function fmtDur(s) {
+      s = Math.max(0, Math.round(s || 0));
+      return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    }
+    function persistRatios() {
+      try { localStorage.setItem('stageRatios', JSON.stringify(engine.stageRatios)); } catch (e) {}
+    }
+    // 读回上次调好的占比
+    (function () {
+      try {
+        const saved = JSON.parse(localStorage.getItem('stageRatios') || 'null');
+        if (Array.isArray(saved) && saved.length === engine.stages.length) engine.setStageRatios(saved);
+      } catch (e) {}
+    })();
+
+    function updateRunModeHint() {
+      const hint = document.getElementById('runModeHint');
+      const btn = document.getElementById('stageRatioBtn');
+      const bpmBtn = document.getElementById('customBpmBtn');
+      if (btn) btn.style.display = (engine.runMode === 'guide') ? 'block' : 'none';
+      if (bpmBtn) bpmBtn.style.display = (engine.runMode === 'custom') ? 'block' : 'none';
+      const val = document.getElementById('customBpmBtnVal');
+      if (val) val.textContent = engine.customBpm;
+      if (!hint) return;
+      if (engine.runMode === 'follow') {
+        hint.textContent = '按你的心率自动切换四个区间，节拍器会渐进把你带到该区间的标准步频，歌单随心率排序循环';
+      } else if (engine.runMode === 'custom') {
+        hint.textContent = '节拍器全程固定在你设定的 ' + engine.customBpm
+          + ' BPM，不变速、不分阶段、不自动结束，跑多久由你决定';
+      } else {
+        const durs = engine.stageDurations();
+        hint.textContent = '节拍从慢到快带你跑，跑满歌单总时长自动结束 · '
+          + engine.stages.map(function (s, i) { return s.name + ' ' + fmtDur(durs[i]); }).join(' / ');
+      }
+    }
+
+    function onRatioInput(i, v) {
+      const cur = engine.stageRatios.slice();
+      const rest = Math.max(0, 1 - v / 100);
+      const others = cur.filter(function (_, k) { return k !== i; });
+      const sumOthers = others.reduce(function (a, b) { return a + b; }, 0);
+      const next = cur.slice();
+      next[i] = v / 100;
+      for (let k = 0; k < cur.length; k++) {
+        if (k === i) continue;
+        // 剩下的按比例分摊给其他阶段，保证合计始终 100%
+        next[k] = sumOthers > 0 ? (cur[k] / sumOthers) * rest : rest / (cur.length - 1);
+      }
+      engine.setStageRatios(next);
+      syncRatioRows(i);
+      persistRatios();
+      updateRunModeHint();
+    }
+
+    // 只刷新文字和滑块数值，不重建 DOM —— 否则正在拖的那根滑块会被销毁，拖不动
+    function syncRatioRows(skipIndex) {
+      const box = document.getElementById('ratioRows');
+      if (!box) return;
+      const ratios = engine.stageRatios;
+      const durs = engine.stageDurations();
+      for (let i = 0; i < box.children.length; i++) {
+        const row = box.children[i];
+        const p = row.querySelector('.ratio-pct');
+        const d = row.querySelector('.ratio-dur');
+        if (p) p.textContent = pctText(ratios[i]);
+        if (d) d.textContent = fmtDur(durs[i]);
+        const s = row.querySelector('input');
+        if (s && i !== skipIndex) s.value = Math.round(ratios[i] * 100);
+      }
+    }
+
+    function renderRatioRows() {
+      const box = document.getElementById('ratioRows');
+      if (!box) return;
+      const ratios = engine.stageRatios;
+      const durs = engine.stageDurations();
+      const total = durs.reduce(function (a, b) { return a + b; }, 0);
+      const sub = document.getElementById('ratioSub');
+      if (sub) sub.textContent = '总时长 ' + fmtDur(total) + '（= 歌单总时长）· 拖动滑块，其余阶段自动按比例重分。';
+      box.innerHTML = '';
+      engine.stages.forEach(function (st, i) {
+        const row = document.createElement('div');
+        row.style.cssText = 'padding:12px;border-radius:14px;background:var(--surface-glass);margin-bottom:10px;';
+        row.innerHTML =
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+            '<div style="display:flex;align-items:center;gap:8px;">' +
+              '<span style="width:8px;height:8px;border-radius:50%;background:' + (STAGE_COLORS[i] || '#FF8C42') + ';"></span>' +
+              '<span style="font-size:14px;font-weight:600;">' + st.name + '</span>' +
+              '<span style="font-size:11px;color:var(--text-secondary);">' + st.startBpm + '-' + st.endBpm + ' BPM</span>' +
+            '</div>' +
+            '<div><span class="ratio-pct" style="font-size:15px;font-weight:700;color:#FF8C42;">' + pctText(ratios[i]) + '</span>' +
+            '<span class="ratio-dur" style="font-size:11px;color:var(--text-secondary);margin-left:6px;">' + fmtDur(durs[i]) + '</span></div>' +
+          '</div>' +
+          '<input type="range" min="5" max="70" step="1" value="' + Math.round(ratios[i] * 100) + '" style="width:100%;accent-color:#FF8C42;">';
+        const slider = row.querySelector('input');
+        slider.oninput = function () { onRatioInput(i, parseInt(slider.value, 10) || 5); };
+        box.appendChild(row);
+      });
+    }
+
+    function openStageRatio() {
+      let ov = document.getElementById('ratioOverlay');
+      if (!ov) ov = buildStageRatioOverlay();
+      if (!ov) return;
+      renderRatioRows();
+      ov.style.display = 'flex';
+      currentOverlay = 'ratio';
+    }
+    function closeStageRatio() {
+      const ov = document.getElementById('ratioOverlay');
+      if (ov) ov.style.display = 'none';
+      if (currentOverlay === 'ratio') currentOverlay = null;
+      updateRunModeHint();
+    }
+    function buildStageRatioOverlay() {
+      const phone = document.getElementById('phone');
+      if (!phone) return null;
+      const ov = document.createElement('div');
+      ov.id = 'ratioOverlay';
+      ov.style.cssText = 'position:absolute;inset:0;z-index:49;background:rgba(19,18,28,0.98);display:none;flex-direction:column;padding:70px 20px 30px;overflow-y:auto;';
+      ov.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+          '<div style="font-size:20px;font-weight:700;">阶段分配</div>' +
+          '<div id="ratioClose" style="cursor:pointer;font-size:22px;color:var(--text-secondary);padding:4px;">✕</div>' +
+        '</div>' +
+        '<div id="ratioSub" style="font-size:11px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5;"></div>' +
+        '<div id="ratioRows"></div>' +
+        '<div style="display:flex;gap:8px;margin-top:18px;">' +
+          '<div id="ratioReset" style="flex:1;text-align:center;padding:11px;border-radius:12px;background:var(--surface-glass);color:var(--text-secondary);cursor:pointer;font-size:13px;">恢复默认</div>' +
+          '<div id="ratioDone" style="flex:1;text-align:center;padding:11px;border-radius:12px;background:#FF8C42;color:#fff;cursor:pointer;font-size:13px;font-weight:600;">完成</div>' +
+        '</div>' +
+        '<div style="font-size:11px;color:var(--text-secondary);margin-top:12px;line-height:1.5;">只作用于「跟天依跑」：总时长仍是歌单总长，这里调的是四个阶段各占多少。</div>';
+      phone.appendChild(ov);
+      document.getElementById('ratioClose').onclick = closeStageRatio;
+      document.getElementById('ratioDone').onclick = closeStageRatio;
+      document.getElementById('ratioReset').onclick = function () {
+        engine.setStageRatios(engine.stages.map(function (s) { return s.dur; }));
+        renderRatioRows();
+        persistRatios();
+        updateRunModeHint();
+      };
+      return ov;
+    }
+    /* ===== 自定义跑：设定步频 BPM ===== */
+    // 常见步频档位，直接点比拖滑块快（跑步时手在抖，大按钮更好按）
+    const BPM_PRESETS = [
+      { v: 150, label: '轻松' }, { v: 160, label: '慢跑' }, { v: 170, label: '节奏' },
+      { v: 180, label: '快跑' }, { v: 190, label: '冲刺' }, { v: 200, label: '间歇' },
+    ];
+    function persistCustomBpm() {
+      try { localStorage.setItem('customBpm', String(engine.customBpm)); } catch (e) {}
+    }
+    // 读回上次设过的步频
+    (function () {
+      try {
+        const v = parseInt(localStorage.getItem('customBpm'), 10);
+        if (v) engine.setCustomBpm(v);
+      } catch (e) {}
+    })();
+
+    let _bpmPreviewOn = false;
+    // 只刷文字和滑块数值，不重建 DOM —— 否则正在拖的那根滑块会被销毁，拖不动
+    function syncBpmUI(skipSlider) {
+      const big = document.getElementById('bpmBig');
+      const slider = document.getElementById('bpmSlider');
+      if (big) big.textContent = engine.customBpm;
+      if (slider && !skipSlider) slider.value = engine.customBpm;
+      // 档位高亮：跟当前值一致的那个点亮
+      const box = document.getElementById('bpmPresets');
+      if (box) {
+        for (let i = 0; i < box.children.length; i++) {
+          const on = String(BPM_PRESETS[i].v) === String(engine.customBpm);
+          box.children[i].style.background = on ? 'rgba(123,228,149,0.22)' : 'var(--surface-glass)';
+          box.children[i].style.color = on ? '#7BE495' : 'var(--text-secondary)';
+        }
+      }
+      const sub = document.getElementById('bpmSub');
+      if (sub) sub.textContent = '每公里约 ' + bpmToPace(engine.customBpm) + '（按步幅 0.9m 估算，仅供参考）';
+    }
+    // 步频 → 预估配速：步长 × 步频 = 速度。步幅因人而异，只给个量级参考
+    function bpmToPace(bpm) {
+      const stride = 0.9; // 米/步，成年人慢跑常见值
+      const secPerKm = 1000 / (bpm * stride / 60);
+      const m = Math.floor(secPerKm / 60), s = Math.round(secPerKm % 60);
+      return m + "'" + String(s).padStart(2, '0') + '"';
+    }
+    function setBpmValue(v) {
+      engine.setCustomBpm(v);
+      syncBpmUI(true);
+      persistCustomBpm();
+      updateRunModeHint();
+      // 跑步页的步频胶囊跟着变
+      setAll('.custom-bpm-chip', function (el) {
+        el.textContent = '自定义 ' + engine.customBpm + ' BPM · 点击调整';
+      });
+      const val = document.getElementById('customBpmBtnVal');
+      if (val) val.textContent = engine.customBpm;
+      // 试听中改值：节拍器立刻跟上，用户能直接听到快慢差别
+      if (_bpmPreviewOn) engine.metronome.setBpm(engine.customBpm);
+    }
+    function toggleBpmPreview() {
+      // 跑步中本来就在打拍子，再开试听只会把节拍器停下来 —— 那种情况下直接禁掉
+      if (engine.state === 'running' || engine.state === 'paused') return;
+      const btn = document.getElementById('bpmPreview');
+      _bpmPreviewOn = !_bpmPreviewOn;
+      try {
+        if (_bpmPreviewOn) { engine.metronome.setBpm(engine.customBpm); engine.metronome.start(); }
+        else engine.metronome.stop();
+      } catch (e) { _bpmPreviewOn = false; }
+      if (btn) {
+        btn.textContent = _bpmPreviewOn ? '■ 停止试听' : '▶ 试听';
+        btn.style.background = _bpmPreviewOn ? '#7BE495' : 'var(--surface-glass)';
+        btn.style.color = _bpmPreviewOn ? '#13121C' : 'var(--text-secondary)';
+      }
+    }
+    function stopBpmPreview() { if (_bpmPreviewOn) toggleBpmPreview(); }
+
+    function openCustomBpm() {
+      let ov = document.getElementById('bpmOverlay');
+      if (!ov) ov = buildCustomBpmOverlay();
+      if (!ov) return;
+      syncBpmUI();
+      // 跑步中打开（点跑步页的步频胶囊）：节拍器正在响，试听没意义，改成提示
+      const canPreview = !(engine.state === 'running' || engine.state === 'paused');
+      const pv = document.getElementById('bpmPreview');
+      if (pv) {
+        pv.textContent = canPreview ? (_bpmPreviewOn ? '■ 停止试听' : '▶ 试听') : '跑步中 · 改了立刻生效';
+        pv.style.opacity = canPreview ? '1' : '0.45';
+        pv.style.pointerEvents = canPreview ? 'auto' : 'none';
+      }
+      ov.style.display = 'flex';
+      currentOverlay = 'bpm';
+    }
+    function closeCustomBpm() {
+      stopBpmPreview(); // 关掉时必须停，否则节拍器会一直响
+      const ov = document.getElementById('bpmOverlay');
+      if (ov) ov.style.display = 'none';
+      if (currentOverlay === 'bpm') currentOverlay = null;
+      updateRunModeHint();
+    }
+    function buildCustomBpmOverlay() {
+      const phone = document.getElementById('phone');
+      if (!phone) return null;
+      const ov = document.createElement('div');
+      ov.id = 'bpmOverlay';
+      ov.style.cssText = 'position:absolute;inset:0;z-index:49;background:rgba(19,18,28,0.98);display:none;flex-direction:column;padding:70px 20px 30px;overflow-y:auto;';
+      const presets = BPM_PRESETS.map(function (p) {
+        return '<div data-bpm="' + p.v + '" style="flex:1;text-align:center;padding:9px 2px;border-radius:10px;'
+          + 'background:var(--surface-glass);color:var(--text-secondary);cursor:pointer;font-size:11px;">'
+          + '<div style="font-size:13px;font-weight:700;">' + p.v + '</div>'
+          + '<div style="margin-top:2px;">' + p.label + '</div></div>';
+      }).join('');
+      ov.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+          '<div style="font-size:20px;font-weight:700;">设定步频</div>' +
+          '<div id="bpmClose" style="cursor:pointer;font-size:22px;color:var(--text-secondary);padding:4px;">✕</div>' +
+        '</div>' +
+        '<div id="bpmSub" style="font-size:11px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5;"></div>' +
+        '<div style="padding:18px;border-radius:16px;background:var(--surface-glass);text-align:center;">' +
+          '<div style="display:flex;align-items:center;justify-content:center;gap:22px;">' +
+            '<div id="bpmMinus" style="width:44px;height:44px;border-radius:50%;background:var(--surface-solid);'
+              + 'color:#fff;font-size:24px;line-height:42px;cursor:pointer;user-select:none;">−</div>' +
+            '<div><span id="bpmBig" style="font-size:44px;font-weight:800;color:#7BE495;line-height:1;">170</span>'
+              + '<span style="font-size:13px;color:var(--text-secondary);margin-left:6px;">BPM</span></div>' +
+            '<div id="bpmPlus" style="width:44px;height:44px;border-radius:50%;background:var(--surface-solid);'
+              + 'color:#fff;font-size:24px;line-height:42px;cursor:pointer;user-select:none;">＋</div>' +
+          '</div>' +
+          '<input id="bpmSlider" type="range" min="60" max="220" step="1" value="170" '
+            + 'style="width:100%;margin-top:16px;accent-color:#7BE495;">' +
+          '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-secondary);margin-top:2px;">'
+            + '<span>60</span><span>BPM</span><span>220</span></div>' +
+        '</div>' +
+        '<div id="bpmPresets" style="display:flex;gap:6px;margin-top:14px;">' + presets + '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:18px;">' +
+          '<div id="bpmPreview" style="flex:1;text-align:center;padding:11px;border-radius:12px;'
+            + 'background:var(--surface-glass);color:var(--text-secondary);cursor:pointer;font-size:13px;">▶ 试听</div>' +
+          '<div id="bpmDone" style="flex:1;text-align:center;padding:11px;border-radius:12px;'
+            + 'background:#7BE495;color:#13121C;cursor:pointer;font-size:13px;font-weight:700;">完成</div>' +
+        '</div>' +
+        '<div style="font-size:11px;color:var(--text-secondary);margin-top:12px;line-height:1.5;">'
+          + '只作用于「自定义」跑法：节拍器全程锁在这个值，不变速、不分阶段、不自动结束。</div>';
+      phone.appendChild(ov);
+
+      document.getElementById('bpmClose').onclick = closeCustomBpm;
+      document.getElementById('bpmDone').onclick = closeCustomBpm;
+      document.getElementById('bpmMinus').onclick = function () { setBpmValue(engine.customBpm - 1); };
+      document.getElementById('bpmPlus').onclick = function () { setBpmValue(engine.customBpm + 1); };
+      document.getElementById('bpmPreview').onclick = toggleBpmPreview;
+      const slider = document.getElementById('bpmSlider');
+      slider.oninput = function () { setBpmValue(parseInt(slider.value, 10) || 170); };
+      const box = document.getElementById('bpmPresets');
+      for (let i = 0; i < box.children.length; i++) {
+        box.children[i].onclick = function () { setBpmValue(BPM_PRESETS[i].v); };
+      }
+      return ov;
+    }
+
+    function pickRunMode(m) {
+      engine.setRunMode(m);
+      try { localStorage.setItem('runMode', m); } catch (e) {}
+      syncRunModeUI();
+    }
+    const guideBtn = document.getElementById('modeGuide');
+    const followBtn = document.getElementById('modeFollow');
+    const customBtn = document.getElementById('modeCustom');
+    if (guideBtn) guideBtn.onclick = function () { pickRunMode('guide'); };
+    if (followBtn) followBtn.onclick = function () { pickRunMode('follow'); };
+    if (customBtn) customBtn.onclick = function () { pickRunMode('custom'); };
+    const ratioBtn = document.getElementById('stageRatioBtn');
+    if (ratioBtn) ratioBtn.onclick = function () { openStageRatio(); };
+    const bpmBtn = document.getElementById('customBpmBtn');
+    if (bpmBtn) bpmBtn.onclick = function () { openCustomBpm(); };
+    // 跑步页的步频胶囊点一下就能改，跑着觉得快了/慢了随时调
+    setAll('.custom-bpm-chip', function (el) { el.onclick = function () { openCustomBpm(); }; });
+    try {
+      const saved = localStorage.getItem('runMode');
+      if (saved === 'follow' || saved === 'guide' || saved === 'custom') engine.setRunMode(saved);
+    } catch (e) {}
+    syncRunModeUI();
+
+    function startRun() {
+      goRun();
+      if (engine.state === 'idle' || engine.state === 'finished') {
+        GpsPace.reset();  // 新一次运动，距离/配速从零开始
+        ensureGps();      // 开跑前确认定位可用
+        if (engine.runMode === 'follow' && !engine.currentHR) {
+          showTip('跟随跑靠心率定区间，先连上手环效果才准哦', 3400);
+        }
+        engine.start();
+        updatePauseBtn('running');
+      }
+    }
+    function togglePause() {
+      if (engine.state === 'running') { engine.pause(); updatePauseBtn('paused'); }
+      else if (engine.state === 'paused') { engine.resume(); updatePauseBtn('running'); }
+      else { engine.start(); updatePauseBtn('running'); }
+    }
+
+    // ===== 长按结束运动（带环形进度，防误触） =====
+    const LONG_PRESS_MS = 800;
+    let pressBtn = null, pressActive = false, pressFired = false, pressStartTime = 0;
+
+    function buildRing(btn) {
+      const CIRC2 = 2 * Math.PI * 46;
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 100 100');
+      svg.style.cssText = 'position:absolute;inset:-8px;width:calc(100% + 16px);height:calc(100% + 16px);pointer-events:none;opacity:0;transition:opacity .15s;';
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', '50'); circle.setAttribute('cy', '50'); circle.setAttribute('r', '46');
+      circle.setAttribute('fill', 'none');
+      circle.setAttribute('stroke', '#FF8C42');
+      circle.setAttribute('stroke-width', '4');
+      circle.setAttribute('stroke-linecap', 'round');
+      circle.style.strokeDasharray = CIRC2;
+      circle.style.strokeDashoffset = CIRC2;
+      circle.style.transform = 'rotate(-90deg)';
+      circle.style.transformOrigin = 'center';
+      svg.appendChild(circle);
+      btn.appendChild(svg);
+      btn._ringCircle = circle; btn._ringSvg = svg; btn._ringCirc = CIRC2;
+    }
+
+    function setRingOn(btn, p) {
+      if (!btn || !btn._ringCircle) return;
+      btn._ringCircle.style.strokeDashoffset = btn._ringCirc * (1 - p);
+      btn._ringSvg.style.opacity = p > 0 ? '1' : '0';
+    }
+
+    function endWorkout() {
+      engine.finish();
+      updatePauseBtn('finished');
+      setAll('.timer', function (el) { el.textContent = '00:00'; });
+      setAll('.distance', function (el) { el.textContent = '-- km'; });
+      recordRun();
+      updateStreak();
+    }
+
+    // ===== 运动结束：心率变化图 + 本次总结 =====
+    function hrChartSVG(series) {
+      if (!series || series.length < 2) {
+        return '<div style="height:130px;display:flex;align-items:center;justify-content:center;'
+          + 'color:var(--text-secondary);font-size:12px;text-align:center;line-height:1.7;">'
+          + '这次没有记录到心率<br>连上手环，下次就能看到曲线啦</div>';
+      }
+      const W = 322, H = 130, PL = 26, PR = 8, PT = 12, PB = 20;
+      const hrs = series.map(function (p) { return p.hr; });
+      let min = Math.min.apply(null, hrs), max = Math.max.apply(null, hrs);
+      if (max - min < 20) { const mid = (max + min) / 2; min = mid - 12; max = mid + 12; }
+      const padv = (max - min) * 0.15;
+      min = Math.max(30, min - padv); max = max + padv;
+      const tMax = Math.max(1, series[series.length - 1].t);
+      const X = function (t) { return PL + (t / tMax) * (W - PL - PR); };
+      const Y = function (h) { return PT + (1 - (h - min) / (max - min)) * (H - PT - PB); };
+
+      let path = '';
+      series.forEach(function (p, i) {
+        path += (i ? ' L' : 'M') + X(p.t).toFixed(1) + ' ' + Y(p.hr).toFixed(1);
+      });
+      const area = path + ' L' + X(tMax).toFixed(1) + ' ' + (H - PB) + ' L' + X(0).toFixed(1) + ' ' + (H - PB) + ' Z';
+
+      let grid = '';
+      for (let g = 0; g <= 2; g++) {
+        const gy = PT + (g / 2) * (H - PT - PB);
+        const hv = Math.round(max - (g / 2) * (max - min));
+        grid += '<line x1="' + PL + '" y1="' + gy.toFixed(1) + '" x2="' + (W - PR) + '" y2="' + gy.toFixed(1)
+          + '" stroke="rgba(255,246,236,0.10)" stroke-width="1"/>'
+          + '<text x="' + (PL - 5) + '" y="' + (gy + 3).toFixed(1) + '" fill="rgba(255,246,236,0.45)" font-size="9" text-anchor="end">' + hv + '</text>';
+      }
+      const last = series[series.length - 1];
+      return '<svg width="100%" viewBox="0 0 ' + W + ' ' + H + '" style="display:block;">'
+        + '<defs><linearGradient id="hrgrad" x1="0" y1="0" x2="0" y2="1">'
+        + '<stop offset="0%" stop-color="#66CCFF" stop-opacity="0.36"/>'
+        + '<stop offset="100%" stop-color="#66CCFF" stop-opacity="0"/></linearGradient></defs>'
+        + grid
+        + '<path d="' + area + '" fill="url(#hrgrad)"/>'
+        + '<path d="' + path + '" fill="none" stroke="#66CCFF" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'
+        + '<circle cx="' + X(last.t).toFixed(1) + '" cy="' + Y(last.hr).toFixed(1) + '" r="3" fill="#66CCFF"/>'
+        + '<text x="' + PL + '" y="' + (H - 6) + '" fill="rgba(255,246,236,0.45)" font-size="9">0:00</text>'
+        + '<text x="' + (W - PR) + '" y="' + (H - 6) + '" fill="rgba(255,246,236,0.45)" font-size="9" text-anchor="end">' + fmt(tMax) + '</text>'
+        + '</svg>';
+    }
+
+    function showWorkoutSummary(s) {
+      const phone = document.getElementById('phone');
+      const old = document.getElementById('sumOverlay');
+      if (old && old.parentNode) old.parentNode.removeChild(old);
+
+      const km = GpsPace.totalKm;
+      const pace = GpsPace.avgPace(s.elapsed);
+      function card(label, val) {
+        return '<div style="flex:1;background:var(--surface-glass);border-radius:14px;padding:12px 8px;text-align:center;">'
+          + '<div style="font-size:18px;font-weight:700;">' + val + '</div>'
+          + '<div style="font-size:11px;color:var(--text-secondary);margin-top:3px;">' + label + '</div></div>';
+      }
+      const ov = document.createElement('div');
+      ov.id = 'sumOverlay';
+      ov.style.cssText = 'position:absolute;inset:0;z-index:60;background:rgba(19,18,28,0.97);'
+        + 'display:flex;flex-direction:column;padding:64px 18px 24px;overflow-y:auto;';
+      ov.innerHTML =
+        '<div style="font-size:22px;font-weight:700;margin-bottom:4px;">本次训练完成</div>'
+        + '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:18px;">天依给你点赞，记得拉伸哦～</div>'
+        + '<div style="display:flex;gap:8px;margin-bottom:8px;">'
+        + card('时长', fmt(s.elapsed)) + card('距离', km > 0 ? km.toFixed(2) + ' km' : '--') + '</div>'
+        + '<div style="display:flex;gap:8px;margin-bottom:18px;">'
+        + card('平均配速', fmtPace(pace)) + card('平均心率', s.avgHR || '--') + '</div>'
+        + '<div style="background:var(--surface-glass);border-radius:16px;padding:14px;margin-bottom:16px;">'
+        + '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">'
+        + '<div style="font-size:14px;font-weight:600;">心率变化</div>'
+        + '<div style="font-size:11px;color:var(--text-secondary);">最高 ' + (s.maxHR || '--') + ' bpm</div></div>'
+        + hrChartSVG(s.hrSeries) + '</div>'
+        + savePlaylistBlockHTML()
+        + '<div id="sumClose" style="margin-top:auto;text-align:center;padding:14px;border-radius:999px;'
+        + 'background:#FF8C42;color:#fff;font-weight:600;cursor:pointer;">完成</div>';
+      phone.appendChild(ov);
+      document.getElementById('sumClose').onclick = function () {
+        if (ov.parentNode) ov.parentNode.removeChild(ov);
+        GpsPace.reset(); // 总结看完了，里程归零，下次开跑重新计
+        goHome();
+      };
+      wireSavePlaylist(ov);
+    }
+
+    // 本次运动播过的歌（按播放日志顺序还原成 track）
+    function playedTracksThisRun() {
+      const names = engine.music.playedNames || [];
+      const out = [];
+      names.forEach(function (n) {
+        const t = engine.music.playlist.find(function (x) { return x.name === n; });
+        if (t) out.push(t);
+      });
+      return out;
+    }
+    function savePlaylistBlockHTML() {
+      const tracks = playedTracksThisRun();
+      if (!tracks.length) {
+        return '<div style="background:var(--surface-glass);border-radius:16px;padding:14px;margin-bottom:16px;'
+          + 'font-size:12px;color:var(--text-secondary);">本次没有播放歌曲，无可保存的歌单</div>';
+      }
+      const preview = tracks.slice(0, 3).map(function (t) { return t.name; }).join('、')
+        + (tracks.length > 3 ? ' 等' : '');
+      return '<div id="sumSaveBox" style="background:var(--surface-glass);border-radius:16px;padding:14px;margin-bottom:16px;">'
+        + '<div style="font-size:14px;font-weight:600;margin-bottom:4px;">保存本次歌单？</div>'
+        + '<div style="font-size:11px;color:var(--text-secondary);margin-bottom:10px;line-height:1.5;">'
+        + '本次播放 ' + tracks.length + ' 首：' + preview + '<br>确认后以今天日期命名存入「我的歌单」</div>'
+        + '<div style="display:flex;gap:8px;">'
+        + '<div id="sumSaveYes" style="flex:1;text-align:center;padding:11px;border-radius:12px;background:#FF8C42;color:#fff;font-weight:600;cursor:pointer;font-size:13px;">保存</div>'
+        + '<div id="sumSaveNo" style="flex:1;text-align:center;padding:11px;border-radius:12px;background:rgba(255,255,255,0.06);color:var(--text-secondary);cursor:pointer;font-size:13px;">不保存</div>'
+        + '</div>'
+        + '<div id="sumSaveHint" style="font-size:11px;color:var(--text-secondary);margin-top:8px;display:none;"></div></div>';
+    }
+    function wireSavePlaylist(ov) {
+      const yes = document.getElementById('sumSaveYes');
+      const no = document.getElementById('sumSaveNo');
+      const hint = document.getElementById('sumSaveHint');
+      if (!yes || !no) return;
+      const done = function (msg) {
+        yes.style.display = 'none'; no.style.display = 'none';
+        if (hint) { hint.style.display = 'block'; hint.textContent = msg; }
+      };
+      yes.onclick = function () {
+        const Store = (window.RunnerCore && window.RunnerCore.PlaylistStore)
+          || (typeof RunnerCore !== 'undefined' && RunnerCore.PlaylistStore) || null;
+        const tracks = playedTracksThisRun();
+        if (!Store || !tracks.length) { done('没有可保存的歌曲'); return; }
+        const name = todayStr();
+        Store.add(name, tracks);
+        updateMusicUI();
+        done('已保存为歌单「' + name + '」，可在音乐页「我的歌单」查看');
+      };
+      no.onclick = function () { done('本次未保存歌单'); };
+    }
+
+    // 引擎跑到终点（引导跑跑满歌单时长）或用户长按结束时都会发 finish，统一在这里弹总结
+    engine.on('finish', function (s) {
+      RunNotify.hide(); // 运动结束，通知条撤掉
+      showWorkoutSummary(s || {});
+    });
+
+    // 连续跑步天数统计
+    function recordRun() {
+      const today = new Date();
+      const key = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+      let days = [];
+      try { days = JSON.parse(localStorage.getItem('runDays') || '[]'); } catch (e) { days = []; }
+      if (days.indexOf(key) === -1) days.push(key);
+      localStorage.setItem('runDays', JSON.stringify(days));
+    }
+    function calcStreak() {
+      let days = [];
+      try { days = JSON.parse(localStorage.getItem('runDays') || '[]'); } catch (e) { days = []; }
+      const set = {};
+      days.forEach(function (d) { set[d] = true; });
+      let streak = 0;
+      const d = new Date();
+      while (true) {
+        const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        if (set[key]) { streak++; d.setDate(d.getDate() - 1); } else break;
+      }
+      return streak;
+    }
+    function updateStreak() {
+      const streak = calcStreak();
+      document.querySelectorAll('.badge-run').forEach(function (el) {
+        const svg = el.querySelector('svg');
+        if (svg) {
+          el.innerHTML = '';
+          el.appendChild(svg.cloneNode(true));
+          el.appendChild(document.createTextNode(' 连续 ' + streak + ' 天'));
+        } else {
+          el.textContent = '连续 ' + streak + ' 天';
+        }
+      });
+    }
+
+    // 每个跑步屏底部加「结束运动」按钮（暂停时显示）
+    function buildEndButton() {
+      document.querySelectorAll('.run-content').forEach(function (rc) {
+        const btn = document.createElement('div');
+        btn.className = 'end-btn';
+        btn.textContent = '结束运动';
+        btn.style.cssText = 'display:none;text-align:center;padding:13px;margin-top:10px;border-radius:999px;background:rgba(251,113,133,0.14);color:#FB7185;font-weight:600;cursor:pointer;font-size:14px;border:1px solid rgba(251,113,133,0.3);';
+        rc.appendChild(btn);
+        btn.onclick = endWorkout;
+      });
+    }
+
+    function onPressStart(e) {
+      if (engine.state !== 'running' && engine.state !== 'paused') return; // 待机时长按无意义
+      e.preventDefault();
+      pressBtn = e.currentTarget;
+      pressActive = true;
+      pressFired = false;
+      pressStartTime = performance.now();
+      (function tick() {
+        if (!pressActive || pressBtn !== e.currentTarget) return;
+        const p = Math.min(1, (performance.now() - pressStartTime) / LONG_PRESS_MS);
+        setRingOn(pressBtn, p);
+        if (p >= 1) {
+          pressFired = true;
+          pressActive = false;
+          setRingOn(pressBtn, 0);
+          endWorkout();
+          return;
+        }
+        requestAnimationFrame(tick);
+      })();
+    }
+
+    function onPressEnd(e) {
+      if (!pressActive || pressBtn !== e.currentTarget) {
+        // 待机/已完成时的短按 → 开始训练
+        if (engine.state === 'idle' || engine.state === 'finished') togglePause();
+        return;
+      }
+      pressActive = false;
+      setRingOn(pressBtn, 0);
+      if (!pressFired) togglePause(); // 短按 → 暂停/继续
+      pressFired = false;
+      pressBtn = null;
+    }
+
+    document.querySelectorAll('.hero-card .btn').forEach(function (btn) { btn.onclick = startRun; });
+    document.querySelectorAll('.pause-btn').forEach(function (btn) {
+      btn.style.position = 'relative';
+      btn.style.touchAction = 'none';
+      buildRing(btn);
+      btn.addEventListener('pointerdown', onPressStart);
+      btn.addEventListener('pointerup', onPressEnd);
+      btn.addEventListener('pointerleave', onPressEnd);
+      btn.addEventListener('pointercancel', onPressEnd);
+    });
+
+    // ===== 蓝牙连接（Capacitor BLE 优先，Web Bluetooth 回退） =====
+    let currentOverlay = null;
+    let lastBackTime = 0;
+    let bleDeviceId = null;
+    let bleDeviceName = '';
+
+    function buildBleOverlay() {
+      const phone = document.getElementById('phone');
+      const ov = document.createElement('div');
+      ov.id = 'bleOverlay';
+      ov.style.cssText = 'position:absolute;inset:0;z-index:48;background:rgba(19,18,28,0.98);display:none;flex-direction:column;padding:70px 24px 30px;';
+      ov.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">' +
+        '<div style="font-size:22px;font-weight:700;">连接设备</div>' +
+        '<div id="bleClose" style="cursor:pointer;font-size:15px;color:var(--text-secondary);padding:4px;">← 返回</div>' +
+        '</div>' +
+        '<div style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;">请开启手环/手表的「心率广播」并靠近手机</div>' +
+        '<div id="bleList" style="display:flex;flex-direction:column;gap:8px;flex:1;overflow-y:auto;"></div>' +
+        '<div id="bleScanBtn" style="margin-top:14px;text-align:center;padding:14px;border-radius:999px;background:#FF8C42;color:#fff;font-weight:600;cursor:pointer;">重新扫描</div>';
+      phone.appendChild(ov);
+      document.getElementById('bleClose').onclick = function () { closeOverlay('ble'); };
+      document.getElementById('bleScanBtn').onclick = function () { startBleScan(); };
+      // 首页加「连接设备」独立卡片（放在 hero 下面）
+      const statsGrid = document.querySelector('.stats-grid');
+      if (statsGrid) {
+        const card = document.createElement('div');
+        card.className = 'glass';
+        card.style.cssText = 'display:flex;align-items:center;gap:12px;padding:16px;border-radius:20px;margin-bottom:16px;cursor:pointer;border:1px solid var(--border-glass);';
+        card.id = 'hrCard';
+        card.innerHTML =
+          '<div id="hrCardIcon" style="width:42px;height:42px;border-radius:12px;background:var(--accent-luo-soft);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">⌚</div>' +
+          '<div style="flex:1;min-width:0;">' +
+          '<div id="hrCardTitle" style="font-size:15px;font-weight:600;">连接手环/手表</div>' +
+          '<div id="hrCardSub" style="font-size:12px;color:var(--text-secondary);">实时心率监测</div>' +
+          '</div>' +
+          '<div id="hrCardAction" style="font-size:12px;color:#66CCFF;font-weight:500;flex-shrink:0;">去连接 ›</div>';
+        card.onclick = function () { startBleScan(); };
+        statsGrid.parentNode.insertBefore(card, statsGrid);
+        refreshHrCard(null);
+      }
+    }
+
+    // 首页心率卡片：没连时是「去连接」，连上后变成实时心率 + 「取消连接」
+    let _hrCardState = '';
+    function refreshHrCard(bpm) {
+      const card = document.getElementById('hrCard');
+      if (!card) return;
+      const want = bleDeviceId ? 'on' : 'off';
+
+      if (want !== _hrCardState) {   // 只在连接状态切换时改静态部分，心率刷新走下面的轻量分支
+        _hrCardState = want;
+        const icon = document.getElementById('hrCardIcon');
+        const sub = document.getElementById('hrCardSub');
+        const action = document.getElementById('hrCardAction');
+        if (want === 'on') {
+          if (icon) { icon.textContent = '❤'; icon.style.background = 'rgba(102,204,255,0.22)'; icon.style.color = '#66CCFF'; }
+          if (sub) sub.textContent = '已连接 ' + (bleDeviceName || '设备');
+          if (action) {
+            action.textContent = '取消连接';
+            action.style.cssText = 'font-size:12px;color:var(--text-secondary);padding:7px 12px;border-radius:999px;'
+              + 'border:1px solid var(--border-glass);flex-shrink:0;cursor:pointer;';
+            action.onclick = function (e) { e.stopPropagation(); disconnectBle(); };
+          }
+          card.style.cursor = 'default';
+          card.onclick = null;       // 已连接时点整张卡不该再跳去扫描
+        } else {
+          if (icon) { icon.textContent = '⌚'; icon.style.background = 'var(--accent-luo-soft)'; icon.style.color = ''; }
+          if (sub) sub.textContent = '实时心率监测';
+          if (action) {
+            action.textContent = '去连接 ›';
+            action.style.cssText = 'font-size:12px;color:#66CCFF;font-weight:500;flex-shrink:0;';
+            action.onclick = null;
+          }
+          card.style.cursor = 'pointer';
+          card.onclick = function () { startBleScan(); };
+        }
+      }
+
+      if (want === 'on') {  // 心率数字单独刷，1 秒一次，不动其余 DOM
+        const title = document.getElementById('hrCardTitle');
+        if (title) {
+          title.innerHTML = bpm
+            ? '心率 <span style="font-size:20px;font-weight:700;color:#66CCFF;">' + bpm + '</span>'
+              + ' <span style="font-size:11px;color:var(--text-secondary);font-weight:400;">bpm</span>'
+            : '等待心率数据…';
+        }
+      }
+    }
+
+    // 设备中途断开/超出范围时，卡片不该一直停在旧数值上。
+    // 连上后每 5 秒看一眼最近一次心率的时间，超时就在副标题里说清楚。
+    let _lastHrAt = 0;
+    let _hrWatchTimer = null;
+    function startHrWatch() {
+      if (_hrWatchTimer) clearInterval(_hrWatchTimer);
+      _hrWatchTimer = setInterval(function () {
+        if (!bleDeviceId) { clearInterval(_hrWatchTimer); _hrWatchTimer = null; return; }
+        const sub = document.getElementById('hrCardSub');
+        if (!sub) return;
+        const silent = Date.now() - _lastHrAt;
+        if (silent > 20000) sub.textContent = '信号丢失，看看设备是否还戴着';
+        else if (silent > 8000) sub.textContent = '正在等待心率…';
+        else sub.textContent = '已连接 ' + (bleDeviceName || '设备');
+      }, 5000);
+    }
+
+    // 断开心率设备：断开 GATT、清空状态、卡片回到「去连接」
+    function disconnectBle() {
+      const id = bleDeviceId;
+      bleDeviceId = null;
+      bleDeviceName = '';
+      engine.currentHR = null;
+      if (_hrWatchTimer) { clearInterval(_hrWatchTimer); _hrWatchTimer = null; }
+      if (id && id !== 'web' && window.ble && window.ble.disconnect) window.ble.disconnect(id);
+      // Web Bluetooth 回退路径（浏览器）走引擎自己的断开
+      try { if (engine.heartRate && engine.heartRate.disconnect) engine.heartRate.disconnect(); } catch (e) {}
+      refreshHrCard(null);
+      showTip('已断开心率设备', 2000);
+    }
+
+    function openOverlay(name) { currentOverlay = name; }
+    function closeOverlay(name) {
+      const map = {
+        ble: 'bleOverlay', music: 'musicOverlay', volume: 'volumeOverlay',
+        account: 'accountOverlay', ratio: 'ratioOverlay', bpm: 'bpmOverlay',
+      };
+      const id = map[name];
+      if (id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
+      if (currentOverlay === name) currentOverlay = null;
+    }
+
+    function startBleScan() {
+      const ov = document.getElementById('bleOverlay');
+      if (ov) ov.style.display = 'flex';
+      currentOverlay = 'ble';
+      const list = document.getElementById('bleList');
+      list.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:20px;">正在扫描附近设备…</div>';
+      const seen = {};
+      function addDevice(d) {
+        if (d.error) { list.innerHTML = '<div style="color:#FB7185;text-align:center;padding:20px;">' + d.error + '</div>'; return; }
+        if (seen[d.id]) return;
+        seen[d.id] = true;
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;background:var(--surface-glass);cursor:pointer;';
+        row.innerHTML =
+          '<div style="width:38px;height:38px;border-radius:50%;background:var(--accent-luo-soft);display:flex;align-items:center;justify-content:center;font-size:18px;">⌚</div>' +
+          '<div style="flex:1;min-width:0;font-size:14px;">' + d.name + '</div>' +
+          '<div style="font-size:12px;color:#66CCFF;">连接</div>';
+        row.onclick = function () { connectBleDevice(d.id, d.name); };
+        list.appendChild(row);
+      }
+      function doScan() {
+        if (window.ble && window.ble.available) {
+          window.ble.scan(addDevice, function () {
+            if (Object.keys(seen).length === 0) {
+              list.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:20px;">没有找到设备，点下方重新扫描</div>';
+            }
+          });
+        } else {
+          list.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:20px;">当前环境不支持蓝牙</div>';
+        }
+      }
+      if (window.ble && window.ble.requestPermissions) {
+        window.ble.requestPermissions().then(doScan).catch(function (e) {
+          list.innerHTML = '<div style="color:#FB7185;text-align:center;padding:20px;">蓝牙权限被拒绝：' + (e && e.message ? e.message : '请在系统设置中开启蓝牙和位置权限') + '</div>';
+        });
+      } else {
+        doScan();
+      }
+    }
+
+    function connectBleDevice(id, name) {
+      speakToast('连接中…');
+      const list = document.getElementById('bleList');
+      list.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:20px;">正在连接 ' + name + '…</div>';
+      window.ble.connect(id, function (bpm) {
+        engine.currentHR = bpm;
+        engine.emit('heartrate', { bpm: bpm });
+      }).then(function (res) {
+        if (res && res.ok) {
+          bleDeviceId = id;
+          bleDeviceName = name || '';
+          _lastHrAt = Date.now();
+          refreshHrCard(null);   // 首页卡片切换成「心率 + 取消连接」
+          startHrWatch();
+          speakToast('已连接 ' + name);
+          closeOverlay('ble');
+        } else {
+          list.innerHTML = '<div style="color:#FB7185;text-align:center;padding:20px;">连接失败：' + (res && res.error ? res.error : '未知错误') + '</div>';
+        }
+      });
+    }
+
+    // 心率卡点击 → 打开蓝牙扫描（或 Web Bluetooth 回退）
+    document.querySelectorAll('.metric-cards .metric-card:first-child').forEach(function (c) {
+      c.style.cursor = 'pointer';
+      c.onclick = function () {
+        if (window.ble && window.ble.available) {
+          startBleScan();
+        } else if (engine.heartRate.supported) {
+          engine.heartRate.connect().then(function () {
+            bleDeviceId = 'web';               // 浏览器 Web Bluetooth 路径，没有原生 deviceId
+            bleDeviceName = '系统心率设备';
+            _lastHrAt = Date.now();
+            refreshHrCard(null);
+            startHrWatch();
+            speakToast('心率已连接');
+          }).catch(function () { speakToast('心率连接失败'); });
+        } else {
+          speakToast('当前环境不支持蓝牙');
+        }
+      };
+    });
+
+    // ===== 返回键逻辑 =====
+    window.handleBack = function () {
+      if (currentOverlay) { closeOverlay(currentOverlay); return; }
+      const active = document.querySelector('.screen.active');
+      if (active && active.id !== 'screen-home') { goHome(); return; }
+      const now = Date.now();
+      if (now - lastBackTime < 2000) {
+        if (window.capApp && window.capApp.exitApp) window.capApp.exitApp();
+      } else {
+        lastBackTime = now;
+        speakToast('再按一次退出应用');
+      }
+    };
+
+    // 音乐：多选导入 + 歌单 + 播放器交互 + 列表
+    const musicInput = document.createElement('input');
+    musicInput.type = 'file'; musicInput.accept = 'audio/*'; musicInput.multiple = true; musicInput.style.display = 'none';
+    document.body.appendChild(musicInput);
+    let musicLoaded = false;
+
+    function updateMusicUI() {
+      const total = engine.music.playlist.length;
+      const cur = engine.music.index + 1;
+      setAll('.music-title', function (el) {
+        if (!total) el.textContent = '洛天依陪跑歌单';
+        else if (cur > 0) el.textContent = engine.music.name;
+        else el.textContent = total + ' 首歌';
+      });
+      setAll('.music-sub', function (el) {
+        if (!total) el.textContent = '点击左侧封面导入洛天依的歌';
+        else if (cur > 0) el.textContent = '第 ' + cur + '/' + total + ' 首';
+        else el.textContent = total + ' 首歌';
+      });
+      // 跑步页顶部的「正在播放」：开跑音乐跟节拍器一起起来时，这里要立刻显示歌名
+      setAll('.run-nowplaying', function (el) {
+        if (!total || engine.music.index < 0) { el.textContent = '♪ 未播放音乐'; return; }
+        el.textContent = engine.music.playing
+          ? ('♪ ' + engine.music.name)
+          : ('♪ ' + engine.music.name + ' · 已暂停');
+      });
+      renderMusicList();
+    }
+
+    engine.music.onTrack = function () { updateMusicUI(); };
+    engine.music.onListChange = function () { updateMusicUI(); };
+    engine.music.onRemovedChange = function () { renderRemovedBox(); };
+    // 切歌单模式时给一句人话提示，顺便同步高亮（跟随跑会自动切到智能，这里要跟上）
+    engine.music.onModeChange = function (mode, prev) {
+      if (mode === 'smart') {
+        showTip('智能模式：已按你的心率重排歌单，当前这首播完才换下一首', 3600);
+      } else if (mode === 'shuffle') {
+        showTip('随机模式：已重新打乱歌单，喜欢的歌会多出现几次', 2600);
+      } else {
+        showTip('顺序模式：已按列表顺序重排，不做 BPM 检测', 2600);
+      }
+      if (typeof syncModeUI === 'function') syncModeUI();
+      if (typeof renderMusicList === 'function') renderMusicList(); // 列表跟着新模式重排
+    };
+    engine.music.onError = function (name, msg) {
+      speakToast('「' + name + '」播放失败：' + msg);
+    };
+
+    // ===== IndexedDB 音乐持久化（导入的音乐退出不丢） =====
+    const MusicDB = {
+      _db: null,
+      open() {
+        return new Promise(function (resolve) {
+          if (!window.indexedDB) { resolve(); return; }
+          const req = indexedDB.open('music-db', 1);
+          req.onupgradeneeded = function (e) {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('songs')) db.createObjectStore('songs', { keyPath: 'id' });
+          };
+          req.onsuccess = function (e) { MusicDB._db = e.target.result; resolve(); };
+          req.onerror = function () { resolve(); };
+        });
+      },
+      save(file) {
+        return new Promise(function (resolve) {
+          if (!MusicDB._db) { resolve(); return; }
+          const id = 'song_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+          const tx = MusicDB._db.transaction('songs', 'readwrite');
+          tx.objectStore('songs').put({ id: id, name: file.name, blob: file });
+          tx.oncomplete = function () { resolve(); };
+          tx.onerror = function () { resolve(); };
+        });
+      },
+      loadAll() {
+        return new Promise(function (resolve) {
+          if (!MusicDB._db) { resolve([]); return; }
+          const tx = MusicDB._db.transaction('songs', 'readonly');
+          const req = tx.objectStore('songs').getAll();
+          req.onsuccess = function () { resolve(req.result || []); };
+          req.onerror = function () { resolve([]); };
+        });
+      },
+    };
+
+    // ===== 本地音乐导入（APK 内写文件持久化 + convertFileSrc 播放；浏览器 blob + IndexedDB） =====
+    const MUSIC_META_KEY = 'musicLibrary';
+    function loadMusicMeta() {
+      try { return JSON.parse(localStorage.getItem(MUSIC_META_KEY) || '[]'); } catch (e) { return []; }
+    }
+    // 批量写：导入 N 首只序列化/落盘一次（原来是每首都全量读+写一遍，N 首就是 O(N²)）
+    function saveMusicMeta(list) {
+      try { localStorage.setItem(MUSIC_META_KEY, JSON.stringify(list)); } catch (e) {}
+    }
+    function addMusicMeta(entry) {
+      const list = loadMusicMeta();
+      list.push(entry);
+      saveMusicMeta(list);
+    }
+
+    // File 列表 → {title, url} 列表
+    // blob: URL 在部分 Android WebView 上无法播放，APK 内改为写入应用数据目录后用 convertFileSrc 转成本地可播 URL
+    async function importMusicFiles(files, onOneDone) {
+      const total = files.length;
+      // 并发 2：再高内存峰值吃不消，且原生端写入本就串行，收益会迅速衰减
+      const CONCURRENCY = Math.min(2, Math.max(1, total));
+      const metaList = loadMusicMeta(); // 预加载一次，导入过程中只往数组里 push，最后统一落盘
+      let cursor = 0;
+      let done = 0;
+
+      async function worker() {
+        while (cursor < total) {
+          const i = cursor++;
+          const f = files[i];
+          const label = '正在导入 ' + (i + 1) + '/' + total;
+          const showPct = f.size > 2 * 1024 * 1024; // 大文件才显示百分比，小文件不刷屏
+          showTip(label + (showPct ? '  0%' : ''), 600000);
+          let item = null;
+          try {
+            if (window.musicFS) {
+              let lastPct = -1;
+              const saved = await window.musicFS.save(f, function (p) {
+                if (!showPct) return;
+                const pct = Math.floor(p * 100);
+                if (pct - lastPct >= 10 || p >= 1) { lastPct = pct; showTip(label + '  ' + pct + '%', 600000); }
+              });
+              item = { title: saved.name, url: saved.url };
+              metaList.push({ name: saved.name, path: saved.path });
+              // 每首都落一次盘：中途被杀后台也不会丢记录（列表已在内存里，写一次只是 stringify，开销极小）
+              saveMusicMeta(metaList);
+            } else {
+              MusicDB.save(f);
+              item = { title: f.name, url: URL.createObjectURL(f) };
+            }
+          } catch (e) {
+            MusicDB.save(f);
+            item = { title: f.name, url: URL.createObjectURL(f) };
+          }
+          done++;
+          // 每首一好就交给 UI，用户不用干等整批跑完
+          if (onOneDone) onOneDone(item, done, total);
+        }
+      }
+
+      await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+      if (window.musicFS) saveMusicMeta(metaList); // 一次落盘，替代原来的每首全量读写
+      return done;
+    }
+
+    musicInput.onchange = async function () {
+      if (!musicInput.files.length) return;
+      const picked = Array.from(musicInput.files);
+      musicInput.value = ''; // 清空，避免重复选同一批文件时 onchange 不触发
+      showTip('准备导入 ' + picked.length + ' 首…', 600000);
+      // 导入期间不测 BPM（解码很吃主线程，会跟文件拷贝抢资源），整批跑完再补
+      engine.music.holdAutoDetect = true;
+      let ok = 0;
+      try {
+        ok = await importMusicFiles(picked, function (item, done, total) {
+          engine.music.addUrls([item]); // onListChange 会自动刷新列表，这里不用再调 updateMusicUI
+          musicLoaded = true;
+          showTip('已导入 ' + done + '/' + total, 600000);
+        });
+      } finally {
+        // 导入中途出错也要放开，否则攒着的 BPM 检测永远不会被放出去
+        engine.music.flushAutoDetect();
+      }
+      // 时长探测：四个阶段的划分和总时长都依赖它，导入完立刻补测
+      engine.music.probeDurations().then(function () {
+        updateMusicUI();
+        if (typeof updateRunModeHint === 'function') updateRunModeHint();
+      });
+      showTip('导入完成，共 ' + ok + ' 首', 2400);
+    };
+
+    // 启动时恢复已保存的音乐（module script 先于 DOMContentLoaded 执行，此处时序安全）
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.musicFS) {
+        // APK：从 localStorage 元数据恢复（音频文件存在应用数据目录，重启不丢）
+        const saved = loadMusicMeta();
+        if (!saved.length) return;
+        Promise.all(saved.map(function (m) {
+          return window.musicFS.getUri(m.path).then(function (url) {
+            return { title: m.name, path: m.path, url: url };
+          }).catch(function () { return null; });
+        })).then(function (list) {
+          const all = list.filter(Boolean);
+          // 被移除过的歌不要回到播放歌单，但仍留在「可再次添加」里，文件也不删
+          const items = [];
+          all.forEach(function (it) {
+            if (engine.music.isRemoved(it.title)) engine.music.addToRemoved(it);
+            else items.push({ title: it.title, url: it.url });
+          });
+          if (items.length) {
+            engine.music.loadUrls(items);
+            musicLoaded = true;
+            updateMusicUI();
+            // 时长是 0 就没法按总时长划四个阶段，启动后补测一次
+            engine.music.probeDurations().then(function () {
+              updateMusicUI();
+              if (typeof updateRunModeHint === 'function') updateRunModeHint();
+            });
+          }
+          renderRemovedBox();
+        });
+      } else {
+        // 浏览器：IndexedDB Blob 恢复
+        MusicDB.open().then(function () { return MusicDB.loadAll(); }).then(function (songs) {
+          if (songs && songs.length) {
+            const files = songs.map(function (s) {
+              return new File([s.blob], s.name, { type: s.blob.type || '' });
+            });
+            engine.music.loadList(files);
+            musicLoaded = true;
+            updateMusicUI();
+          }
+        });
+      }
+    });
+
+    // 播放器：左边正方框（封面）= 播放/暂停，右边整卡 = 进列表
+    document.querySelectorAll('.music-cover').forEach(function (cover) {
+      cover.style.cursor = 'pointer';
+      cover.onclick = function (e) {
+        e.stopPropagation();
+        if (!musicLoaded) { musicInput.click(); return; }
+        engine.music.toggle();
+        updateMusicUI();
+      };
+    });
+    document.querySelectorAll('.music-player').forEach(function (mp) {
+      mp.style.cursor = 'pointer';
+      mp.onclick = function () { openMusicList(); };
+    });
+
+    // ===== 音乐列表浮层 =====
+    function buildMusicOverlay() {
+      const phone = document.getElementById('phone');
+      const ov = document.createElement('div');
+      ov.id = 'musicOverlay';
+      ov.style.cssText = 'position:absolute;inset:0;z-index:45;background:rgba(19,18,28,0.98);display:none;flex-direction:column;padding:70px 18px 30px;overflow-y:auto;';
+      ov.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">' +
+        '<div style="font-size:22px;font-weight:700;">音乐</div>' +
+        '<div id="musicClose" style="cursor:pointer;font-size:22px;color:var(--text-secondary);padding:4px;">✕</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;margin-bottom:14px;">' +
+        '<div id="tabLocal" style="flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;background:#FF8C42;color:#fff;font-size:13px;">本地歌单</div>' +
+        '<div id="tabLibrary" style="flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;background:var(--surface-glass);color:var(--text-secondary);font-size:13px;">内置音乐</div>' +
+        '<div id="tabSaved" style="flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;background:var(--surface-glass);color:var(--text-secondary);font-size:13px;">我的歌单</div>' +
+        '</div>' +
+        '<div id="localView">' +
+        // 导入入口上移：原来在最底部，每次都要滑到底才能操作
+        '<div style="display:flex;gap:8px;margin-bottom:12px;">' +
+        '<div id="musicImport" style="flex:1;text-align:center;padding:12px;border-radius:999px;background:#FF8C42;color:#fff;font-weight:600;cursor:pointer;font-size:13px;">导入音频</div>' +
+        '<div id="musicDetectAll" style="flex:1;text-align:center;padding:12px;border-radius:999px;background:var(--surface-glass);color:var(--accent-luo);font-weight:600;cursor:pointer;font-size:13px;">识别全部 BPM</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;margin-bottom:14px;">' +
+        '<div id="modeOrder" style="flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;">顺序</div>' +
+        '<div id="modeShuffle" style="flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;">随机</div>' +
+        '<div id="modeSmart" style="flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;">智能</div>' +
+        '</div>' +
+        '<div id="musicList" style="display:flex;flex-direction:column;gap:8px;"></div>' +
+        '<div id="musicEmpty" style="color:var(--text-secondary);text-align:center;padding:40px 0;font-size:13px;">还没有音乐哦，点上面的按钮导入吧</div>' +
+        '<div id="removedBox" style="display:none;margin-top:16px;"></div>' +
+        '</div>' +
+        '<div id="libraryView" style="display:none;"><div id="libraryList"></div></div>' +
+        '<div id="savedView" style="display:none;"><div id="savedList"></div></div>';
+      phone.appendChild(ov);
+      document.getElementById('musicClose').onclick = closeMusicList;
+      document.getElementById('musicImport').onclick = function () { musicInput.click(); };
+      document.getElementById('musicDetectAll').onclick = function () {
+        if (!engine.music.playlist.length) { showTip('先导入音乐吧'); return; }
+        const n = engine.music.playlist.filter(function (t) { return !t.bpm; }).length;
+        if (!n) { showTip('所有歌都已识别出 BPM'); return; }
+        engine.music.detectAll();
+        showTip('正在识别 ' + n + ' 首歌的 BPM，稍等一下');
+      };
+      document.getElementById('modeOrder').onclick = function () { engine.music.setMode('order'); syncModeUI(); renderMusicList(); };
+      document.getElementById('modeShuffle').onclick = function () { engine.music.setMode('shuffle'); syncModeUI(); renderMusicList(); };
+      document.getElementById('modeSmart').onclick = function () { engine.music.setMode('smart'); syncModeUI(); renderMusicList(); };
+      document.getElementById('tabLocal').onclick = function () { switchMusicTab('local'); };
+      document.getElementById('tabLibrary').onclick = function () { switchMusicTab('library'); };
+      document.getElementById('tabSaved').onclick = function () { switchMusicTab('saved'); };
+      syncModeUI();
+
+    function switchMusicTab(tab) {
+      const local = document.getElementById('localView');
+      const lib = document.getElementById('libraryView');
+      const saved = document.getElementById('savedView');
+      const tl = document.getElementById('tabLocal');
+      const tlb = document.getElementById('tabLibrary');
+      const tsv = document.getElementById('tabSaved');
+      if (!local || !lib) return;
+      const on = '#FF8C42', off = 'var(--surface-glass)';
+      const paint = function (el, active) {
+        if (!el) return;
+        el.style.background = active ? on : off;
+        el.style.color = active ? '#fff' : 'var(--text-secondary)';
+      };
+      paint(tl, tab === 'local'); paint(tlb, tab === 'library'); paint(tsv, tab === 'saved');
+      local.style.display = (tab === 'local') ? 'block' : 'none';
+      lib.style.display = (tab === 'library') ? 'block' : 'none';
+      if (saved) saved.style.display = (tab === 'saved') ? 'block' : 'none';
+      if (tab === 'library') loadLibrary();
+      if (tab === 'saved') renderSavedPlaylists();
+    }
+
+    // ===== 内置音乐库（读 assets/music_meta.json） =====
+    let libraryData = null;
+    function loadLibrary() {
+      const list = document.getElementById('libraryList');
+      if (!list) return;
+      if (libraryData) { renderLibrary(); return; }
+      list.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:20px;">加载中…</div>';
+      fetch('assets/music_meta.json').then(function (r) { return r.json(); }).then(function (data) {
+        libraryData = data;
+        renderLibrary();
+      }).catch(function () {
+        list.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:20px;">内置音乐加载失败</div>';
+      });
+    }
+    function renderLibrary() {
+      const list = document.getElementById('libraryList');
+      if (!list) return;
+      list.innerHTML = '';
+      (libraryData || []).forEach(function (album) {
+        const card = document.createElement('div');
+        card.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--surface-glass);cursor:pointer;margin-bottom:8px;';
+        const coverHtml = album.cover
+          ? '<div style="width:54px;height:54px;border-radius:10px;background-size:cover;background-position:center;background-image:url(' + album.cover + ');flex-shrink:0;"></div>'
+          : '<div style="width:54px;height:54px;border-radius:10px;background:linear-gradient(135deg,#66CCFF,#3399FF);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;flex-shrink:0;">♪</div>';
+        card.innerHTML = coverHtml +
+          '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:15px;font-weight:600;">' + album.album + '</div>' +
+          '<div style="font-size:12px;color:var(--text-secondary);">' + album.songs.length + ' 首</div>' +
+          '</div>' +
+          '<div style="color:var(--text-secondary);font-size:18px;">›</div>';
+        card.onclick = function () { openAlbum(album); };
+        list.appendChild(card);
+      });
+    }
+    // 长按（≥500ms 且没滑动）进入多选
+    function bindLongPress(el, fn) {
+      let timer = null, moved = false, sx = 0, sy = 0;
+      el.addEventListener('pointerdown', function (e) {
+        moved = false; sx = e.clientX; sy = e.clientY;
+        timer = setTimeout(function () { if (!moved) fn(); }, 500);
+      });
+      el.addEventListener('pointermove', function (e) {
+        if (Math.abs(e.clientX - sx) > 8 || Math.abs(e.clientY - sy) > 8) moved = true;
+      });
+      const clear = function () { if (timer) { clearTimeout(timer); timer = null; } };
+      el.addEventListener('pointerup', clear);
+      el.addEventListener('pointercancel', clear);
+      el.addEventListener('pointerleave', clear);
+    }
+
+    let albumSel = null; // { album, idx:Set<number>, active:bool }
+    function openAlbum(album) {
+      const list = document.getElementById('libraryList');
+      if (!list) return;
+      albumSel = { album: album, idx: new Set(), active: false };
+      renderAlbum();
+    }
+    function albumIsBundled(album) { return album.songs.length > 0 && !!album.songs[0].file; }
+
+    function renderAlbum() {
+      const list = document.getElementById('libraryList');
+      if (!list || !albumSel) return;
+      const album = albumSel.album;
+      const isBundled = albumIsBundled(album);
+      list.innerHTML = '';
+
+      const back = document.createElement('div');
+      back.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:10px;cursor:pointer;font-size:14px;color:#66CCFF;';
+      back.textContent = '‹ 返回专辑';
+      back.onclick = renderLibrary;
+      list.appendChild(back);
+
+      const tip = document.createElement('div');
+      tip.style.cssText = 'font-size:11px;color:var(--text-secondary);margin-bottom:12px;line-height:1.5;';
+      tip.textContent = albumSel.active ? '勾选要导入的歌曲，点下方按钮一次性加入播放歌单' : '长按任意歌曲可进入多选';
+      list.appendChild(tip);
+
+      // 多选工具条
+      if (albumSel.active) {
+        const bar = document.createElement('div');
+        bar.style.cssText = 'display:flex;gap:8px;margin-bottom:12px;';
+        bar.innerHTML =
+          '<div id="selAll" style="flex:0 0 auto;padding:10px 14px;border-radius:12px;background:var(--surface-glass);color:var(--text-secondary);cursor:pointer;font-size:13px;">全选</div>' +
+          '<div id="selNone" style="flex:0 0 auto;padding:10px 14px;border-radius:12px;background:var(--surface-glass);color:var(--text-secondary);cursor:pointer;font-size:13px;">清空</div>' +
+          '<div id="selExit" style="flex:0 0 auto;padding:10px 14px;border-radius:12px;background:var(--surface-glass);color:var(--text-secondary);cursor:pointer;font-size:13px;">退出多选</div>';
+        list.appendChild(bar);
+        document.getElementById('selAll').onclick = function () {
+          album.songs.forEach(function (_, i) { albumSel.idx.add(i); });
+          renderAlbum();
+        };
+        document.getElementById('selNone').onclick = function () { albumSel.idx.clear(); renderAlbum(); };
+        document.getElementById('selExit').onclick = function () { albumSel.active = false; albumSel.idx.clear(); renderAlbum(); };
+
+        const go = document.createElement('div');
+        const n = albumSel.idx.size;
+        go.style.cssText = 'text-align:center;padding:12px;border-radius:999px;margin-bottom:14px;cursor:pointer;font-weight:600;font-size:14px;'
+          + (n ? 'background:#FF8C42;color:#fff;' : 'background:var(--surface-glass);color:var(--text-secondary);');
+        go.textContent = n ? ('导入所选 ' + n + ' 首到播放歌单') : '请先勾选歌曲';
+        go.onclick = function () { importSelectedAlbumSongs(); };
+        list.appendChild(go);
+      } else {
+        const main = document.createElement('div');
+        main.style.cssText = 'text-align:center;padding:12px;border-radius:999px;background:#FF8C42;color:#fff;font-weight:600;cursor:pointer;margin-bottom:14px;';
+        if (isBundled) {
+          main.textContent = '▶ 播放专辑（' + album.songs.length + ' 首）';
+          main.onclick = function () { playBundledAlbum(album); };
+        } else {
+          main.textContent = '导入本专辑音乐（' + album.songs.length + ' 首）';
+          main.onclick = function () { importAlbumMusic(album); };
+        }
+        list.appendChild(main);
+      }
+
+      album.songs.forEach(function (song, i) {
+        const row = document.createElement('div');
+        const on = albumSel.idx.has(i);
+        row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;margin-bottom:6px;cursor:pointer;'
+          + (albumSel.active
+            ? ('background:' + (on ? 'rgba(255,140,66,0.16)' : 'var(--surface-glass)') + ';border:1px solid ' + (on ? '#FF8C42' : 'transparent') + ';')
+            : 'background:var(--surface-glass);');
+        const box = albumSel.active
+          ? '<div style="width:20px;height:20px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;'
+            + (on ? 'background:#FF8C42;color:#fff;">✓' : 'border:1px solid var(--text-secondary);color:transparent;">✓') + '</div>'
+          : '';
+        row.innerHTML = box +
+          '<div style="width:38px;height:38px;border-radius:10px;background:var(--surface-glass);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-size:14px;flex-shrink:0;">♪</div>' +
+          '<div style="flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + song.title + '</div>';
+        row.onclick = function () {
+          if (albumSel.active) {
+            if (albumSel.idx.has(i)) albumSel.idx.delete(i); else albumSel.idx.add(i);
+            renderAlbum();
+          } else if (isBundled) {
+            playBundledAlbum(album, i);
+          } else {
+            showTip('长按歌曲可多选导入', 2000);
+          }
+        };
+        bindLongPress(row, function () {
+          if (!albumSel.active) { albumSel.active = true; albumSel.idx.add(i); renderAlbum(); showTip('已进入多选，勾选后点上方按钮导入', 2400); }
+        });
+        list.appendChild(row);
+      });
+    }
+
+    // 一次性把勾选的歌加入播放歌单
+    function importSelectedAlbumSongs() {
+      if (!albumSel || !albumSel.idx.size) return;
+      const album = albumSel.album;
+      const picked = [];
+      albumSel.idx.forEach(function (i) { if (album.songs[i]) picked.push(album.songs[i]); });
+      if (!picked.length) return;
+
+      if (albumIsBundled(album)) {
+        // 内置曲库自带文件路径，直接进歌单，不用再选文件
+        engine.music.holdAutoDetect = true;
+        try {
+          engine.music.addUrls(picked.map(function (s) {
+            return { title: s.title, url: s.file, duration: s.duration, bpm: s.bpm };
+          }));
+        } finally { engine.music.flushAutoDetect(); }
+        musicLoaded = true;
+        updateMusicUI();
+        showTip('已导入 ' + picked.length + ' 首到播放歌单', 2400);
+        albumSel.active = false; albumSel.idx.clear();
+        renderAlbum();
+        return;
+      }
+      // 非内置：还是要从磁盘挑文件，导入后按曲库元数据回填时长
+      importAlbumMusic(album, picked);
+    }
+
+    function playBundledAlbum(album, startIndex) {
+      startIndex = startIndex || 0;
+      const urls = album.songs.map(function (s) { return { title: s.title, url: s.file }; });
+      engine.music.loadUrls(urls);
+      engine.music.playTrack(startIndex);
+      musicLoaded = true;
+      updateMusicUI();
+      closeMusicList();
+    }
+
+    function importAlbumMusic(album, songs) {
+      const list = Array.isArray(songs) ? songs : album.songs;
+      const inp = document.createElement('input');
+      inp.type = 'file'; inp.accept = 'audio/*'; inp.multiple = true; inp.style.display = 'none';
+      document.body.appendChild(inp);
+      inp.onchange = async function () {
+        if (!inp.files.length) return;
+        // importMusicFiles 返回的是「成功数量」，歌曲通过 onOneDone 逐首回调上来的
+        engine.music.holdAutoDetect = true;
+        const added = [];
+        try {
+          await importMusicFiles(Array.from(inp.files), function (item) {
+            engine.music.addUrls([item]);
+            added.push(item);
+          });
+        } finally {
+          engine.music.flushAutoDetect();
+        }
+        if (added.length) {
+          musicLoaded = true;
+          updateMusicUI();
+          showTip('已导入 ' + added.length + ' 首', 2400);
+        }
+        // 内置音乐的时长元数据在 music_meta.json 里，导入后回填，避免总时长算成 0
+        backfillDurations(list);
+        closeMusicList();
+      };
+      inp.click();
+    }
+
+    // 用内置曲库的 title 匹配刚导入的歌，把时长/BPM 填进去（总时长和阶段划分都依赖它）
+    function backfillDurations(songs) {
+      (songs || []).forEach(function (s) {
+        if (!s || !s.title || !s.duration) return;
+        const t = engine.music.playlist.find(function (x) { return x.name === s.title || x.title === s.title; });
+        if (t && !t.duration) { t.duration = s.duration; if (s.bpm && !t.bpm) t.bpm = s.bpm; }
+      });
+      if (typeof updateRunModeHint === 'function') updateRunModeHint();
+    }
+    }
+
+    function syncModeUI() {
+      const mode = engine.music.mode;
+      function style(el, on) {
+        if (!el) return;
+        el.style.background = on ? '#FF8C42' : 'var(--surface-glass)';
+        el.style.color = on ? '#fff' : 'var(--text-secondary)';
+      }
+      style(document.getElementById('modeOrder'), mode === 'order');
+      style(document.getElementById('modeShuffle'), mode === 'shuffle');
+      style(document.getElementById('modeSmart'), mode === 'smart');
+    }
+
+    function openMusicList() {
+      const ov = document.getElementById('musicOverlay');
+      if (ov) { ov.style.display = 'flex'; syncModeUI(); renderMusicList(); }
+      currentOverlay = 'music';
+    }
+    function closeMusicList() {
+      const ov = document.getElementById('musicOverlay');
+      if (ov) ov.style.display = 'none';
+      if (currentOverlay === 'music') currentOverlay = null;
+    }
+
+    function renderMusicList() {
+      const list = document.getElementById('musicList');
+      if (!list) return;
+      const empty = document.getElementById('musicEmpty');
+      const pl = engine.music.playlist;
+      if (empty) empty.style.display = pl.length ? 'none' : 'block';
+      list.innerHTML = '';
+      // 按当前模式排好的顺序渲染：顺序=列表原序，随机=打乱队列，智能=按心率匹配度
+      const order = engine.music.orderedIndices();
+      order.forEach(function (i, pos) {
+        const t = pl[i];
+        const active = i === engine.music.index;
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--surface-glass);cursor:pointer;' + (active ? 'border:1px solid #FF8C42;' : '');
+        // 有结果 → 显示 BPM；已试过没识别出 → 明确说明；还没轮到 → 提示可点按识别
+        const bpmTxt = t.bpm ? (t.bpm + ' BPM') : (t.bpmTried ? 'BPM 未识别' : '点按识别 BPM');
+        // 方格里显示位次，切换模式时重排一眼就能看出来
+        const playIcon = (active && engine.music.playing) ? '❚❚' : String(pos + 1);
+        row.innerHTML =
+          '<div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#66CCFF,#3399FF);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;flex-shrink:0;">' + playIcon + '</div>' +
+          '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + t.name + '</div>' +
+          '<div style="font-size:11px;color:var(--text-secondary);">' + bpmTxt + '</div>' +
+          '</div>' +
+          '<div class="like-btn" style="cursor:pointer;font-size:20px;flex-shrink:0;">' + (t.liked ? '❤️' : '🤍') + '</div>' +
+          // 移除：只出歌单，本地文件不动，可在下方「已移除」里再加回来
+          '<div class="remove-btn" style="cursor:pointer;font-size:12px;font-weight:600;color:var(--text-secondary);flex-shrink:0;padding:4px 8px;border-radius:8px;background:var(--surface-glass);">移除</div>';
+        row.onclick = function (e) {
+          if (e.target.classList && e.target.classList.contains('like-btn')) return;
+          if (e.target.classList && e.target.classList.contains('remove-btn')) return;
+          engine.music.playTrack(i);
+          renderMusicList();
+        };
+        row.querySelector('.like-btn').onclick = function (e) {
+          e.stopPropagation();
+          engine.music.toggleLike(i);
+          renderMusicList();
+        };
+        row.querySelector('.remove-btn').onclick = function (e) {
+          e.stopPropagation();
+          engine.music.removeTrack(i); // 文件保留，可在下方重新添加
+          showTip('已移除「' + t.name + '」，本地文件仍保留', 2600);
+        };
+        list.appendChild(row);
+      });
+      renderRemovedBox();
+    }
+
+    // 已移除的歌：不参与播放，但文件还在，可以再添回来
+    function renderRemovedBox() {
+      const box = document.getElementById('removedBox');
+      if (!box) return;
+      const removed = engine.music.removed || [];
+      if (!removed.length) { box.style.display = 'none'; box.innerHTML = ''; return; }
+      box.style.display = 'block';
+      box.innerHTML =
+        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">已移除 ' + removed.length + ' 首（本地文件仍保留，可再次添加）</div>';
+      removed.forEach(function (t, ri) {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--surface-glass);margin-bottom:6px;opacity:.85;';
+        row.innerHTML =
+          '<div style="flex:1;min-width:0;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + t.name + '</div>' +
+          '<div class="restore-btn" style="cursor:pointer;font-size:12px;font-weight:600;color:#FF8C42;padding:4px 10px;border-radius:8px;background:rgba(255,140,66,0.14);">添加</div>';
+        row.querySelector('.restore-btn').onclick = function (e) {
+          e.stopPropagation();
+          engine.music.restoreTrack(ri);
+          showTip('已重新添加「' + t.name + '」', 2200);
+        };
+        box.appendChild(row);
+      });
+    }
+
+    // ===== 我的歌单（运动结束后按日期保存下来的） =====
+    let savedOpenId = null; // 打开中的歌单详情 id；null = 列表页
+    function renderSavedPlaylists() {
+      const box = document.getElementById('savedList');
+      if (!box) return;
+      const PlaylistStore = (window.RunnerCore && window.RunnerCore.PlaylistStore)
+        || (typeof RunnerCore !== 'undefined' && RunnerCore.PlaylistStore) || null;
+      if (!PlaylistStore) { box.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:20px;">歌单功能不可用</div>'; return; }
+      if (savedOpenId) {
+        const pl = PlaylistStore.list().find(function (x) { return x.id === savedOpenId; });
+        if (pl) { renderSavedDetail(pl); return; }
+        savedOpenId = null; // 歌单可能已被删，回列表
+      }
+      const list = PlaylistStore.list();
+      if (!list.length) {
+        box.innerHTML = '<div style="color:var(--text-secondary);text-align:center;padding:40px 0;font-size:13px;">还没有保存的歌单<br>每次运动结束时可以选择保存本次播放的歌曲</div>';
+        return;
+      }
+      box.innerHTML = '';
+      list.forEach(function (pl) {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--surface-glass);margin-bottom:8px;cursor:pointer;';
+        row.innerHTML =
+          '<div style="width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#FF8C42,#FF5A7A);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0;">♪</div>' +
+          '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:15px;font-weight:600;">' + pl.name + '</div>' +
+          '<div style="font-size:11px;color:var(--text-secondary);margin-top:2px;">' + pl.songs.length + ' 首 · ' + fmtDate(pl.createdAt) + '</div>' +
+          '</div>' +
+          '<div style="color:var(--text-secondary);font-size:18px;">›</div>' +
+          '<div class="pl-del" style="font-size:12px;color:var(--text-secondary);padding:4px 8px;">删除</div>';
+        row.onclick = function (e) {
+          if (e.target.classList && e.target.classList.contains('pl-del')) return;
+          // 只进详情页，不自动加载、不自动播放
+          savedOpenId = pl.id;
+          renderSavedPlaylists();
+        };
+        row.querySelector('.pl-del').onclick = function (e) {
+          e.stopPropagation();
+          PlaylistStore.remove(pl.id);
+          renderSavedPlaylists();
+        };
+        box.appendChild(row);
+      });
+    }
+
+    // 歌单详情：封面 / 歌名 / 歌手 / 时长，加载与播放都由用户手动触发
+    function renderSavedDetail(pl) {
+      const box = document.getElementById('savedList');
+      if (!box) return;
+      box.innerHTML = '';
+
+      const back = document.createElement('div');
+      back.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;font-size:14px;color:#66CCFF;';
+      back.textContent = '‹ 我的歌单';
+      back.onclick = function () { savedOpenId = null; renderSavedPlaylists(); };
+      box.appendChild(back);
+
+      // 头部：大封面 + 名称 + 数量/日期
+      const head = document.createElement('div');
+      head.style.cssText = 'display:flex;align-items:center;gap:12px;padding:14px;border-radius:16px;background:var(--surface-glass);margin-bottom:12px;';
+      head.innerHTML =
+        '<div style="width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,#FF8C42,#FF5A7A);display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;flex-shrink:0;">♪</div>' +
+        '<div style="flex:1;min-width:0;">' +
+        '<div style="font-size:17px;font-weight:700;">' + pl.name + '</div>' +
+        '<div style="font-size:11px;color:var(--text-secondary);margin-top:3px;">' + pl.songs.length + ' 首 · ' + fmtDate(pl.createdAt) + '</div>' +
+        '</div>';
+      box.appendChild(head);
+
+      // 两个手动操作：载入并播放 / 全部加入播放列表（都不会自动开始，除非点了载入并播放）
+      const acts = document.createElement('div');
+      acts.style.cssText = 'display:flex;gap:8px;margin-bottom:14px;';
+      acts.innerHTML =
+        '<div id="plLoadPlay" style="flex:1;text-align:center;padding:11px;border-radius:999px;background:#FF8C42;color:#fff;font-weight:600;cursor:pointer;font-size:13px;">▶ 载入并播放</div>' +
+        '<div id="plAppend" style="flex:1;text-align:center;padding:11px;border-radius:999px;background:var(--surface-glass);color:var(--text-secondary);cursor:pointer;font-size:13px;">＋ 全部加入播放列表</div>';
+      box.appendChild(acts);
+      document.getElementById('plLoadPlay').onclick = function () {
+        if (!pl.songs.length) { showTip('这个歌单是空的'); return; }
+        engine.music.loadUrls(pl.songs.map(function (s) { return { title: s.name, url: s.url }; }));
+        musicLoaded = true;
+        engine.music.playTrack(0);
+        updateMusicUI();
+        closeMusicList();
+        showTip('已载入「' + pl.name + '」开始播放', 2200);
+      };
+      document.getElementById('plAppend').onclick = function () {
+        if (!pl.songs.length) { showTip('这个歌单是空的'); return; }
+        engine.music.addUrls(pl.songs.map(function (s) { return { title: s.name, url: s.url }; }));
+        musicLoaded = true;
+        updateMusicUI();
+        showTip('已把 ' + pl.songs.length + ' 首加入播放列表', 2200);
+      };
+
+      // 歌曲列表：封面占位 / 歌名 / 歌手 / 时长 / BPM
+      const totalSec = pl.songs.reduce(function (a, s) { return a + (s.duration || 0); }, 0);
+      if (totalSec > 0) {
+        const sum = document.createElement('div');
+        sum.style.cssText = 'font-size:11px;color:var(--text-secondary);margin-bottom:10px;';
+        sum.textContent = '总时长 ' + fmtDur(totalSec);
+        box.appendChild(sum);
+      }
+      pl.songs.forEach(function (s, i) {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:var(--surface-glass);margin-bottom:6px;cursor:pointer;';
+        const sub = [s.artist, s.bpm ? s.bpm + ' BPM' : ''].filter(Boolean).join(' · ');
+        row.innerHTML =
+          '<div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#66CCFF,#3399FF);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;flex-shrink:0;">' + (i + 1) + '</div>' +
+          '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + s.name + '</div>' +
+          '<div style="font-size:11px;color:var(--text-secondary);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (sub || '—') + '</div>' +
+          '</div>' +
+          '<div style="font-size:11px;color:var(--text-secondary);flex-shrink:0;">' + (s.duration ? fmtDur(s.duration) : '--:--') + '</div>';
+        row.onclick = function () {
+          engine.music.loadUrls(pl.songs.map(function (x) { return { title: x.name, url: x.url }; }));
+          musicLoaded = true;
+          engine.music.playTrack(i);
+          updateMusicUI();
+          closeMusicList();
+        };
+        box.appendChild(row);
+      });
+    }
+    function fmtDate(ts) {
+      const d = new Date(ts || Date.now());
+      const p = function (n) { return String(n).padStart(2, '0'); };
+      return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+    }
+    function todayStr() {
+      const d = new Date();
+      const p = function (n) { return String(n).padStart(2, '0'); };
+      return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+    }
+
+    // Tab「音乐」→ 打开列表
+    document.querySelectorAll('.tab-item[data-tab="music"]').forEach(function (t) {
+      t.onclick = openMusicList;
+    });
+
+    // ===== 首页动态化 =====
+    function updateHome() {
+      const h = new Date().getHours();
+      const greet = h < 5 ? '夜深了' : h < 11 ? '早安' : h < 14 ? '午安' : h < 18 ? '下午好' : '晚安';
+      const name = localStorage.getItem('nickname') || '跑者';
+      const titleEl = document.querySelector('.title-lg');
+      if (titleEl) titleEl.textContent = greet + '，' + name;
+
+      const heroTitle = document.querySelector('.hero-card .title');
+      const heroMeta = document.querySelector('.hero-card .meta');
+      if (engine.state === 'running' || engine.state === 'paused') {
+        const st = engine.stages[engine.stageIndex];
+        if (heroTitle) heroTitle.textContent = st ? ('进行中 · ' + st.name) : '训练中';
+        if (heroMeta) heroMeta.textContent = fmt(engine.elapsed) + ' · 目标 ' + engine.currentBpm + ' BPM';
+      } else if (engine.state === 'finished') {
+        if (heroTitle) heroTitle.textContent = '训练完成，真棒！';
+        if (heroMeta) heroMeta.textContent = '天依给你点赞，记得拉伸哦';
+      } else {
+        if (heroTitle) heroTitle.textContent = '今天还没开跑哦';
+        if (heroMeta) heroMeta.textContent = '点「开始跑步」，天依陪你一起';
+      }
+      updateStatCards();
+    }
+
+    function updateStatCards() {
+      const km = GpsPace.totalKm;
+      const hasData = km > 0 || engine.elapsed > 0;
+      const kcal = km > 0 ? Math.round(km * 60) : 0;
+      const pace = GpsPace.avgPace(engine.elapsed);
+      const data = [
+        hasData ? GpsPace.totalKm.toFixed(2) + ' km' : '无',
+        (pace ? fmtPace(pace) : '无'),
+        hasData ? kcal + ' kcal' : '无',
+        hasData ? fmt(engine.elapsed) : '无',
+      ];
+      const reasons = [
+        hasData ? '本次实时里程' : '还没有跑步记录',
+        hasData ? '本次实时配速' : '跑了才有配速',
+        hasData ? '按里程估算' : '跑起来才消耗卡路里',
+        hasData ? '本次运动时长' : '还没开始计时',
+      ];
+      const cards = document.querySelectorAll('.stat-card');
+      cards.forEach(function (card, i) {
+        if (i >= data.length) return;
+        const val = card.querySelector('.value');
+        if (val) val.textContent = data[i];
+        let reason = card.querySelector('.reason');
+        if (!reason) {
+          reason = document.createElement('div');
+          reason.className = 'reason';
+          reason.style.cssText = 'font-size:9px;color:var(--text-muted-low);margin-top:3px;';
+          card.appendChild(reason);
+        }
+        reason.textContent = reasons[i];
+      });
+    }
+
+    // ===== 音量调节（设置页卡片 + 跑步页均衡器浮层） =====
+    function renderVolumeSliders(container) {
+      if (!container) return;
+      const items = [
+        { key: 'master', label: '总音量', icon: '🔊' },
+        { key: 'voice', label: '洛天依声音', icon: '🎤' },
+        { key: 'music', label: '音乐', icon: '🎵' },
+        { key: 'metronome', label: '节拍器', icon: '🥁' },
+      ];
+      let html = '';
+      items.forEach(function (it) {
+        const v = engine.getVolumes()[it.key];
+        html +=
+          '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">' +
+          '<span style="width:88px;font-size:13px;color:var(--text-secondary);">' + it.icon + ' ' + it.label + '</span>' +
+          '<input type="range" class="vol-slider" data-key="' + it.key + '" min="0" max="100" value="' + Math.round(v * 100) + '" style="flex:1;accent-color:#66CCFF;">' +
+          '<span class="vol-val" style="width:34px;text-align:right;font-size:12px;color:var(--text-secondary);">' + Math.round(v * 100) + '</span>' +
+          '</div>';
+      });
+      container.innerHTML = html;
+      renderMetronomeTone(container);   // 音量下面接一节音色选择
+      container.querySelectorAll('.vol-slider').forEach(function (slider) {
+        slider.oninput = function () {
+          const key = slider.dataset.key;
+          engine.setVolume(key, parseInt(slider.value, 10) / 100);
+          const valEl = slider.parentElement.querySelector('.vol-val');
+          if (valEl) valEl.textContent = slider.value;
+        };
+      });
+    }
+
+    /* ===== 节拍器音色：木块（默认，带敲击瞬态）/ 电子（方波，穿透力强） ===== */
+    const METRONOME_TONES = [
+      { v: 'wood', label: '木块', desc: '像木鱼，柔和耐听' },
+      { v: 'click', label: '电子', desc: '清脆穿透，户外好用' },
+    ];
+    function syncToneRow(row, cur) {
+      for (let i = 0; i < row.children.length; i++) {
+        const on = METRONOME_TONES[i].v === cur;
+        row.children[i].style.background = on ? 'rgba(102,204,255,0.22)' : 'var(--surface-solid)';
+        row.children[i].style.color = on ? '#66CCFF' : 'var(--text-secondary)';
+      }
+    }
+    // 选完立刻示范两拍，用户不用退出去开跑才能听差别。
+    // 跑步中不试 —— 那会把正在打的节拍器停掉。
+    function previewToneOnce() {
+      try {
+        if (engine.state === 'running' || engine.state === 'paused') return;
+        const m = engine.metronome;
+        m.setBpm(120);
+        m.start();
+        setTimeout(function () { try { m.stop(); } catch (e) {} }, 900);
+      } catch (e) {}
+    }
+    function renderMetronomeTone(container) {
+      if (!container || !engine.metronome) return;
+      const box = document.createElement('div');
+      box.style.cssText = 'margin-top:6px;padding:12px;border-radius:14px;background:var(--surface-glass);';
+      box.innerHTML =
+        '<div style="font-size:13px;font-weight:600;margin-bottom:4px;">🥁 节拍器音色</div>' +
+        '<div style="font-size:11px;color:var(--text-secondary);margin-bottom:10px;line-height:1.5;">'
+          + '木块是噪声瞬态 + 共鸣体合成，听着像打击乐；电子是纯方波，更刺耳但嘈杂环境容易听清。</div>' +
+        '<div class="tone-row" style="display:flex;gap:8px;"></div>';
+      container.appendChild(box);
+      const row = box.querySelector('.tone-row');
+      METRONOME_TONES.forEach(function (t) {
+        const b = document.createElement('div');
+        b.style.cssText = 'flex:1;text-align:center;padding:9px 4px;border-radius:10px;cursor:pointer;';
+        b.innerHTML = '<div style="font-size:13px;font-weight:700;">' + t.label + '</div>'
+          + '<div style="margin-top:2px;font-size:10px;opacity:.75;">' + t.desc + '</div>';
+        b.onclick = function () {
+          engine.metronome.setTone(t.v);
+          try { localStorage.setItem('metronomeTone', t.v); } catch (e) {}
+          syncToneRow(row, t.v);
+          previewToneOnce();
+        };
+        row.appendChild(b);
+      });
+      syncToneRow(row, engine.metronome.tone || 'wood');
+    }
+    // 读回上次选的音色
+    (function () {
+      try {
+        const t = localStorage.getItem('metronomeTone');
+        if (t && engine.metronome) engine.metronome.setTone(t);
+      } catch (e) {}
+    })();
+
+    function buildVolumeUI() {
+      const settings = document.getElementById('screen-settings');
+      if (!settings) return;
+      const content = settings.querySelector('.content');
+      if (!content) return;
+      const card = document.createElement('div');
+      card.className = 'glass';
+      card.style.cssText = 'padding:18px;border-radius:20px;margin-top:16px;';
+      card.innerHTML = '<div style="font-size:15px;font-weight:600;margin-bottom:14px;">音量</div><div class="vol-panel"></div>';
+      content.appendChild(card);
+      renderVolumeSliders(card.querySelector('.vol-panel'));
+    }
+
+    function buildVolumeOverlay() {
+      const phone = document.getElementById('phone');
+      const ov = document.createElement('div');
+      ov.id = 'volumeOverlay';
+      ov.style.cssText = 'position:absolute;inset:0;z-index:46;background:rgba(19,18,28,0.97);display:none;flex-direction:column;padding:70px 24px 30px;';
+      ov.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">' +
+        '<div style="font-size:22px;font-weight:700;">均衡器</div>' +
+        '<div id="volClose" style="cursor:pointer;font-size:15px;color:var(--text-secondary);padding:4px;">← 返回</div>' +
+        '</div>' +
+        '<div id="volPanel"></div>';
+      phone.appendChild(ov);
+      document.getElementById('volClose').onclick = closeVolumeOverlay;
+    }
+
+    function openVolumeOverlay() {
+      const ov = document.getElementById('volumeOverlay');
+      if (ov) { ov.style.display = 'flex'; renderVolumeSliders(document.getElementById('volPanel')); }
+      currentOverlay = 'volume';
+    }
+    function closeVolumeOverlay() {
+      const ov = document.getElementById('volumeOverlay');
+      if (ov) ov.style.display = 'none';
+      if (currentOverlay === 'volume') currentOverlay = null;
+    }
+
+    // 音乐卡加切歌 + 音量按钮（放在音乐卡右侧，显眼）
+    function buildMusicControls() {
+      document.querySelectorAll('.music-player').forEach(function (mp) {
+        const controls = document.createElement('div');
+        controls.style.cssText = 'display:flex;align-items:center;gap:12px;flex-shrink:0;';
+        const prev = document.createElement('div');
+        prev.textContent = '⏮';
+        prev.style.cssText = 'font-size:19px;cursor:pointer;';
+        prev.onclick = function (e) { e.stopPropagation(); engine.music.prev(); updateMusicUI(); };
+        const next = document.createElement('div');
+        next.textContent = '⏭';
+        next.style.cssText = 'font-size:19px;cursor:pointer;';
+        next.onclick = function (e) { e.stopPropagation(); engine.music.next(); updateMusicUI(); };
+        const vol = document.createElement('div');
+        vol.textContent = '🔊';
+        vol.style.cssText = 'font-size:17px;cursor:pointer;';
+        vol.onclick = function (e) { e.stopPropagation(); openVolumeOverlay(); };
+        controls.appendChild(prev);
+        controls.appendChild(next);
+        controls.appendChild(vol);
+        const left = mp.querySelector('.music-left');
+        if (left && left.nextSibling) mp.insertBefore(controls, left.nextSibling);
+        else mp.appendChild(controls);
+      });
+    }
+
+    // ===== 账号（换头像 + 昵称） =====
+    let pendingAvatar = null;
+    let avatarInput = null;
+
+    function buildAccountUI() {
+      document.querySelectorAll('.avatar').forEach(function (av) {
+        av.style.cursor = 'pointer';
+        av.onclick = openAccount;
+      });
+      const phone = document.getElementById('phone');
+      const ov = document.createElement('div');
+      ov.id = 'accountOverlay';
+      ov.style.cssText = 'position:absolute;inset:0;z-index:47;background:rgba(19,18,28,0.97);display:none;flex-direction:column;padding:70px 24px 30px;';
+      ov.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">' +
+        '<div style="font-size:22px;font-weight:700;">我的账号</div>' +
+        '<div id="accClose" style="cursor:pointer;font-size:15px;color:var(--text-secondary);padding:4px;">← 返回</div>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">' +
+        '<div id="accAvatar" style="width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,#66CCFF,#3399FF);display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;cursor:pointer;background-size:cover;background-position:center;flex-shrink:0;">跑</div>' +
+        '<div style="flex:1;">' +
+        '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">点击头像更换</div>' +
+        '<input id="accName" type="text" maxlength="12" placeholder="输入昵称" style="background:var(--surface-glass);border:1px solid var(--border-glass);border-radius:10px;padding:10px;color:var(--text-primary);font-size:14px;width:100%;">' +
+        '</div>' +
+        '</div>' +
+        '<div id="accSave" style="text-align:center;padding:14px;border-radius:999px;background:#FF8C42;color:#fff;font-weight:600;cursor:pointer;">保存</div>';
+      phone.appendChild(ov);
+      document.getElementById('accClose').onclick = closeAccount;
+      document.getElementById('accSave').onclick = saveAccount;
+      document.getElementById('accAvatar').onclick = function () { avatarInput.click(); };
+      avatarInput = document.createElement('input');
+      avatarInput.type = 'file'; avatarInput.accept = 'image/*'; avatarInput.style.display = 'none';
+      document.body.appendChild(avatarInput);
+      avatarInput.onchange = function () {
+        if (avatarInput.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            pendingAvatar = e.target.result;
+            const el = document.getElementById('accAvatar');
+            el.style.backgroundImage = 'url(' + pendingAvatar + ')';
+            el.textContent = '';
+          };
+          reader.readAsDataURL(avatarInput.files[0]);
+        }
+      };
+    }
+
+    function openAccount() {
+      const ov = document.getElementById('accountOverlay');
+      if (!ov) return;
+      ov.style.display = 'flex';
+      document.getElementById('accName').value = localStorage.getItem('nickname') || '';
+      const av = localStorage.getItem('avatar');
+      pendingAvatar = av;
+      const el = document.getElementById('accAvatar');
+      el.style.backgroundImage = av ? ('url(' + av + ')') : 'none';
+      el.textContent = av ? '' : '跑';
+      currentOverlay = 'account';
+    }
+    function closeAccount() {
+      const ov = document.getElementById('accountOverlay');
+      if (ov) ov.style.display = 'none';
+      if (currentOverlay === 'account') currentOverlay = null;
+    }
+    function saveAccount() {
+      const name = document.getElementById('accName').value.trim();
+      if (name) localStorage.setItem('nickname', name);
+      if (pendingAvatar) localStorage.setItem('avatar', pendingAvatar);
+      applyAccount();
+      closeAccount();
+    }
+    function applyAccount() {
+      const av = localStorage.getItem('avatar');
+      document.querySelectorAll('.avatar').forEach(function (el) {
+        if (av) { el.style.backgroundImage = 'url(' + av + ')'; el.style.backgroundSize = 'cover'; el.style.backgroundPosition = 'center'; }
+        else { el.style.backgroundImage = ''; }
+      });
+      updateHome();
+    }
+
+    // 初始化静态数据
+    setAll('.timer', function (el) { el.textContent = '00:00'; });
+    setAll('.distance', function (el) { el.textContent = '-- km'; });
+    setAll('.metric-cards', function (cards) {
+      const mc = cards.querySelectorAll('.metric-card');
+      if (mc[0]) {
+        mc[0].querySelector('.metric-value').textContent = '--';
+        const ring = mc[0].querySelector('.fill');
+        if (ring) ring.style.strokeDashoffset = CIRC;
+        const bar = mc[0].querySelector('.hr-bar-fill');
+        if (bar) bar.style.width = '0%';
+      }
+      if (mc[1]) {
+        mc[1].querySelector('.metric-value').textContent = "--'--\"";
+        mc[1].querySelector('.metric-bpm').textContent = 'BPM ' + engine.stages[0].startBpm;
+      }
+    });
+    updatePauseBtn('idle');
+    buildMusicOverlay();
+    buildVolumeUI();
+    buildVolumeOverlay();
+    buildMusicControls();
+    buildAccountUI();
+    buildEndButton();
+    buildBleOverlay();
+    applyAccount();
+    updateMusicUI();
+    updateHome();
+    updateStreak();
+  </script>
+
+  <script>
+  // ===== Capacitor 桥（无 bundler，必须用 window.Capacitor.Plugins，裸 import 在 WebView 中解析必失败） =====
+  (function () {
+    if (!window.Capacitor || !window.Capacitor.Plugins) return; // 浏览器环境跳过
+    const P = window.Capacitor.Plugins;
+    const App = P.App;
+    const BluetoothLe = P.BluetoothLe; // 注意：注册名是 BluetoothLe，不是 BleClient
+    const Filesystem = P.Filesystem;
+
+    window.capApp = App;
+
+    // 返回键：交给普通 script 的 handleBack 处理
+    App.addListener('backButton', function () {
+      if (typeof window.handleBack === 'function') window.handleBack();
+    });
+
+    // ===== 本地音乐持久化：写入应用数据目录，转成 WebView 可直接播放的 URL =====
+    // （blob: URL 在部分 Android WebView 上无法播放，这是 Capacitor 官方推荐做法）
+    function blobToBase64(blob) {
+      return new Promise(function (resolve, reject) {
+        const fr = new FileReader();
+        fr.onload = function () {
+          const s = String(fr.result);
+          resolve(s.indexOf(',') >= 0 ? s.slice(s.indexOf(',') + 1) : s);
+        };
+        fr.onerror = function () { reject(new Error('读取文件失败')); };
+        fr.readAsDataURL(blob);
+      });
+    }
+
+    // 导入瓶颈有三处，逐个拆掉：
+    // ① 块太小 → Capacitor 跨桥往返次数爆炸（40MB FLAC 从 80 次降到 20 次）
+    // ② 每块都 setTimeout(0) 让出 → Chromium 会把嵌套 setTimeout clamp 到 4ms，光等待就攒出几百毫秒
+    // ③ 单文件串行 → base64 编码和跨桥写入本可以重叠
+    const WRITE_CHUNK = 2 * 1024 * 1024; // 2MB：再大内存峰值吃不消（并发 2 时峰值约 20MB）
+    const YIELD_MS = 60;                 // 累计忙满这么久才让出一次主线程，够 UI 流畅即可
+    let _saveSeq = 0;                    // 并发导入时保证落盘路径唯一
+
+    async function writeFileChunked(file, path, onProgress) {
+      let offset = 0;
+      let lastYield = Date.now();
+      let prefetched = null;   // 预读的下一块：让「编码」和「跨桥写入」重叠起来
+      while (offset < file.size) {
+        const end = Math.min(offset + WRITE_CHUNK, file.size);
+        const cur = prefetched || blobToBase64(file.slice(offset, end));
+        prefetched = (end < file.size)
+          ? blobToBase64(file.slice(end, Math.min(end + WRITE_CHUNK, file.size)))
+          : null;
+        const b64 = await cur;
+        if (offset === 0) {
+          await Filesystem.writeFile({ path: path, data: b64, directory: 'DATA', recursive: true });
+        } else {
+          await Filesystem.appendFile({ path: path, data: b64, directory: 'DATA' });
+        }
+        offset = end;
+        if (onProgress) onProgress(file.size ? offset / file.size : 1);
+        if (Date.now() - lastYield >= YIELD_MS) {
+          // 让出主线程：这一步是「不卡死」的关键，UI 得以继续绘制
+          await new Promise(function (r) { setTimeout(r, 0); });
+          lastYield = Date.now();
+        }
+      }
+    }
+
+    window.musicFS = {
+      async save(file, onProgress) {
+        const b64first = file.size <= WRITE_CHUNK; // 小文件直接一次写完，省往返
+        let safe = (file.name || 'audio.mp3').replace(/[\/\\:*?"<>|]/g, '_');
+        if (!/\.[a-zA-Z0-9]{2,5}$/.test(safe)) safe += '.mp3';
+        // 并发导入时同一毫秒会撞车，加序号保证路径唯一（否则两首歌写进同一个文件）
+        const path = 'musics/' + Date.now() + '_' + (_saveSeq++) + '_' + safe;
+        if (b64first) {
+          const b64 = await blobToBase64(file);
+          await Filesystem.writeFile({ path: path, data: b64, directory: 'DATA', recursive: true });
+          if (onProgress) onProgress(1);
+        } else {
+          await writeFileChunked(file, path, onProgress);
+        }
+        const res = await Filesystem.getUri({ path: path, directory: 'DATA' });
+        return { name: file.name, path: path, uri: res.uri, url: window.Capacitor.convertFileSrc(res.uri) };
+      },
+      async getUri(path) {
+        const res = await Filesystem.getUri({ path: path, directory: 'DATA' });
+        return window.Capacitor.convertFileSrc(res.uri);
+      },
+    };
+
+    // ===== BLE（复刻 @capacitor-community/bluetooth-le 的 BleClient 关键行为） =====
+    // 原生注册名 BluetoothLe；扫描结果走 onScanResult 事件；通知值是 hex 字符串
+    const HR_SERVICE = '0000180d-0000-1000-8000-00805f9b34fb';
+    const HR_MEASUREMENT = '00002a37-0000-1000-8000-00805f9b34fb';
+
+    function hexStringToDataView(value) {
+      const numbers = value.trim().split(' ').filter(function (e) { return e !== ''; })
+        .map(function (s) { return parseInt(s, 16); });
+      return new DataView(Uint8Array.from(numbers).buffer);
+    }
+
+    function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+    // 开心率通知需要写 CCCD 描述符；连接刚建立就写常被设备拒绝（或被别的 App 占用连接）
+    function startNotificationsWithRetry(id, tries) {
+      tries = tries || 3;
+      function attempt(n) {
+        return BluetoothLe.startNotifications({
+          deviceId: id, service: HR_SERVICE, characteristic: HR_MEASUREMENT,
+        }).catch(function (e) {
+          if (n <= 1) throw e;
+          return wait(700).then(function () { return attempt(n - 1); });
+        });
+      }
+      return attempt(tries);
+    }
+
+    // 把原生报错翻译成用户能懂的话
+    function friendlyBleError(e) {
+      const m = String((e && e.message) || e || '');
+      if (/descriptor/i.test(m)) {
+        return '设备拒绝了心率通知。常见原因：①手环已被手机上的官方 App 占用（先在官方 App 断开或关掉蓝牙重开）；②未开启「心率广播」；③需要配对。请处理后重试。';
+      }
+      if (/notification/i.test(m)) return '该设备不支持心率通知（请确认是心率设备）';
+      if (/connect/i.test(m)) return '连接失败，请靠近设备后重试';
+      if (/timeout/i.test(m)) return '连接超时，请重试';
+      return m || '连接失败';
+    }
+
+    // androidNeverForLocation：不再请求定位权限（Manifest 已配 neverForLocation）。
+    // initialize 的权限注解会弹 BLUETOOTH_SCAN/CONNECT 运行时权限——之前 module 脚本解析失败
+    // 导致 initialize 从未执行，权限从未请求，扫描永远走"不支持蓝牙"分支
+    function ensureBleInit() { return BluetoothLe.initialize({ androidNeverForLocation: true }); }
+
+    // 蓝牙能力暴露给 UI script（APK 内可用）
+    window.ble = {
+      available: true,
+      requestPermissions: function () { return ensureBleInit(); },
+      scan: function (onDevice, onDone) {
+        let listener = null;
+        ensureBleInit().then(function () {
+          return BluetoothLe.addListener('onScanResult', function (result) {
+            if (result && result.device) {
+              let name = result.localName || result.device.name || '';
+              if (!name) name = '未命名设备 ' + String(result.device.deviceId).slice(-4).toUpperCase();
+              onDevice({ id: result.device.deviceId, name: name });
+            }
+          });
+        }).then(function (l) {
+          listener = l;
+          return BluetoothLe.requestLEScan({ allowDuplicates: false });
+        }).then(function () {
+          setTimeout(function () {
+            BluetoothLe.stopLEScan().catch(function () {});
+            if (listener && listener.remove) listener.remove().catch(function () {});
+            if (onDone) onDone();
+          }, 10000);
+        }).catch(function (e) {
+          onDevice({ error: (e && e.message) || String(e) });
+        });
+      },
+      connect: function (id, onData) {
+        const key = 'notification|' + id + '|' + HR_SERVICE + '|' + HR_MEASUREMENT;
+        return BluetoothLe.stopLEScan().catch(function () {}).then(function () {
+          return BluetoothLe.addListener(key, function (event) {
+            try {
+              const dv = hexStringToDataView(event.value);
+              const flags = dv.getUint8(0);
+              const u16 = flags & 0x01;
+              const bpm = u16 ? dv.getUint16(1, true) : dv.getUint8(1);
+              if (bpm > 0) onData(bpm);
+            } catch (e) {}
+          });
+        }).then(function () {
+          return BluetoothLe.connect({ deviceId: id });
+        }).then(function () {
+          return wait(900); // 等服务发现完成，太快写 CCCD 会被设备拒绝
+        }).then(function () {
+          return BluetoothLe.discoverServices({ deviceId: id }).catch(function () {});
+        }).then(function () {
+          return wait(300);
+        }).then(function () {
+          return startNotificationsWithRetry(id, 3); // 失败自动重试 3 次
+        }).then(function () {
+          return { ok: true };
+        }).catch(function (e) {
+          return { ok: false, error: friendlyBleError(e) };
+        });
+      },
+      disconnect: function (id) {
+        return BluetoothLe.disconnect({ deviceId: id }).catch(function () {});
+      },
+    };
+  })();
+  </script>
+</body>
+</html>
