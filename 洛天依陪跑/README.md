@@ -55,12 +55,6 @@
 
 到 [Releases](../../releases) 下载 APK，安卓 8.0 以上直接装。
 
-当前版本：**v1.2**（113 MB）
-
-```
-https://github.com/w8888-hh/luotianyi-running-app/releases/download/v1.2/luotianyi-running-v1.2.apk
-```
-
 第一次开跑会要通知权限 —— 给了才有常驻通知条；不给也不影响跑步，只是没有通知条。
 
 心率功能需要连蓝牙手环或心率带。不连也能跑，只是「天依跟你跑」会退回按时间推进。
