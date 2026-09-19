@@ -72,8 +72,10 @@
 APK 在 GitHub Releases 里（仓库不放安装包，太大）：
 
 ```
-https://github.com/<你的用户名>/luotianyi-running-app/releases
+https://github.com/w8888-hh/luotianyi-running-app/releases
 ```
+
+源码也在这里：<https://github.com/w8888-hh/luotianyi-running-app>（MIT 协议，随便改随便分发）
 
 安卓 8.0 以上都能装。第一次开跑会要通知权限，给了才有常驻通知条；不给也不影响跑步，只是没有通知条。
 
