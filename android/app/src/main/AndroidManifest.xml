@@ -24,7 +24,17 @@
 
         </activity>
 
-        <!-- 运动常驻通知条：承载通知的前台服务 + 按钮广播接收器 -->
+        <service
+            android:name=".BiliMediaService"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService" />
+            </intent-filter>
+        </service>
+
+
         <service
             android:name=".RunNotificationService"
             android:exported="false"

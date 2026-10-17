@@ -2860,6 +2860,7 @@
         '<div id="tabLocal" style="flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;background:#FF8C42;color:#fff;font-size:13px;">本地歌单</div>' +
         '<div id="tabLibrary" style="flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;background:var(--surface-glass);color:var(--text-secondary);font-size:13px;">内置音乐</div>' +
         '<div id="tabSaved" style="flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;background:var(--surface-glass);color:var(--text-secondary);font-size:13px;">我的歌单</div>' +
+        '<div id="tabBili" style="flex:1;text-align:center;padding:10px;border-radius:12px;cursor:pointer;background:var(--surface-glass);color:var(--text-secondary);font-size:13px;">哔哩哔哩</div>' +
         '</div>' +
         '<div id="localView">' +
         // 导入入口上移：原来在最底部，每次都要滑到底才能操作
@@ -2877,7 +2878,8 @@
         '<div id="removedBox" style="display:none;margin-top:16px;"></div>' +
         '</div>' +
         '<div id="libraryView" style="display:none;"><div id="libraryList"></div></div>' +
-        '<div id="savedView" style="display:none;"><div id="savedList"></div></div>';
+        '<div id="savedView" style="display:none;"><div id="savedList"></div></div>' +
+        '<div id="biliView" style="display:none;"><div id="biliList"></div></div>';
       phone.appendChild(ov);
       document.getElementById('musicClose').onclick = closeMusicList;
       document.getElementById('musicImport').onclick = function () { musicInput.click(); };
@@ -2894,15 +2896,18 @@
       document.getElementById('tabLocal').onclick = function () { switchMusicTab('local'); };
       document.getElementById('tabLibrary').onclick = function () { switchMusicTab('library'); };
       document.getElementById('tabSaved').onclick = function () { switchMusicTab('saved'); };
+      document.getElementById('tabBili').onclick = function () { switchMusicTab('bili'); };
       syncModeUI();
 
     function switchMusicTab(tab) {
       const local = document.getElementById('localView');
       const lib = document.getElementById('libraryView');
       const saved = document.getElementById('savedView');
+      const bili = document.getElementById('biliView');
       const tl = document.getElementById('tabLocal');
       const tlb = document.getElementById('tabLibrary');
       const tsv = document.getElementById('tabSaved');
+      const tb = document.getElementById('tabBili');
       if (!local || !lib) return;
       const on = '#FF8C42', off = 'var(--surface-glass)';
       const paint = function (el, active) {
@@ -2910,12 +2915,192 @@
         el.style.background = active ? on : off;
         el.style.color = active ? '#fff' : 'var(--text-secondary)';
       };
-      paint(tl, tab === 'local'); paint(tlb, tab === 'library'); paint(tsv, tab === 'saved');
+      paint(tl, tab === 'local'); paint(tlb, tab === 'library'); paint(tsv, tab === 'saved'); paint(tb, tab === 'bili');
       local.style.display = (tab === 'local') ? 'block' : 'none';
       lib.style.display = (tab === 'library') ? 'block' : 'none';
       if (saved) saved.style.display = (tab === 'saved') ? 'block' : 'none';
+      if (bili) bili.style.display = (tab === 'bili') ? 'block' : 'none';
       if (tab === 'library') loadLibrary();
       if (tab === 'saved') renderSavedPlaylists();
+      if (tab === 'bili') renderBiliView();
+    }
+
+    // ===== 哔哩哔哩音乐源：Cookie 登录、收藏夹与音频轨道 =====
+    const biliState = { account: null, folders: [], folder: null, items: [], page: 1, loading: false, qrAuthCode: null, qrActive: false, qrTimer: null, qrDeadline: 0, searching: false, keyword: '', results: [], resultPage: 1, hasMore: false, loadingSearch: false };
+    function biliErrorText(e) {
+      const s = String((e && (e.message || e.error)) || e || 'B站请求失败');
+      const map = { NOT_LOGGED_IN: '请先登录哔哩哔哩', AUTH_EXPIRED: '登录已失效，请重新扫码', AUDIO_NOT_AVAILABLE: '这条视频没有可用音频', NETWORK_ERROR: '网络连接失败', QR_EXPIRED: '二维码已过期，请重新生成', QR_CREATE_FAILED: '二维码生成失败', QR_POLL_FAILED: '二维码状态查询失败', QR_NO_COOKIE: '登录成功但未收到账号信息', AUTH_NOT_VERIFIED: '扫码已确认，但账号验证未通过，请重新生成二维码' };
+      return map[s] || s;
+    }
+    function cancelBiliQrLogin() {
+      if (biliState.qrTimer) { clearTimeout(biliState.qrTimer); biliState.qrTimer = null; }
+      biliState.qrAuthCode = null; biliState.qrActive = false; biliState.qrDeadline = 0;
+      const p = biliPlugin(); if (p && p.cancelQrLogin) p.cancelQrLogin().catch(function () {});
+    }
+    function startBiliQrLogin() {
+      const p = biliPlugin(), box = document.getElementById('biliQrBox'), img = document.getElementById('biliQrImage'), hint = document.getElementById('biliQrHint'), button = document.getElementById('biliQrStart');
+      if (!p || !p.startQrLogin) { showTip('当前版本不支持扫码登录'); return; }
+      cancelBiliQrLogin(); if (box) box.style.display = 'block'; if (button) { button.textContent = '正在生成二维码…'; button.style.pointerEvents = 'none'; }
+      p.startQrLogin().then(function (r) {
+        biliState.qrActive = true;
+        biliState.qrAuthCode = 'active';
+        biliState.qrDeadline = Date.now() + (r.expiresIn || 180) * 1000;
+        if (img) img.src = r.qrUrl;
+        if (hint) hint.textContent = '请使用哔哩哔哩 App 扫码，二维码约 3 分钟有效';
+        if (button) { button.textContent = '重新生成二维码'; button.style.pointerEvents = 'auto'; }
+        pollBiliQrLogin();
+      }).catch(function (e) { if (hint) hint.textContent = biliErrorText(e); if (button) { button.textContent = '重新生成二维码'; button.style.pointerEvents = 'auto'; } });
+    }
+    function pollBiliQrLogin() {
+      const p = biliPlugin(), hint = document.getElementById('biliQrHint');
+      if (!p || !biliState.qrActive) return;
+      if (Date.now() >= biliState.qrDeadline) { cancelBiliQrLogin(); if (hint) hint.textContent = '二维码已过期，请重新生成'; return; }
+      p.pollQrLogin({}).then(function (r) {
+        if (r.status === 'verified') { cancelBiliQrLogin(); biliState.account = r.account; renderBiliView(); showTip('哔哩哔哩登录成功', 2200); return; }
+        const code = Number(r.code);
+        if (r.status === 'scanned' || code === 86090 || code === 86039) {
+          if (hint) hint.textContent = '已扫码，请在手机上确认登录';
+        } else if (hint) hint.textContent = '等待扫码…';
+        biliState.qrTimer = setTimeout(pollBiliQrLogin, 1000);
+      }).catch(function (e) {
+        if (hint) hint.textContent = biliErrorText(e);
+        cancelBiliQrLogin();
+      });
+    }
+    function doBiliSearch() {
+      const p = biliPlugin(), input = document.getElementById('biliSearchInput');
+      const kw = (input && input.value || '').trim();
+      if (!kw) { showTip('请输入搜索关键词'); return; }
+      biliState.searching = true; biliState.keyword = kw; biliState.results = []; biliState.resultPage = 1;
+      renderBiliSearch(true);
+      loadBiliSearch(true);
+    }
+    function loadBiliSearch(reset) {
+      const p = biliPlugin(); if (!p || biliState.loadingSearch) return;
+      biliState.loadingSearch = true;
+      p.searchVideo({ keyword: biliState.keyword, page: reset ? 1 : biliState.resultPage }).then(function (r) {
+        const got = r.items || [];
+        biliState.results = reset ? got : biliState.results.concat(got);
+        biliState.resultPage = (reset ? 1 : biliState.resultPage) + 1;
+        biliState.hasMore = !!r.hasMore;
+        renderBiliSearch();
+      }).catch(function (e) { showTip(biliErrorText(e), 2600); renderBiliSearch(); })
+        .then(function () { biliState.loadingSearch = false; });
+    }
+    function renderBiliSearch(loading) {
+      const box = document.getElementById('biliList'); if (!box) return;
+      box.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:14px;">' +
+        '<span id="biliSearchBack" style="cursor:pointer;color:#66CCFF;">‹ 返回</span>' +
+        '<span style="flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">搜索：' + escHtml(biliState.keyword) + '</span></div>' +
+        (loading ? '<div style="padding:24px;text-align:center;color:var(--text-secondary);">搜索中…</div>' : '') +
+        '<div style="display:flex;gap:8px;margin-bottom:12px;">' +
+        '<div id="biliSAdd" style="flex:1;text-align:center;padding:11px;border-radius:999px;background:#FF8C42;color:#fff;font-size:13px;font-weight:600;cursor:pointer;">加入播放列表</div>' +
+        '<div id="biliSPlay" style="flex:1;text-align:center;padding:11px;border-radius:999px;background:var(--surface-glass);color:var(--text-secondary);font-size:13px;cursor:pointer;">载入并播放</div></div>' +
+        '<div id="biliSRows"></div>';
+      document.getElementById('biliSearchBack').onclick = function () { biliState.searching = false; biliState.results = []; renderBiliView(); };
+      const rows = document.getElementById('biliSRows');
+      biliState.results.forEach(function (it, idx) {
+        const row = document.createElement('div'); row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:11px;border-radius:12px;background:var(--surface-glass);margin-bottom:6px;cursor:pointer;';
+        row.innerHTML = '<input type="checkbox" class="bili-scheck" data-i="' + idx + '" style="accent-color:#FF8C42;width:18px;height:18px;" />' +
+          '<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escHtml(it.title) + '</div>' +
+          '<div style="font-size:11px;color:var(--text-secondary);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escHtml(it.author || '哔哩哔哩') + ' · ' + fmtDur(it.duration || 0) + '</div></div>';
+        row.onclick = function (e) { if (e.target.tagName !== 'INPUT') { const c = row.querySelector('input'); c.checked = !c.checked; } };
+        rows.appendChild(row);
+      });
+      if (!loading && !biliState.results.length) {
+        const empty = document.createElement('div'); empty.style.cssText = 'padding:30px;text-align:center;color:var(--text-secondary);font-size:13px;';
+        empty.textContent = '没有搜到结果'; rows.appendChild(empty);
+      }
+      if (biliState.hasMore) {
+        const more = document.createElement('div'); more.textContent = '加载更多';
+        more.style.cssText = 'text-align:center;padding:14px;color:#66CCFF;cursor:pointer;font-size:13px;';
+        more.onclick = function () { loadBiliSearch(false); }; rows.appendChild(more);
+      }
+      function selected() { return Array.from(box.querySelectorAll('.bili-scheck:checked')).map(function (c) { return biliState.results[Number(c.dataset.i)]; }).filter(Boolean); }
+      document.getElementById('biliSAdd').onclick = function () { const a = selected(); if (!a.length) { showTip('先勾选要加入的歌曲'); return; } engine.music.addProviderTracks(a); musicLoaded = true; updateMusicUI(); showTip('已加入 ' + a.length + ' 首', 2200); };
+      document.getElementById('biliSPlay').onclick = function () { const a = selected(); if (!a.length) { showTip('先勾选要播放的歌曲'); return; } engine.music.loadUrls([]); engine.music.addProviderTracks(a); musicLoaded = true; engine.music.playTrack(0); updateMusicUI(); closeMusicList(); };
+    }
+    function biliPlugin() { return window.biliSource || (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.BiliSource) || null; }
+    function renderBiliView() {
+      const box = document.getElementById('biliList'); if (!box) return;
+      const p = biliPlugin();
+      if (!p) { box.innerHTML = '<div style="padding:24px 12px;text-align:center;color:var(--text-secondary);">哔哩哔哩源仅支持 Android App</div>'; return; }
+      if (biliState.account === null && p.getAccount) {
+        p.getAccount().then(function (a) { biliState.account = a; renderBiliView(); }).catch(function () { biliState.account = { loggedIn: false }; renderBiliView(); });
+        box.innerHTML = '<div style="padding:24px 12px;text-align:center;color:var(--text-secondary);">正在检查登录状态…</div>'; return;
+      }
+      if (biliState.searching) { renderBiliSearch(); return; }
+      if (biliState.folder) { renderBiliItems(); return; }
+      if (biliState.account && biliState.account.loggedIn) {
+        box.innerHTML = '<div style="display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;background:var(--surface-glass);margin-bottom:12px;">' +
+          '<div style="flex:1;min-width:0;"><div style="font-weight:600;">' + escHtml(biliState.account.name || '哔哩哔哩用户') + '</div><div style="font-size:11px;color:var(--text-secondary);">UID ' + (biliState.account.mid || '--') + '</div></div>' +
+          '<div id="biliRefresh" style="padding:8px 10px;border-radius:10px;background:var(--surface-glass);color:#FF8C42;font-size:12px;cursor:pointer;">刷新</div>' +
+          '<div id="biliLogout" style="padding:8px 10px;border-radius:10px;background:var(--surface-glass);color:var(--text-secondary);font-size:12px;cursor:pointer;">退出</div></div>' +
+          '<div style="display:flex;gap:8px;margin-bottom:12px;">' +
+          '<input id="biliSearchInput" type="search" placeholder="搜索哔哩哔哩视频" style="flex:1;box-sizing:border-box;padding:11px 13px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:var(--surface-glass);color:var(--text-primary);outline:none;font-size:13px;" />' +
+          '<div id="biliSearchBtn" style="flex:0 0 auto;padding:11px 18px;border-radius:999px;background:#FF8C42;color:#fff;font-weight:600;font-size:13px;cursor:pointer;">搜索</div></div>' +
+          '<div id="biliFolders"><div style="padding:20px;text-align:center;color:var(--text-secondary);">加载收藏夹…</div></div>';
+        document.getElementById('biliRefresh').onclick = loadBiliFolders;
+        document.getElementById('biliLogout').onclick = function () { p.clearCookie().then(function () { biliState.account = null; biliState.folders = []; renderBiliView(); }); };
+        document.getElementById('biliSearchBtn').onclick = doBiliSearch;
+        document.getElementById('biliSearchInput').onkeydown = function (e) { if (e.key === 'Enter') doBiliSearch(); };
+        loadBiliFolders(); return;
+      }
+      box.innerHTML = '<div style="padding:14px;border-radius:16px;background:var(--surface-glass);margin-bottom:12px;line-height:1.6;">' +
+        '<div style="font-size:16px;font-weight:700;margin-bottom:6px;">哔哩哔哩收藏夹</div><div style="font-size:12px;color:var(--text-secondary);">扫码登录后读取你的收藏夹并播放音频。登录凭据只保存在 Android 应用私有空间。</div></div>' +
+        '<div id="biliQrBox" style="display:none;text-align:center;padding:14px;border-radius:16px;background:#fff;margin-bottom:12px;"><img id="biliQrImage" alt="哔哩哔哩登录二维码" style="width:210px;height:210px;display:block;margin:0 auto;object-fit:contain;" /><div id="biliQrHint" style="color:#555;font-size:12px;margin-top:10px;">请使用哔哩哔哩 App 扫码</div></div>' +
+        '<div id="biliQrStart" style="text-align:center;padding:12px;border-radius:999px;background:#FF8C42;color:#fff;font-weight:600;cursor:pointer;margin-bottom:10px;">扫码登录</div>' +
+        '<details style="color:var(--text-secondary);font-size:12px;"><summary style="cursor:pointer;padding:8px 0;">其他方式：粘贴 Cookie</summary>' +
+        '<input id="biliCookie" type="password" autocomplete="off" placeholder="粘贴 Cookie（包含 SESSDATA 等）" style="box-sizing:border-box;width:100%;padding:13px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:var(--surface-glass);color:var(--text-primary);outline:none;margin:6px 0 10px;" />' +
+        '<div id="biliLogin" style="text-align:center;padding:10px;border-radius:999px;background:var(--surface-glass);color:#FF8C42;font-weight:600;cursor:pointer;">保存并验证 Cookie</div></details>' +
+        '<div id="biliHint" style="font-size:11px;color:var(--text-secondary);margin-top:10px;text-align:center;"></div>';
+      document.getElementById('biliQrStart').onclick = startBiliQrLogin;
+      document.getElementById('biliLogin').onclick = biliLogin;
+    }
+    function biliLogin() {
+      const p = biliPlugin(), input = document.getElementById('biliCookie'), hint = document.getElementById('biliHint');
+      const cookie = input && input.value.trim(); if (!cookie) { hint.textContent = '请先粘贴 Cookie'; return; }
+      hint.textContent = '正在验证…';
+      p.setCookie({ cookie: cookie }).then(function (a) { biliState.account = a; if (!a.loggedIn) throw new Error('AUTH_EXPIRED'); renderBiliView(); showTip('哔哩哔哩登录成功', 2200); }).catch(function (e) { hint.textContent = biliErrorText(e); });
+    }
+    function loadBiliFolders() {
+      const p = biliPlugin(), box = document.getElementById('biliFolders'); if (!p || !box) return;
+      box.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-secondary);">加载收藏夹…</div>';
+      p.listFavFolders({ pn: 1, ps: 50 }).then(function (r) { biliState.folders = r.items || []; renderBiliFolders(); }).catch(function (e) { box.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-secondary);">' + escHtml(biliErrorText(e)) + '</div>'; });
+    }
+    function renderBiliFolders() {
+      const box = document.getElementById('biliFolders'); if (!box) return;
+      if (!biliState.folders.length) { box.innerHTML = '<div style="padding:32px;text-align:center;color:var(--text-secondary);">没有找到收藏夹</div>'; return; }
+      box.innerHTML = ''; biliState.folders.forEach(function (f) {
+        const row = document.createElement('div'); row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--surface-glass);margin-bottom:8px;cursor:pointer;';
+        row.innerHTML = '<div style="width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#66CCFF,#3399FF);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0;">♡</div><div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escHtml(f.title) + '</div><div style="font-size:11px;color:var(--text-secondary);margin-top:3px;">' + (f.count || 0) + ' 个视频</div></div><div style="color:var(--text-secondary);font-size:18px;">›</div>';
+        row.onclick = function () { openBiliFolder(f); }; box.appendChild(row);
+      });
+    }
+    function openBiliFolder(folder) {
+      biliState.folder = folder; biliState.items = []; biliState.page = 1; renderBiliView(); loadBiliItems(true);
+    }
+    function loadBiliItems(reset) {
+      const p = biliPlugin(); if (!p || !biliState.folder || biliState.loading) return; biliState.loading = true;
+      p.listFavItems({ mediaId: biliState.folder.id, pn: reset ? 1 : biliState.page, ps: 20, order: 'mtime' }).then(function (r) {
+        const got = r.items || []; biliState.items = reset ? got : biliState.items.concat(got); biliState.page = (reset ? 1 : biliState.page) + 1; biliState.hasMore = !!r.hasMore; renderBiliItems();
+      }).catch(function (e) { showTip(biliErrorText(e), 2600); }).then(function () { biliState.loading = false; });
+    }
+    function renderBiliItems() {
+      const box = document.getElementById('biliList'); if (!box || !biliState.folder) return;
+      box.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;color:#66CCFF;font-size:14px;"><span id="biliBack">‹ 收藏夹</span><span style="flex:1;font-weight:700;color:var(--text-primary);">' + escHtml(biliState.folder.title) + '</span></div>' +
+        '<div style="display:flex;gap:8px;margin-bottom:12px;"><div id="biliAdd" style="flex:1;text-align:center;padding:11px;border-radius:999px;background:#FF8C42;color:#fff;font-size:13px;font-weight:600;cursor:pointer;">加入播放列表</div><div id="biliPlay" style="flex:1;text-align:center;padding:11px;border-radius:999px;background:var(--surface-glass);color:var(--text-secondary);font-size:13px;cursor:pointer;">载入并播放</div></div><div id="biliRows"></div>';
+      document.getElementById('biliBack').onclick = function () { biliState.folder = null; renderBiliView(); };
+      const rows = document.getElementById('biliRows');
+      biliState.items.forEach(function (it, idx) {
+        const row = document.createElement('div'); row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:11px;border-radius:12px;background:var(--surface-glass);margin-bottom:6px;cursor:pointer;';
+        row.innerHTML = '<input type="checkbox" class="bili-check" data-i="' + idx + '" style="accent-color:#FF8C42;width:18px;height:18px;" /><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escHtml(it.title) + '</div><div style="font-size:11px;color:var(--text-secondary);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escHtml(it.author || '哔哩哔哩') + ' · B站音频 · ' + fmtDur(it.duration || 0) + '</div></div>';
+        row.onclick = function (e) { if (e.target.tagName !== 'INPUT') { const c = row.querySelector('input'); c.checked = !c.checked; } }; rows.appendChild(row);
+      });
+      if (biliState.hasMore) { const more = document.createElement('div'); more.textContent = '加载更多'; more.style.cssText = 'text-align:center;padding:14px;color:#66CCFF;cursor:pointer;font-size:13px;'; more.onclick = function () { loadBiliItems(false); }; rows.appendChild(more); }
+      function selected() { return Array.from(box.querySelectorAll('.bili-check:checked')).map(function (c) { return biliState.items[Number(c.dataset.i)]; }).filter(Boolean); }
+      document.getElementById('biliAdd').onclick = function () { const a = selected(); if (!a.length) { showTip('先勾选要加入的歌曲'); return; } engine.music.addProviderTracks(a); musicLoaded = true; updateMusicUI(); showTip('已加入 ' + a.length + ' 首 B站音频', 2200); };
+      document.getElementById('biliPlay').onclick = function () { const a = selected(); if (!a.length) { showTip('先勾选要播放的歌曲'); return; } engine.music.loadUrls([]); engine.music.addProviderTracks(a); musicLoaded = true; engine.music.playTrack(0); updateMusicUI(); closeMusicList(); };
     }
 
     // ===== 内置音乐库（读 assets/music_meta.json） =====
@@ -3158,6 +3343,7 @@
       currentOverlay = 'music';
     }
     function closeMusicList() {
+      cancelBiliQrLogin();
       const ov = document.getElementById('musicOverlay');
       if (ov) ov.style.display = 'none';
       if (currentOverlay === 'music') currentOverlay = null;
@@ -3312,7 +3498,10 @@
       box.appendChild(acts);
       document.getElementById('plLoadPlay').onclick = function () {
         if (!pl.songs.length) { showTip('这个歌单是空的'); return; }
-        engine.music.loadUrls(pl.songs.map(function (s) { return { title: s.name, url: s.url }; }));
+        const providerSongs = pl.songs.filter(function (s) { return s.source === 'bilibili'; });
+        const localSongs = pl.songs.filter(function (s) { return s.source !== 'bilibili'; });
+        engine.music.loadUrls(localSongs.map(function (s) { return { title: s.name, url: s.url, bpm: s.bpm, duration: s.duration }; }));
+        engine.music.addProviderTracks(providerSongs.map(function (s) { return { title: s.name, author: s.artist, duration: s.duration, bpm: s.bpm, providerMeta: s.providerMeta }; }));
         musicLoaded = true;
         engine.music.playTrack(0);
         updateMusicUI();
@@ -3321,7 +3510,10 @@
       };
       document.getElementById('plAppend').onclick = function () {
         if (!pl.songs.length) { showTip('这个歌单是空的'); return; }
-        engine.music.addUrls(pl.songs.map(function (s) { return { title: s.name, url: s.url }; }));
+        const provider = pl.songs.filter(function (s) { return s.source === 'bilibili'; });
+        const local = pl.songs.filter(function (s) { return s.source !== 'bilibili'; });
+        if (provider.length) engine.music.addProviderTracks(provider.map(function (s) { return { title: s.name, author: s.artist, duration: s.duration, bpm: s.bpm, providerMeta: s.providerMeta }; }));
+        if (local.length) engine.music.addUrls(local.map(function (s) { return { title: s.name, url: s.url, duration: s.duration, bpm: s.bpm }; }));
         musicLoaded = true;
         updateMusicUI();
         showTip('已把 ' + pl.songs.length + ' 首加入播放列表', 2200);
@@ -4333,8 +4525,29 @@
     const App = P.App;
     const BluetoothLe = P.BluetoothLe; // 注意：注册名是 BluetoothLe，不是 BleClient
     const Filesystem = P.Filesystem;
+    const BiliSource = P.BiliSource;
 
     window.capApp = App;
+    window.biliSource = BiliSource;
+
+    if (BiliSource && BiliSource.addListener) {
+      BiliSource.addListener('mediaState', function (ev) {
+        const t = engine.music.playlist[engine.music.index];
+        if (!t || t.source !== 'bilibili') return;
+        engine.music.playing = !!ev.playing;
+        if (ev.duration > 0) t.duration = ev.duration / 1000;
+        if (ev.reason === 'ended' || ev.state === 4) engine.music.next();
+        if (engine.music.onListChange) engine.music.onListChange();
+      });
+      BiliSource.addListener('mediaError', function (ev) {
+        const t = engine.music.playlist[engine.music.index];
+        if (t && t.source === 'bilibili') {
+          engine.music.playing = false;
+          if (engine.music.onError) engine.music.onError(t.name, ev.error || 'B站音频播放失败');
+          if (engine.music.onListChange) engine.music.onListChange();
+        }
+      });
+    }
 
     // 返回键：交给普通 script 的 handleBack 处理
     App.addListener('backButton', function () {
@@ -4408,7 +4621,9 @@
       },
       async getUri(path) {
         const res = await Filesystem.getUri({ path: path, directory: 'DATA' });
-        return window.Capacitor.convertFileSrc(res.uri);
+        const url = window.Capacitor.convertFileSrc(res.uri);
+        if (!url) throw new Error('本地音乐 URI 为空');
+        return url;
       },
     };
 
