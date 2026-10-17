@@ -9,6 +9,8 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         // 自定义插件显式注册（自动扫描在部分版本上不可靠）
         registerPlugin(RunNotificationPlugin.class);
+        registerPlugin(BiliSourcePlugin.class);
+        registerPlugin(BiliSourcePlugin.class);
         super.onCreate(savedInstanceState);
     }
 }

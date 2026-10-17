@@ -589,6 +589,8 @@
         url: url || '',
         bpm: bpm || null,
         duration: duration || 0,
+        source: null,
+        providerMeta: null,
         liked: false,
         bpmTried: false, // 已尝试过检测（无论成败），避免重复解码
       };
@@ -603,11 +605,34 @@
         : '';
     }
 
-    // 加载内置音乐（URL 列表）——替换当前歌单（播放专辑场景）
+    addProviderTracks(items) {
+      const existing = new Set(this.playlist.map((t) => t.providerMeta && t.providerMeta.bvid ? 'bili:' + t.providerMeta.bvid : 'url:' + t.name));
+      const added = [];
+      (items || []).forEach((it) => {
+        const meta = it.providerMeta || { bvid: it.bvid, aid: it.aid, cid: it.cid, author: it.author, cover: it.cover };
+        const key = meta && meta.bvid ? 'bili:' + meta.bvid : 'url:' + this._cleanName(it.title || it.name);
+        if (!key || existing.has(key)) return;
+        const t = this._mkTrack(it.title || it.name || 'B站视频', null, '', it.bpm, it.duration);
+        t.source = 'bilibili';
+        t.providerMeta = meta;
+        t.artist = it.author || meta.author || '哔哩哔哩';
+        t.title = it.title || t.name;
+        this.playlist.push(t); existing.add(key); added.push(t);
+      });
+      this._refreshName();
+      if (this.onListChange) this.onListChange();
+      return added;
+    }
+
+
     // items 可带 bpm/duration（内置音乐 meta 里已算好），带了就直接用，不必再检测
     loadUrls(items) {
       this._clear();
-      this.playlist = (items || []).map((it) => this._mkTrack(it.title || it.url, null, it.url, it.bpm, it.duration));
+      this.playlist = (items || []).map((it) => {
+        const t = this._mkTrack(it.title || it.url, null, it.url, it.bpm, it.duration);
+        if (it.source) { t.source = it.source; t.providerMeta = it.providerMeta || null; t.artist = it.author || t.artist; }
+        return t;
+      });
       this.index = -1;
       this._refreshName();
       if (this.onListChange) this.onListChange();
@@ -927,8 +952,39 @@
       this.index = i;
       if (this.audio) this.audio.pause();
       const track = this.playlist[i];
+      if (track.source === 'bilibili') {
+        this.audio = null;
+        this.playing = true;
+        this.name = track.name;
+        this._logPlayed(track.name);
+        if (this.onTrack) this.onTrack(track.name, i);
+        const p = (global.Capacitor && global.Capacitor.Plugins && global.Capacitor.Plugins.BiliSource) || null;
+        if (!p || !track.providerMeta) {
+          this.playing = false;
+          if (this.onError) this.onError(track.name, '哔哩哔哩原生播放不可用');
+          return;
+        }
+        const meta = track.providerMeta;
+        p.resolveAudio({ bvid: meta.bvid || '', aid: meta.aid || 0, cid: meta.cid || 0 }).then((r) => {
+          if (this.index !== i) return;
+          track.duration = r.duration || track.duration || 0;
+          return p.playAudio({ url: r.url, title: track.title || track.name, artist: track.artist || '哔哩哔哩' });
+        }).catch((e) => {
+          if (this.index !== i) return;
+          this.playing = false;
+          if (this.onError) this.onError(track.name, (e && e.message) || 'B站音频解析失败');
+          if (this.onListChange) this.onListChange();
+        });
+        return;
+      }
       const self = this;
       this.audio = new Audio(track.url);
+      this.audio.onerror = function () {
+        const mediaError = self.audio && self.audio.error;
+        const detail = mediaError ? (' code=' + mediaError.code + ' message=' + (mediaError.message || '')) : '';
+        try { console.error('[MusicPlayer] audio error', track.name, track.url, detail); } catch (e) {}
+        if (self.onError) self.onError(track.name, '音频无法解码或文件不可读' + detail);
+      };
       this.audio.volume = this.volume;
       this.audio.onended = () => this.next(); // 播完自动切下一首
       // 拖动进度条跳转时也通知一下 UI（阶段时间提示要跟着刷新）
@@ -964,7 +1020,14 @@
       this._playIndex(this.mode === 'smart' ? this._smartNext()
         : (this.mode === 'shuffle' ? this._shuffleNext() : 0));
     }
-    pause() { if (this.audio) { this.audio.pause(); this.playing = false; } }
+    pause() {
+      if (this.playlist[this.index] && this.playlist[this.index].source === 'bilibili') {
+        const p = global.Capacitor && global.Capacitor.Plugins && global.Capacitor.Plugins.BiliSource;
+        if (p) p.pauseAudio().catch(() => {});
+        this.playing = false; if (this.onListChange) this.onListChange(); return;
+      }
+      if (this.audio) { this.audio.pause(); this.playing = false; }
+    }
     toggle() { this.playing ? this.pause() : this.play(); }
     // 智能模式选下一首：按「与当前心率对应的目标 BPM 的差距」排序，喜欢优先。
     // 本轮播过的先排除，全部播完自动重置 —— 这样既是「随心率实时变顺序」，又能循环放完整张歌单。
@@ -1001,7 +1064,14 @@
         this._playIndex(Math.max(0, this.index - 1));
       }
     }
-    stop() { if (this.audio) { this.audio.pause(); this.playing = false; } }
+    stop() {
+      if (this.playlist[this.index] && this.playlist[this.index].source === 'bilibili') {
+        const p = global.Capacitor && global.Capacitor.Plugins && global.Capacitor.Plugins.BiliSource;
+        if (p) p.stopAudio().catch(() => {});
+        this.playing = false; return;
+      }
+      if (this.audio) { this.audio.pause(); this.playing = false; }
+    }
     setVolume(v) {
       this.volume = Math.max(0, Math.min(1, v));
       if (this.audio) this.audio.volume = this.volume;
@@ -1758,9 +1828,10 @@
         id: 'pl_' + Date.now(),
         name: name,
         createdAt: Date.now(),
-        songs: (tracks || []).map((t) => ({
-          name: t.name, url: t.url || '', bpm: t.bpm || null,
-          artist: t.artist || '', duration: t.duration || 0, // 详情页要显示歌手和时长
+          songs: (tracks || []).map((t) => ({
+          name: t.name, url: t.source === 'bilibili' ? '' : (t.url || ''), bpm: t.bpm || null,
+          artist: t.artist || '', duration: t.duration || 0,
+          source: t.source || null, providerMeta: t.providerMeta || null,
         })),
       };
       l.unshift(pl);
