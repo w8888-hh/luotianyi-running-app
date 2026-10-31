@@ -2,7 +2,7 @@
 
 > 洛天依语音陪跑应用 —— 节拍器 + 心率监测 + 音乐播放 + 语音引导，让跑步不再孤单
 
-**当前版本：v1.2**（2026-09-19） · [更新日志](CHANGELOG.md) · [给观众的介绍](B站介绍-v1.2.md)
+**当前版本：v1.4**（2026-11-01） · [更新日志](CHANGELOG.md) · [给观众的介绍](B站介绍-v1.2.md)
 
 ![洛天依陪跑](luotianyi-running-app-icon.png)
 
@@ -44,7 +44,7 @@
 
 ### 语音与界面
 
-- **16 句洛天依语音**：阶段提示 + 控制语音 + 8 句随机鼓励语，本地音频优先，缺失才回退系统 TTS
+- **59 句洛天依语音**：阶段提示 + 控制语音 + 随机鼓励语，本地音频优先，缺失才回退系统 TTS
 - **字幕显示**：语音播报时同步显示文字
 - **暗色主题**：深夜跑步不刺眼
 - **心率环 / 心率条**：高性能与低性能两套渲染，按设备自动降级
@@ -55,10 +55,10 @@
 
 到 [Releases](../../releases) 下载 APK，安卓 8.0 以上直接装。
 
-当前版本：**v1.2**（113 MB）
+当前版本：**v1.4**（约 75 MB）
 
 ```
-https://github.com/w8888-hh/luotianyi-running-app/releases/download/v1.2/luotianyi-running-v1.2.apk
+https://github.com/w8888-hh/luotianyi-running-app/releases/download/v1.4/luotianyi-running-v1.4.apk
 ```
 
 第一次开跑会要通知权限 —— 给了才有常驻通知条；不给也不影响跑步，只是没有通知条。
@@ -162,6 +162,23 @@ node _bench_import.js
 | 个人音乐库 | 用户自行导入的本地音乐 |
 | APK 安装包 | 体积太大，通过 Releases 分发（`.gitignore` 已排除） |
 | Capacitor 生成的图标 / 闪屏 | 可由 `npx cap add android` 重新生成 |
+
+## 引用与致谢
+
+**作者**：Cory（B站：@本人内心十分开朗）
+
+| 内容 | 来源 / 版权 |
+|------|-------------|
+| 洛天依语音（59 条，GPT-SoVITS 合成） | 模型：[@只想干饭的麦克斯韦妖](https://github.com/xdedmmc2/GPT-SoVITS-Luo-Tianyi) · 声音形象版权：**上海禾念信息科技有限公司** |
+| 洛天依官方立绘 4 张（内置背景：荷塘月色 / 伞下 / 星夜 / 上海日落） | 洛天依官方物料，版权归上海禾念及相关画师所有 |
+| bpm-detective.js（BPM 检测） | 开源库，作者见其仓库 |
+| BPM 曲库（25057 首，`assets/bpm_library.json`） | 由作者整理，仅作离线匹配参考 |
+
+**特别说明**
+
+- 本项目是**粉丝作品（同人应用）**，与上海禾念 / Vsinger 无隶属、合作或授权关系
+- 洛天依相关素材仅随本项目作**非商业学习交流**分发；权利人如要求移除，将立即处理
+- `voices/` 是示例语音，可按 [voice_script.md](voice_script.md) 命名规范替换为自有音色
 
 ## 隐私保护
 
