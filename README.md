@@ -6,6 +6,20 @@
 
 ![洛天依陪跑](luotianyi-running-app-icon.png)
 
+## 真机截图（v1.4 · Magic7 Pro 实拍）
+
+| 首页 | 赏花 · 花历 |
+|------|------------|
+| ![首页](screenshots/v14_01_home.jpg) | ![赏花](screenshots/v14_02_flower.jpg) |
+
+| 跑步 · 主控 | 跑步 · 调节 |
+|------|------------|
+| ![跑步主控](screenshots/v14_03_run_p1.jpg) | ![跑步调节](screenshots/v14_04_run_p2.jpg) |
+
+| 设置 | 软件信息与引用致谢 |
+|------|------------|
+| ![设置](screenshots/v14_05_settings_top.jpg) | ![软件信息](screenshots/v14_06_about.jpg) |
+
 ## 三种跑法
 
 | 跑法 | 谁定节奏 | 说明 |
